@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Productor — RuralControl</title>
+
+  <style>
+    body {
+      margin:0;
+      padding:0;
+      font-family: Arial, sans-serif;
+      background:#f0f2f3;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+    }
+
+    .card {
+      background:white;
+      padding:25px;
+      width:90%;
+      max-width:350px;
+      border-radius:12px;
+      box-shadow:0 4px 15px rgba(0,0,0,0.1);
+      text-align:center;
+    }
+
+    h2 {
+      margin-bottom:20px;
+      color:#2c7b2f;
+    }
+
+    input {
+      width:100%;
+      padding:12px;
+      margin:8px 0;
+      border-radius:10px;
+      border:1px solid #ccc;
+      font-size:16px;
+    }
+
+    button {
+      width:100%;
+      padding:12px;
+      background:#2c7b2f;
+      border:none;
+      border-radius:10px;
+      color:white;
+      font-size:16px;
+      font-weight:bold;
+      cursor:pointer;
+      margin-top:10px;
+    }
+
+    button:hover {
+      background:#226423;
+    }
+
+    #msg {
+      margin-top:15px;
+      font-size:14px;
+      color:red;
+    }
+
+    a {
+      display:block;
+      margin-top:18px;
+      color:#555;
+      text-decoration:none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>👨‍🌾 Acceso Productor</h2>
+
+    <input type="email" id="user" placeholder="Correo electrónico">
+    <input type="password" id="pass" placeholder="Contraseña">
+
+    <button id="btnLogin">Ingresar</button>
+
+    <p id="msg"></p>
+
+    <a href="../index-page.html">⬅ Volver</a>
+  </div>
+
+  <!-- Importamos Firebase desde TU archivo -->
+  <script type="module">
+    import { auth } from "../firebase-init.js";
+    import { signInWithEmailAndPassword }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
+    const btn = document.getElementById("btnLogin");
+    const msg = document.getElementById("msg");
+
+    btn.addEventListener("click", loginProductor);
+
+    async function loginProductor() {
+      const email = document.getElementById("user").value.trim();
+      const pass  = document.getElementById("pass").value.trim();
+
+      if (email === "" || pass === "") {
+        msg.textContent = "Completa todos los campos.";
+        return;
+      }
+
+      try {
+        // Login con Firebase
+        const cred = await signInWithEmailAndPassword(auth, email, pass);
+
+        // Guardamos el ID del productor
+        localStorage.setItem("productorId", cred.user.uid);
+
+        // Redirigimos al panel del productor
+        window.location.href = "panel.html";
+
+      } catch (error) {
+        msg.textContent = "Error: " + limpiarError(error.message);
+      }
+    }
+
+    // Limpieza de errores de Firebase
+    function limpiarError(error) {
+      if (error.includes("auth/user-not-found")) return "Usuario no registrado.";
+      if (error.includes("auth/wrong-password")) return "Contraseña incorrecta.";
+      if (error.includes("auth/invalid-email")) return "Correo inválido.";
+      return error;
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>RuralControl — Gestión y Seguridad de Campos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Leaflet CSS (mapa) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+  <style>
+    :root {
+      --verde: #16a34a;
+      --amarillo: #eab308;
+      --rojo: #dc2626;
+      --bg: #f3f4f6;
+      --bg-panel: #ffffff;
+      --texto: #111827;
+      --borde: #e5e7eb;
+      --accent: #2563eb;
+      --c1: #0f766e;
+      --c2: #22c55e;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--texto);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--c1), var(--c2));
+      color: #fff;
+      padding: 12px 16px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    header p {
+      margin: 4px 0 0;
+      font-size: 0.9rem;
+      opacity: 0.95;
+    }
+
+    #conexionEstado {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      border-radius: 999px;
+      padding: 3px 8px;
+      background: #fee2e2;
+      color: #991b1b;
+      margin-top: 6px;
+    }
+
+    .badge-online {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      gap: 10px;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .nav-btn {
+      flex: 1;
+      min-width: 120px;
+      border-radius: 999px;
+      border: 1px solid var(--borde);
+      padding: 7px 10px;
+      font-size: 0.85rem;
+      background: #fff;
+      color: #374151;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .nav-btn.activo {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .layout {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    @media (min-width: 900px) {
+      .layout-caminos {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        min-height: 420px;
+      }
+    }
+
+    .panel {
+      background: var(--bg-panel);
+      border-radius: 10px;
+      padding: 12px;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12);
+    }
+
+    .panel h2 {
+      margin: 0 0 6px;
+      font-size: 1.1rem;
+    }
+
+    .panel small {
+      color: #6b7280;
+      font-size: 0.8rem;
+    }
+
+    #map {
+      flex: 1;
+      min-height: 350px;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12);
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      margin-top: 8px;
+      margin-bottom: 4px;
+      color: #374151;
+    }
+
+    input[type="text"],
+    input[type="datetime-local"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--borde);
+      font-size: 0.9rem;
+      outline: none;
+      background: #fff;
+    }
+
+    input[type="text"]:focus,
+    input[type="datetime-local"]:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.3);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    .botones-estado {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .boton-estado {
+      flex: 1;
+      border: none;
+      padding: 8px 6px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-weight: 600;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .boton-verde {
+      background: var(--verde);
+    }
+
+    .boton-amarillo {
+      background: var(--amarillo);
+      color: #111827;
+    }
+
+    .boton-rojo {
+      background: var(--rojo);
+    }
+
+    .status-msg {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: #4b5563;
+    }
+
+    .status-msg strong {
+      color: var(--accent);
+    }
+
+    .lista-reportes,
+    .lista-simple {
+      margin-top: 10px;
+      max-height: 180px;
+      overflow-y: auto;
+      border-top: 1px solid var(--borde);
+      padding-top: 6px;
+    }
+
+    .reporte-item,
+    .item-simple {
+      border-radius: 8px;
+      border: 1px solid var(--borde);
+      padding: 6px 8px;
+      font-size: 0.8rem;
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .reporte-info {
+      flex: 1;
+    }
+
+    .chip-estado {
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .chip-verde {
+      background: var(--verde);
+    }
+
+    .chip-amarillo {
+      background: var(--amarillo);
+      color: #111827;
+    }
+
+    .chip-rojo {
+      background: var(--rojo);
+    }
+
+    .btn-mini,
+    .btn-primario,
+    .btn-secundario {
+      border-radius: 999px;
+      border: 1px solid var(--borde);
+      padding: 7px 10px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      background: #fff;
+      color: #374151;
+    }
+
+    .btn-mini {
+      border: none;
+      background: transparent;
+      text-decoration: underline;
+      padding-left: 0;
+    }
+
+    .btn-primario {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .btn-secundario {
+      background: #e5e7eb;
+    }
+
+    .fila {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 600px) {
+      .fila {
+        flex-direction: column;
+      }
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      border-radius: 999px;
+      padding: 3px 8px;
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .finca-item {
+      border: 1px solid var(--borde);
+      padding: 6px 8px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .finca-check {
+      transform: scale(1.3);
+      margin-right: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>RuralControl — Todo tu campo, en tu celular</h1>
+    <p>Gestión de empleados, tareas, caminos rurales y alertas de seguridad para campos de Gualeguay.</p>
+    <div id="conexionEstado">🔌 Detectando conexión...</div>
+  </header>
+
+  <main>
+    <!-- Navegación de módulos -->
+    <nav>
+      <button class="nav-btn activo" data-target="seccion-caminos">🗺️ Caminos</button>
+      <button class="nav-btn" data-target="seccion-empleados">👨‍🌾 Empleados</button>
+      <button class="nav-btn" data-target="seccion-tareas">📋 Tareas del día</button>
+      <button class="nav-btn" data-target="seccion-alertas">🚨 Alertas & Tranqueras</button>
+      <h3 style="margin-top:15px;">📞 Lista de vecinos para alertas</h3>
+      <small>Los vecinos recibirán automáticamente tu alerta rural por WhatsApp.</small>
+
+      <div class="fila">
+        <input type="text" id="vecinoNombre" placeholder="Nombre de la finca o vecino" />
+        <input type="text" id="vecinoTelefono" placeholder="Teléfono (ej: 3444...)" />
+        <button class="btn-primario" id="btnAgregarVecino">➕ Agregar</button>
+      </div>
+
+      <div class="lista-simple" id="listaVecinos" style="margin-top:10px;"></div>
+
+      <button class="btn-mini" id="btnBorrarVecinos">🗑️ Borrar todos los vecinos</button>
+
+    </nav>
+
+    <!-- =======================
+         SECCIÓN CAMINOS
+    ======================== -->
+    <section id="seccion-caminos" class="layout layout-caminos">
+      <!-- PANEL LATERAL -->
+      <section class="panel">
+        <h2>Estado de Caminos Rurales</h2>
+        <small>
+          1️⃣ Hacé clic en el mapa (ubicación aproximada).<br>
+          2️⃣ Completá los datos.<br>
+          3️⃣ Elegí el estado del camino.
+        </small>
+
+        <p class="status-msg" id="puntoSeleccionadoTexto">
+          📍 Aún no seleccionaste un punto en el mapa.
+        </p>
+
+        <label for="nombreCamino">Nombre del camino / referencia</label>
+        <input type="text" id="nombreCamino" placeholder="Ej: Camino a Colonia Viraró, acceso norte" />
+
+        <label for="descripcionCamino">Descripción (opcional)</label>
+        <textarea id="descripcionCamino" placeholder="Ej: Zanja profunda, mucha agua, camión encajado, etc."></textarea>
+
+        <div class="botones-estado">
+          <button class="boton-estado boton-verde" data-estado="transitable">
+            🟢 Transitable
+          </button>
+          <button class="boton-estado boton-amarillo" data-estado="complicado">
+            🟡 Complicado
+          </button>
+          <button class="boton-estado boton-rojo" data-estado="intransitable">
+            🔴 Intransitable
+          </button>
+        </div>
+
+        <p class="status-msg" id="mensajeGuardadoCamino"></p>
+
+        <div class="lista-reportes" id="listaReportesCaminos">
+          <!-- Se cargan reportes -->
+        </div>
+
+        <button class="btn-mini" id="btnBorrarCaminos">
+          🗑️ Borrar reportes locales de caminos (solo en este dispositivo)
+        </button>
+      </section>
+
+      <!-- MAPA -->
+      <section id="map"></section>
+    </section>
+
+    <!-- =======================
+         SECCIÓN EMPLEADOS (B)
+    ======================== -->
+    <section id="seccion-empleados" class="panel hidden">
+      <h2>Control de Empleados Rurales</h2>
+      <small>
+        Marcación de entrada/salida + ubicación aproximada. Se guarda en este dispositivo (después lo podemos conectar a
+        Firebase).
+      </small>
+
+      <label for="empleadoNombre">Nombre del empleado</label>
+      <input type="text" id="empleadoNombre" placeholder="Ej: Juan Pérez" />
+
+      <div class="fila">
+        <button class="btn-primario" id="btnInEmpleado">🟢 Marcar ENTRADA (IN)</button>
+        <button class="btn-secundario" id="btnOutEmpleado">🔴 Marcar SALIDA (OUT)</button>
+      </div>
+
+      <p class="status-msg" id="mensajeEmpleado"></p>
+
+      <div class="lista-simple" id="listaMarcaciones">
+        <!-- Marcaciones -->
+      </div>
+
+      <button class="btn-mini" id="btnBorrarEmpleados">
+        🗑️ Borrar marcaciones locales (solo en este dispositivo)
+      </button>
+    </section>
+
+    <!-- =======================
+         SECCIÓN TAREAS (G)
+    ======================== -->
+    <section id="seccion-tareas" class="panel hidden">
+      <h2>Registro de Tareas Diarias</h2>
+      <small>
+        Cargá la lista de tareas del día y marcá qué se hizo. Más adelante lo vinculamos por empleado y lo sincronizamos
+        online.
+      </small>
+
+      <div class="fila">
+        <input type="text" id="nuevaTareaTexto" placeholder="Ej: Revisar bebederos del potrero 3" />
+        <button class="btn-primario" id="btnAgregarTarea">➕ Agregar tarea</button>
+      </div>
+
+      <p class="status-msg" id="mensajeTareas"></p>
+
+      <div class="lista-simple" id="listaTareas">
+        <!-- Tareas -->
+      </div>
+
+      <button class="btn-mini" id="btnBorrarTareas">
+        🗑️ Borrar tareas locales del día
+      </button>
+    </section>
+
+    <!-- =======================
+         SECCIÓN ALERTAS & TRANQUERAS (E + Y)
+    ======================== -->
+    
+
+    <section id="seccion-alertas" class="panel hidden">
+      <h2>Alertas Rurales & Tranqueras</h2>
+      <!-- LISTA DE FINCAS VECINAS -->
+      <label>Fincas vecinas a alertar</label>
+      <div id="listaFincas"></div>
+
+      <div class="fila">
+        <input type="text" id="fincaNombre" placeholder="Nombre de finca" />
+        <input type="text" id="fincaTelefono" placeholder="Teléfono" />
+        <button class="btn-primario" id="btnAgregarFinca">➕ Agregar</button>
+      </div>
+
+      <button class="btn-mini" id="btnBorrarFincas">
+        🗑️ Borrar fincas vecinas
+      </button>
+
+      <small>
+        Generá alertas rápidas para compartir por WhatsApp con vecinos/familia, y registrá eventos de apertura de
+        tranqueras. Más adelante se pueden vincular a sensores reales.
+      </small>
+
+      <label for="descripcionAlerta">Descripción de la alerta</label>
+      <textarea id="descripcionAlerta"
+        placeholder="Ej: Vehículo sospechoso en la entrada principal del campo."></textarea>
+
+      <div class="fila">
+        <button class="btn-primario" id="btnAlertaRural">🚨 Enviar alerta rural (WhatsApp)</button>
+        <button class="btn-secundario" id="btnVehiculoSospechoso">🚗 Vehículo sospechoso</button>
+        <button class="btn-secundario" id="btnAlertaControlada">🟢 Avisar ALERTA CONTROLADA
+        </button>
+
+      </div>
+
+      <label for="tranqueraNombre">Nombre / referencia de tranquera</label>
+      <input type="text" id="tranqueraNombre" placeholder="Ej: Tranquera sur — acceso camino vecinal" />
+
+      <div class="fila">
+        <button class="btn-primario" id="btnTranqueraAbierta">🟡 Registrar apertura de tranquera</button>
+      </div>
+
+      <p class="status-msg" id="mensajeAlertas"></p>
+
+      <div class="lista-simple" id="listaAlertas">
+        <!-- Alertas y eventos -->
+      </div>
+
+      <button class="btn-mini" id="btnBorrarAlertas">
+        🗑️ Borrar alertas locales
+      </button>
+
+      <p class="status-msg">
+        💡 Tip: al presionar una alerta, se abre WhatsApp con un mensaje pre-armado (si hay conexión). Si no, queda
+        guardado para reenviar más tarde.
+      </p>
+    </section>
+  </main>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <script>
+    // ==========================
+    //  ESTADO GLOBAL Y UTILIDADES
+    // ==========================
+    const conexionEstado = document.getElementById("conexionEstado");
+
+    function formatearFecha(timestamp) {
+      const fecha = new Date(timestamp);
+      return fecha.toLocaleString("es-AR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function actualizarEstadoConexion() {
+      if (navigator.onLine) {
+        conexionEstado.textContent = "✅ Conectado: se podrían sincronizar datos cuando implementemos backend.";
+        conexionEstado.classList.add("badge-online");
+      } else {
+        conexionEstado.textContent =
+          "⚠️ Sin conexión: se guarda todo en este dispositivo (modo campo).";
+        conexionEstado.classList.remove("badge-online");
+      }
+    }
+
+    window.addEventListener("online", actualizarEstadoConexion);
+    window.addEventListener("offline", actualizarEstadoConexion);
+
+    // ==========================
+    //  NAVEGACIÓN ENTRE SECCIONES
+    // ==========================
+    function configurarNavegacion() {
+      const navBtns = document.querySelectorAll(".nav-btn");
+      const secciones = document.querySelectorAll("main > section");
+
+      navBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          navBtns.forEach((b) => b.classList.remove("activo"));
+          btn.classList.add("activo");
+
+          const targetId = btn.dataset.target;
+          secciones.forEach((sec) => {
+            if (sec.id === targetId) {
+              sec.classList.remove("hidden");
+            } else {
+              sec.classList.add("hidden");
+            }
+          });
+
+          // Ajustar mapa si cambiamos a sección caminos
+          if (targetId === "seccion-caminos" && map) {
+            setTimeout(() => {
+              map.invalidateSize();
+            }, 200);
+          }
+        });
+      });
+    }
+
+    // ==========================
+    //  CAMINOS (MAPA + REPORTES)
+    // ==========================
+    let map;
+    let marcadorSeleccionado = null;
+    let puntoSeleccionado = null;
+    let reportesCaminos = [];
+    let capaReportesCaminos;
+
+    const LS_CAMINOS = "reportesCaminosGualeguay";
+
+    const puntoTexto = document.getElementById("puntoSeleccionadoTexto");
+    const mensajeGuardadoCamino = document.getElementById("mensajeGuardadoCamino");
+    const listaReportesCaminos = document.getElementById("listaReportesCaminos");
+
+    function guardarCaminosLocal() {
+      localStorage.setItem(LS_CAMINOS, JSON.stringify(reportesCaminos));
+    }
+
+    function cargarCaminosLocal() {
+      const data = localStorage.getItem(LS_CAMINOS);
+      if (!data) return;
+      try {
+        reportesCaminos = JSON.parse(data);
+      } catch (e) {
+        console.error("Error al parsear reportes de caminos:", e);
+        reportesCaminos = [];
+      }
+    }
+
+    function obtenerColorEstado(estado) {
+      switch (estado) {
+        case "transitable":
+          return "#16a34a";
+        case "complicado":
+          return "#eab308";
+        case "intransitable":
+          return "#dc2626";
+        default:
+          return "#6b7280";
+      }
+    }
+
+    function dibujarReportesEnMapa() {
+      if (!map || !capaReportesCaminos) return;
+      capaReportesCaminos.clearLayers();
+
+      reportesCaminos.forEach((rep) => {
+        const color = obtenerColorEstado(rep.estado);
+        const marcador = L.circleMarker([rep.lat, rep.lng], {
+          radius: 7,
+          color: color,
+          fillColor: color,
+          fillOpacity: 0.9
+        }).addTo(capaReportesCaminos);
+
+        const estadoTexto =
+          rep.estado === "transitable"
+            ? "🟢 Transitable"
+            : rep.estado === "complicado"
+              ? "🟡 Complicado"
+              : "🔴 Intransitable";
+
+        marcador.bindPopup(
+          `<strong>${rep.nombreCamino || "Sin nombre"}</strong><br />
+           ${estadoTexto}<br />
+           ${rep.descripcion ? rep.descripcion + "<br />" : ""}
+           <small>${formatearFecha(rep.timestamp)}</small>`
+        );
+      });
+    }
+
+    function renderListaReportesCaminos() {
+      listaReportesCaminos.innerHTML = "";
+
+      if (reportesCaminos.length === 0) {
+        listaReportesCaminos.innerHTML =
+          '<small>No hay reportes de caminos guardados en este dispositivo.</small>';
+        return;
+      }
+
+      const ordenados = [...reportesCaminos].sort((a, b) => b.timestamp - a.timestamp);
+
+      ordenados.forEach((rep) => {
+        const item = document.createElement("div");
+        item.className = "reporte-item";
+
+        const info = document.createElement("div");
+        info.className = "reporte-info";
+
+        const nombre = rep.nombreCamino || "Sin nombre";
+        const fecha = formatearFecha(rep.timestamp);
+        const desc = rep.descripcion || "";
+
+        info.innerHTML = `<strong>${nombre}</strong><br/>
+                          <small>${fecha}</small>${desc ? "<br/>" + desc : ""}`;
+
+        const chip = document.createElement("span");
+        chip.className =
+          "chip-estado " +
+          (rep.estado === "transitable"
+            ? "chip-verde"
+            : rep.estado === "complicado"
+              ? "chip-amarillo"
+              : "chip-rojo");
+
+        chip.textContent =
+          rep.estado === "transitable"
+            ? "Transitable"
+            : rep.estado === "complicado"
+              ? "Complicado"
+              : "Intransitable";
+
+        item.appendChild(info);
+        item.appendChild(chip);
+
+        listaReportesCaminos.appendChild(item);
+      });
+    }
+
+    function initMapa() {
+      const centroGualeguay = [-33.15, -59.33];
+
+      map = L.map("map").setView(centroGualeguay, 10);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 18,
+        attribution: "&copy; OpenStreetMap"
+      }).addTo(map);
+
+      capaReportesCaminos = L.layerGroup().addTo(map);
+
+      map.on("click", function (e) {
+        puntoSeleccionado = {
+          lat: e.latlng.lat,
+          lng: e.latlng.lng
+        };
+
+        if (marcadorSeleccionado) {
+          marcadorSeleccionado.setLatLng(e.latlng);
+        } else {
+          marcadorSeleccionado = L.circleMarker(e.latlng, {
+            radius: 8,
+            color: "#2563eb",
+            fillColor: "#bfdbfe",
+            fillOpacity: 0.9
+          }).addTo(map);
+        }
+
+        puntoTexto.innerHTML =
+          "📍 Punto seleccionado:<br><strong>Lat:</strong> " +
+          puntoSeleccionado.lat.toFixed(5) +
+          " – <strong>Lng:</strong> " +
+          puntoSeleccionado.lng.toFixed(5);
+      });
+
+      dibujarReportesEnMapa();
+    }
+
+    function manejarClickEstadoCamino(estado) {
+      if (!puntoSeleccionado) {
+        mensajeGuardadoCamino.textContent =
+          "⚠️ Primero hacé clic en el mapa para seleccionar la ubicación del camino.";
+        mensajeGuardadoCamino.style.color = "#b91c1c";
+        return;
+      }
+
+      const nombreCamino = document.getElementById("nombreCamino").value.trim();
+      const descripcion = document.getElementById("descripcionCamino").value.trim();
+
+      const nuevo = {
+        id: Date.now(),
+        lat: puntoSeleccionado.lat,
+        lng: puntoSeleccionado.lng,
+        nombreCamino,
+        descripcion,
+        estado,
+        timestamp: Date.now()
+      };
+
+      reportesCaminos.push(nuevo);
+      guardarCaminosLocal();
+
+      if (marcadorSeleccionado) {
+        marcadorSeleccionado.remove();
+        marcadorSeleccionado = null;
+      }
+      puntoSeleccionado = null;
+      puntoTexto.innerHTML = "📍 Aún no seleccionaste un punto en el mapa.";
+
+      mensajeGuardadoCamino.style.color = "#166534";
+      mensajeGuardadoCamino.textContent = "✅ Reporte de camino guardado localmente.";
+
+      document.getElementById("descripcionCamino").value = "";
+
+      dibujarReportesEnMapa();
+      renderListaReportesCaminos();
+    }
+
+    function configurarCaminos() {
+      cargarCaminosLocal();
+      renderListaReportesCaminos();
+
+      document.querySelectorAll(".boton-estado").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const estado = btn.dataset.estado;
+          manejarClickEstadoCamino(estado);
+        });
+      });
+
+      document.getElementById("btnBorrarCaminos").addEventListener("click", () => {
+        if (!confirm("¿Seguro que querés borrar TODOS los reportes de caminos de este dispositivo?"))
+          return;
+        reportesCaminos = [];
+        guardarCaminosLocal();
+        renderListaReportesCaminos();
+        dibujarReportesEnMapa();
+      });
+    }
+
+    // ==========================
+    //  EMPLEADOS (IN/OUT) — B
+    // ==========================
+    const LS_EMPLEADOS = "ruralControlEmpleados";
+    let marcaciones = [];
+
+    const mensajeEmpleado = document.getElementById("mensajeEmpleado");
+    const listaMarcaciones = document.getElementById("listaMarcaciones");
+
+    function cargarEmpleadosLocal() {
+      const data = localStorage.getItem(LS_EMPLEADOS);
+      if (!data) return;
+      try {
+        marcaciones = JSON.parse(data);
+      } catch (e) {
+        console.error("Error al parsear marcaciones:", e);
+        marcaciones = [];
+      }
+    }
+
+    function guardarEmpleadosLocal() {
+      localStorage.setItem(LS_EMPLEADOS, JSON.stringify(marcaciones));
+    }
+
+    function renderMarcaciones() {
+      listaMarcaciones.innerHTML = "";
+
+      if (marcaciones.length === 0) {
+        listaMarcaciones.innerHTML =
+          "<small>No hay marcaciones guardadas en este dispositivo.</small>";
+        return;
+      }
+
+      const ordenadas = [...marcaciones].sort((a, b) => b.timestamp - a.timestamp);
+
+      ordenadas.forEach((m) => {
+        const item = document.createElement("div");
+        item.className = "item-simple";
+
+        const info = document.createElement("div");
+        info.className = "reporte-info";
+
+        const tipoTxt = m.tipo === "IN" ? "ENTRADA" : "SALIDA";
+        const color = m.tipo === "IN" ? "#16a34a" : "#dc2626";
+
+        info.innerHTML = `<strong>${m.empleado || "Empleado sin nombre"}</strong><br/>
+                          <span style="color:${color};font-weight:700;">${tipoTxt}</span> — ${formatearFecha(m.timestamp)}<br/>
+                          <small>Lat: ${m.lat?.toFixed?.(5) ?? "N/A"} – Lng: ${m.lng?.toFixed?.(5) ?? "N/A"}</small>`;
+
+        item.appendChild(info);
+        listaMarcaciones.appendChild(item);
+      });
+    }
+
+    function registrarMarcacion(tipo) {
+      const empleadoNombre = document.getElementById("empleadoNombre").value.trim();
+      if (!empleadoNombre) {
+        mensajeEmpleado.textContent = "⚠️ Escribí el nombre del empleado antes de marcar.";
+        mensajeEmpleado.style.color = "#b91c1c";
+        return;
+      }
+
+      mensajeEmpleado.style.color = "#4b5563";
+      mensajeEmpleado.textContent = "⏳ Intentando obtener ubicación GPS (si está disponible)...";
+
+      if (!navigator.geolocation) {
+        finalizarMarcacion(tipo, empleadoNombre, null, null);
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          finalizarMarcacion(tipo, empleadoNombre, pos.coords.latitude, pos.coords.longitude);
+        },
+        () => {
+          finalizarMarcacion(tipo, empleadoNombre, null, null);
+        },
+        { enableHighAccuracy: true, timeout: 5000 }
+      );
+    }
+
+    function finalizarMarcacion(tipo, empleado, lat, lng) {
+      const nueva = {
+        id: Date.now(),
+        empleado,
+        tipo, // IN / OUT
+        timestamp: Date.now(),
+        lat,
+        lng
+      };
+
+      marcaciones.push(nueva);
+      guardarEmpleadosLocal();
+      renderMarcaciones();
+
+      mensajeEmpleado.style.color = "#166534";
+      mensajeEmpleado.textContent =
+        "✅ Marcación registrada correctamente" +
+        (lat && lng ? " (ubicación capturada)." : " (sin ubicación GPS).");
+    }
+
+    function configurarEmpleados() {
+      cargarEmpleadosLocal();
+      renderMarcaciones();
+
+      document.getElementById("btnInEmpleado").addEventListener("click", () => {
+        registrarMarcacion("IN");
+      });
+
+      document.getElementById("btnOutEmpleado").addEventListener("click", () => {
+        registrarMarcacion("OUT");
+      });
+
+      document.getElementById("btnBorrarEmpleados").addEventListener("click", () => {
+        if (!confirm("¿Seguro que querés borrar TODAS las marcaciones locales?")) return;
+        marcaciones = [];
+        guardarEmpleadosLocal();
+        renderMarcaciones();
+      });
+    }
+
+    // ==========================
+    //  TAREAS DIARIAS — G
+    // ==========================
+    const LS_TAREAS = "ruralControlTareas";
+    let tareas = [];
+
+    const listaTareas = document.getElementById("listaTareas");
+    const mensajeTareas = document.getElementById("mensajeTareas");
+
+    function cargarTareasLocal() {
+      const data = localStorage.getItem(LS_TAREAS);
+      if (!data) return;
+      try {
+        tareas = JSON.parse(data);
+      } catch (e) {
+        console.error("Error al parsear tareas:", e);
+        tareas = [];
+      }
+    }
+
+    function guardarTareasLocal() {
+      localStorage.setItem(LS_TAREAS, JSON.stringify(tareas));
+    }
+
+    function renderTareas() {
+      listaTareas.innerHTML = "";
+
+      if (tareas.length === 0) {
+        listaTareas.innerHTML =
+          "<small>No hay tareas cargadas para hoy en este dispositivo.</small>";
+        return;
+      }
+
+      const ordenadas = [...tareas].sort((a, b) => a.creado - b.creado);
+
+      ordenadas.forEach((t) => {
+        const item = document.createElement("div");
+        item.className = "item-simple";
+
+        const info = document.createElement("div");
+        info.className = "reporte-info";
+
+        const estadoTexto = t.completado ? "✅ Hecha" : "⏳ Pendiente";
+        const color = t.completado ? "#16a34a" : "#f97316";
+
+        info.innerHTML = `<strong>${t.texto}</strong><br/>
+                          <small>Creada: ${formatearFecha(t.creado)}</small><br/>
+                          <span style="color:${color};font-weight:600;">${estadoTexto}</span>`;
+
+        const btn = document.createElement("button");
+        btn.className = "btn-mini";
+        btn.textContent = t.completado ? "Marcar como pendiente" : "Marcar como hecha";
+        btn.addEventListener("click", () => {
+          t.completado = !t.completado;
+          guardarTareasLocal();
+          renderTareas();
+        });
+
+        item.appendChild(info);
+        item.appendChild(btn);
+        listaTareas.appendChild(item);
+      });
+    }
+
+    function agregarTarea() {
+      const texto = document.getElementById("nuevaTareaTexto").value.trim();
+      if (!texto) {
+        mensajeTareas.style.color = "#b91c1c";
+        mensajeTareas.textContent = "⚠️ Escribí la tarea antes de agregar.";
+        return;
+      }
+
+      const nueva = {
+        id: Date.now(),
+        texto,
+        creado: Date.now(),
+        completado: false
+      };
+
+      tareas.push(nueva);
+      guardarTareasLocal();
+      renderTareas();
+
+      mensajeTareas.style.color = "#166534";
+      mensajeTareas.textContent = "✅ Tarea agregada.";
+      document.getElementById("nuevaTareaTexto").value = "";
+    }
+
+    function configurarTareas() {
+      cargarTareasLocal();
+      renderTareas();
+
+      document.getElementById("btnAgregarTarea").addEventListener("click", agregarTarea);
+
+      document.getElementById("nuevaTareaTexto").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          agregarTarea();
+        }
+      });
+
+      document.getElementById("btnBorrarTareas").addEventListener("click", () => {
+        if (!confirm("¿Seguro que querés borrar TODAS las tareas locales?")) return;
+        tareas = [];
+        guardarTareasLocal();
+        renderTareas();
+      });
+    }
+
+    // ==========================
+    // FINCAS VECINAS
+    // ==========================
+    const LS_FINCAS = "ruralControlFincasVecinas";
+    let fincas = [];
+
+    const listaFincas = document.getElementById("listaFincas");
+
+    function cargarFincas() {
+      const data = localStorage.getItem(LS_FINCAS);
+      if (!data) return;
+      try {
+        fincas = JSON.parse(data);
+      } catch (e) {
+        fincas = [];
+      }
+    }
+
+    function guardarFincas() {
+      localStorage.setItem(LS_FINCAS, JSON.stringify(fincas));
+    }
+
+    function renderFincas() {
+      listaFincas.innerHTML = "";
+
+      if (fincas.length === 0) {
+        listaFincas.innerHTML = "<small>No hay fincas vecinas registradas.</small>";
+        return;
+      }
+
+      fincas.forEach((finca, i) => {
+        const div = document.createElement("div");
+        div.className = "finca-item";
+
+        div.innerHTML = `
+      <div>
+        <input type="checkbox" class="finca-check" data-index="${i}">
+        <strong>${finca.nombre}</strong><br>
+        <small>${finca.telefono}</small>
+      </div>
+      <button class="btn-mini" onclick="eliminarFinca(${i})">Eliminar</button>
+    `;
+        listaFincas.appendChild(div);
+      });
+    }
+
+    function eliminarFinca(i) {
+      fincas.splice(i, 1);
+      guardarFincas();
+      renderFincas();
+    }
+
+    // Inicialización
+    cargarFincas();
+    renderFincas();
+
+    document.getElementById("btnAgregarFinca").addEventListener("click", () => {
+      const nombre = document.getElementById("fincaNombre").value.trim();
+      const telefono = document.getElementById("fincaTelefono").value.trim();
+
+      if (!nombre || !telefono) {
+        alert("Completá nombre y teléfono");
+        return;
+      }
+
+      fincas.push({ nombre, telefono });
+      guardarFincas();
+      renderFincas();
+
+      document.getElementById("fincaNombre").value = "";
+      document.getElementById("fincaTelefono").value = "";
+    });
+
+    document.getElementById("btnBorrarFincas").addEventListener("click", () => {
+      if (!confirm("¿Eliminar TODAS las fincas vecinas?")) return;
+      fincas = [];
+      guardarFincas();
+      renderFincas();
+    });
+
+    // ==========================
+    //  ALERTAS & TRANQUERAS — E + Y
+    // ==========================
+    const LS_VECINOS = "ruralControlVecinos";
+    let vecinos = [];
+    const LS_ALERTAS = "ruralControlAlertas";
+    let alertas = [];
+
+    const listaAlertas = document.getElementById("listaAlertas");
+    const mensajeAlertas = document.getElementById("mensajeAlertas");
+
+    function cargarAlertasLocal() {
+      const data = localStorage.getItem(LS_ALERTAS);
+      if (!data) return;
+      try {
+        alertas = JSON.parse(data);
+      } catch (e) {
+        console.error("Error al parsear alertas:", e);
+        alertas = [];
+      }
+    }
+
+    function guardarAlertasLocal() {
+      localStorage.setItem(LS_ALERTAS, JSON.stringify(alertas));
+    }
+
+    function renderAlertas() {
+      listaAlertas.innerHTML = "";
+
+      if (alertas.length === 0) {
+        listaAlertas.innerHTML =
+          "<small>No hay alertas ni eventos registrados en este dispositivo.</small>";
+        return;
+      }
+
+      const ordenadas = [...alertas].sort((a, b) => b.timestamp - a.timestamp);
+
+      ordenadas.forEach((a) => {
+        const item = document.createElement("div");
+        item.className = "item-simple";
+
+        const info = document.createElement("div");
+        info.className = "reporte-info";
+
+        const tipoColor =
+          a.tipo === "alerta" || a.tipo === "vehiculo"
+            ? "#dc2626"
+            : "#eab308";
+
+        info.innerHTML = `<strong>${a.titulo}</strong><br/>
+                          <small>${formatearFecha(a.timestamp)}</small><br/>
+                          <span style="color:${tipoColor};font-weight:600;">${a.detalle}</span>`;
+
+        if (a.mensajeWhatsApp) {
+          const btn = document.createElement("button");
+          btn.className = "btn-mini";
+          btn.textContent = "📲 Reenviar por WhatsApp";
+          btn.addEventListener("click", () => {
+            const url =
+              "https://wa.me/?text=" + encodeURIComponent(a.mensajeWhatsApp);
+            window.open(url, "_blank");
+          });
+          item.appendChild(btn);
+        }
+
+        listaAlertas.appendChild(item);
+      });
+    }
+    function crearAlerta(tipo) {
+      const txt = descAlerta.value;
+      const hora = new Date().toLocaleString("es-AR");
+
+      const titulo =
+        tipo === "alerta" ? "🚨 ALERTA RURAL" :
+          tipo === "vehiculo" ? "🚗 VEHÍCULO SOSPECHOSO" :
+            "🔔 ALERTA";
+
+      // Guardar en historial
+      alertas.push({ titulo, detalle: txt, hora });
+      localStorage.setItem("alertas", JSON.stringify(alertas));
+      renderAlertas();
+
+      // Guardar mensaje final
+      window.alertaMensajeActual = `${titulo}\n${txt}\n${hora}`;
+
+      // Abrir popup para elegir vecinos
+      abrirPopup();
+    }
+
+
+
+
+
+    function registrarTranquera() {
+      const nombre = document.getElementById("tranqueraNombre").value.trim();
+      if (!nombre) {
+        mensajeAlertas.style.color = "#b91c1c";
+        mensajeAlertas.textContent =
+          "⚠️ Escribí una referencia de la tranquera antes de registrar.";
+        return;
+      }
+
+      const titulo = "🟡 Apertura de tranquera";
+      const detalle = nombre;
+
+      const evento = {
+        id: Date.now(),
+        tipo: "tranquera",
+        titulo,
+        detalle,
+        timestamp: Date.now()
+      };
+
+      alertas.push(evento);
+      guardarAlertasLocal();
+      renderAlertas();
+
+      mensajeAlertas.style.color = "#166534";
+      mensajeAlertas.textContent = "✅ Apertura de tranquera registrada.";
+      document.getElementById("tranqueraNombre").value = "";
+    }
+
+    function cargarVecinosLocal() {
+      const data = localStorage.getItem(LS_VECINOS);
+      if (!data) return;
+      try { vecinos = JSON.parse(data); } catch { vecinos = []; }
+    }
+
+    function guardarVecinosLocal() {
+      localStorage.setItem(LS_VECINOS, JSON.stringify(vecinos));
+    }
+
+    function renderVecinos() {
+      const cont = document.getElementById("listaVecinos");
+      cont.innerHTML = "";
+
+      if (vecinos.length === 0) {
+        cont.innerHTML = "<small>No hay fincas vecinas cargadas.</small>";
+        return;
+      }
+
+      vecinos.forEach((v, i) => {
+        const item = document.createElement("div");
+        item.className = "item-simple";
+
+        const info = document.createElement("div");
+        info.className = "reporte-info";
+        info.innerHTML = `<strong>${v.nombre}</strong><br/><small>${v.telefono}</small>`;
+
+        const btn = document.createElement("button");
+        btn.className = "btn-mini";
+        btn.textContent = "Eliminar";
+        btn.onclick = () => {
+          vecinos.splice(i, 1);
+          guardarVecinosLocal();
+          renderVecinos();
+        };
+
+        item.appendChild(info);
+        item.appendChild(btn);
+        cont.appendChild(item);
+      });
+    }
+
+    function abrirPopup() {
+      const cont = document.getElementById("listaVecinosPopup");
+      cont.innerHTML = "";
+
+      vecinos.forEach((v, i) => {
+        const div = document.createElement("div");
+        div.style.marginBottom = "6px";
+
+        div.innerHTML = `
+      <label>
+        <input type="checkbox" id="vc_${i}">
+        <b>${v.nombre}</b> — ${v.tel}
+      </label>
+    `;
+
+        cont.appendChild(div);
+      });
+
+      document.getElementById("popupVecinos").style.display = "flex";
+    }
+
+    function cerrarPopup() {
+      document.getElementById("popupVecinos").style.display = "none";
+    }
+
+    function enviarAlertaSeleccionada() {
+      const mensaje = window.alertaMensajeActual;
+
+      vecinos.forEach((v, i) => {
+        const chk = document.getElementById("vc_" + i);
+        if (chk && chk.checked) {
+          const url = `https://wa.me/54${v.tel}?text=${encodeURIComponent(mensaje)}`;
+          window.open(url, "_blank");
+        }
+      });
+
+      cerrarPopup();
+    }
+
+
+    function enviarAlertaControlada() {
+      const mensaje = [
+        "🟢 ALERTA CONTROLADA",
+        "Un vecino confirmó que la situación ya está bajo control.",
+        `🕒 ${formatearFecha(Date.now())}`
+      ].join("\n");
+
+      vecinos.forEach(v => {
+        const url = `https://wa.me/54${v.telefono}?text=${encodeURIComponent(mensaje)}`;
+        window.open(url, "_blank");
+      });
+
+      mensajeAlertas.style.color = "#166534";
+      mensajeAlertas.textContent = "🟢 Aviso enviado: alerta controlada.";
+    }
+
+
+    function configurarAlertas() {
+      cargarAlertasLocal();
+      renderAlertas();
+
+      document.getElementById("btnAlertaRural").addEventListener("click", () => {
+        const descripcion = document.getElementById("descripcionAlerta").value.trim();
+        if (!descripcion) {
+          alert("Escribí una descripción de la alerta.");
+          return;
+        }
+
+        // Fincas seleccionadas
+        const seleccionados = Array.from(document.querySelectorAll(".finca-check:checked"));
+        const fincasElegidas = seleccionados.map((chk) => fincas[chk.dataset.index]);
+
+        if (fincasElegidas.length === 0) {
+          alert("Seleccioná al menos una finca para alertar.");
+          return;
+        }
+
+        // Crear mensaje
+        const mensaje = encodeURIComponent(`🚨 ALERTA RURAL 🚨\n\n${descripcion}`);
+
+        // Enviar a cada finca seleccionada
+        fincasElegidas.forEach((f) => {
+          const url = `https://wa.me/${f.telefono}?text=${mensaje}`;
+          window.open(url, "_blank");
+        });
+
+        // Guardar local (como antes)
+        registrarAlertaLocal("Alerta rural", descripcion);
+
+        document.getElementById("descripcionAlerta").value = "";
+      });
+
+
+      document.getElementById("btnVehiculoSospechoso").addEventListener("click", () => {
+        crearAlerta("vehiculo");
+      });
+
+      document.getElementById("btnTranqueraAbierta").addEventListener("click", () => {
+        registrarTranquera();
+      });
+
+      document.getElementById("btnAlertaControlada").addEventListener("click", enviarAlertaControlada);
+
+
+      document.getElementById("btnBorrarAlertas").addEventListener("click", () => {
+        if (!confirm("¿Seguro que querés borrar TODAS las alertas locales?")) return;
+        alertas = [];
+        guardarAlertasLocal();
+        renderAlertas();
+      });
+
+      document.getElementById("btnAgregarVecino").addEventListener("click", () => {
+        const nombre = document.getElementById("vecinoNombre").value.trim();
+        const tel = document.getElementById("vecinoTelefono").value.trim();
+
+        if (!nombre || !tel) {
+          mensajeAlertas.style.color = "#b91c1c";
+          mensajeAlertas.textContent = "⚠️ Ingresá nombre y teléfono.";
+          return;
+        }
+
+        vecinos.push({ nombre, telefono: tel });
+        guardarVecinosLocal();
+        renderVecinos();
+
+        mensajeAlertas.style.color = "#166534";
+        mensajeAlertas.textContent = "✅ Vecino agregado.";
+
+        document.getElementById("vecinoNombre").value = "";
+        document.getElementById("vecinoTelefono").value = "";
+      });
+      document.getElementById("btnBorrarVecinos").addEventListener("click", () => {
+        if (!confirm("¿Borrar todos los vecinos?")) return;
+        vecinos = [];
+        guardarVecinosLocal();
+        renderVecinos();
+      });
+
+    }
+
+    function enviarAlertaControlada() {
+      const mensaje = [
+        "🟢 ALERTA CONTROLADA",
+        "Un vecino confirmó que la situación ya está bajo control.",
+        `🕒 ${formatearFecha(Date.now())}`
+      ].join("\n");
+
+      vecinos.forEach(v => {
+        const url = `https://wa.me/54${v.telefono}?text=${encodeURIComponent(mensaje)}`;
+        window.open(url, "_blank");
+      });
+
+      mensajeAlertas.style.color = "#166534";
+      mensajeAlertas.textContent = "🟢 Aviso enviado: alerta controlada.";
+      document.getElementById("btnAlertaControlada").addEventListener("click", enviarAlertaControlada);
+
+    }
+
+
+    // ==========================
+    //  INICIO
+    // ==========================
+    document.addEventListener("DOMContentLoaded", () => {
+      actualizarEstadoConexion();
+      configurarNavegacion();
+
+      // Módulos
+      configurarCaminos();
+      configurarEmpleados();
+      configurarTareas();
+      configurarAlertas();
+
+      // Mapa se inicializa después para asegurar que el contenedor existe
+      setTimeout(() => {
+        initMapa();
+      }, 100);
+    });
+  </script>
+  <!-- ================= POPUP PARA SELECCIONAR VECINOS ================= -->
+  <div id="popupVecinos" style="
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+">
+    <div style="
+    background: white;
+    padding: 15px;
+    width: 90%;
+    max-width: 350px;
+    border-radius: 10px;
+  ">
+      <h3>Enviar alerta a:</h3>
+      <div id="listaVecinosPopup" style="max-height:200px; overflow-y:auto; margin:10px 0;"></div>
+
+      <button class="btn-primario" onclick="enviarAlertaSeleccionada()">
+        📤 Enviar alerta
+      </button>
+
+      <button class="btn-secundario" onclick="cerrarPopup()">
+        Cancelar
+      </button>
+    </div>
+  </div>
+
+</body>
+
+</html>

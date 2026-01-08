@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login Empleado — RuralControl</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #f0f2f3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh
+    }
+
+    .card {
+      background: #fff;
+      width: min(420px, 92vw);
+      padding: 22px;
+      border-radius: 14px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, .12)
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: 20px
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 6px;
+      font-weight: 700
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 15px
+    }
+
+    button {
+      width: 100%;
+      margin-top: 14px;
+      padding: 12px;
+      border: 0;
+      border-radius: 10px;
+      background: #14532d;
+      color: #fff;
+      font-weight: 800;
+      cursor: pointer
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center
+    }
+
+    .row a {
+      color: #14532d;
+      text-decoration: none;
+      font-weight: 700
+    }
+
+    .muted {
+      color: #6b7280;
+      font-size: 13px;
+      margin-top: 10px
+    }
+
+    .err {
+      color: #b91c1c;
+      font-weight: 700;
+      margin-top: 10px
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <div class="row" style="justify-content:space-between">
+      <h1>👷 Login Empleado</h1>
+      <a href="../index-page.html">⬅ Volver</a>
+    </div>
+
+    <label for="dni">DNI</label>
+    <input id="dni" inputmode="numeric" placeholder="Ej: 30123456" />
+
+    <label for="pass">Contraseña</label>
+    <input id="pass" type="password" placeholder="Tu clave" />
+
+    <button id="btnLogin">Ingresar</button>
+
+    <div id="msg" class="muted">Ingresá con tu DNI y la clave asignada por el Productor.</div>
+    <div id="err" class="err" style="display:none"></div>
+  </div>
+
+  <script type="module">
+    import { db } from "../firebase-init.js";
+    import { collection, query, where, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const dniEl = document.getElementById("dni");
+    const passEl = document.getElementById("pass");
+    const errEl = document.getElementById("err");
+
+    function showErr(t) {
+      errEl.style.display = "block";
+      errEl.textContent = t;
+    }
+
+    document.getElementById("btnLogin").addEventListener("click", async () => {
+      errEl.style.display = "none";
+      const dni = (dniEl.value || "").trim();
+      const clave = (passEl.value || "").trim();
+
+      if (!dni || !clave) return showErr("Completá DNI y contraseña.");
+
+      try {
+        const ref = collection(db, "employees");
+        const qEmp = query(ref, where("dni", "==", dni), limit(1));
+        const snap = await getDocs(qEmp);
+
+        if (snap.empty) return showErr("Empleado no encontrado.");
+
+        const docu = snap.docs[0];
+        const data = docu.data();
+
+        if ((data.clave || "") !== clave) return showErr("Contraseña incorrecta.");
+
+        // ✅ Guardar sesión simple
+        localStorage.setItem("empleadoDni", dni);     // clave real para tareas
+        localStorage.setItem("empleadoDocId", docu.id); // opcional (por si después lo usás)
+        localStorage.setItem("productorId", data.productorId || "");
+
+        location.href = "./panel.html";
+      } catch (e) {
+        console.error(e);
+        showErr("Error de login. Revisá conexión y permisos.");
+      }
+    });
+  </script>
+</body>
+
+</html>
