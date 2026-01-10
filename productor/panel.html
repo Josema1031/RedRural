@@ -451,6 +451,8 @@
       <div id="listaEmpleados" class="lista-simple"></div>
     </section>
 
+
+
     <!-- ============================= -->
     <!-- SECCIÓN: MARCACIONES LOCALES -->
     <!-- ============================= -->
@@ -477,6 +479,11 @@
       <p class="status-msg" id="msgMarcOnline"></p>
       <div id="listaMarcOnline" class="lista-simple"></div>
     </section>
+
+
+
+
+
 
     <!-- ============================= -->
     <!-- SECCIÓN: VECINOS -->
@@ -516,8 +523,26 @@
       </div>
 
       <p class="status-msg" id="msgAlertas"></p>
-      <div id="listaAlertas" class="lista-simple"></div>
+      <!-- ✅ Selección visual de vecinos para enviar alerta -->
+      <div style="margin-top:14px;">
+        <h3 style="margin:10px 0 6px; color:#14532d;">📲 Enviar a vecinos</h3>
+
+        <div class="fila" style="margin-top:6px;">
+          <button class="btn-secundario" id="btnSelTodosVecinos" type="button">Seleccionar todos</button>
+          <button class="btn-secundario" id="btnSelNingunoVecinos" type="button">Ninguno</button>
+        </div>
+
+        <div id="listaVecinosAlertas" class="lista-simple"></div>
+
+        <small style="display:block;margin-top:8px;color:#6b7280;">
+        
+        </small>
+      </div>
+
     </section>
+
+
+
 
     <!-- ============================= -->
     <!-- SECCIÓN: CAMINOS -->
@@ -708,6 +733,10 @@
       cargarEmpleados();
       escucharTareas();
       escucharMarcacionesOnline();
+      escucharVecinos();
+      escucharVecinosParaAlertas();
+      escucharAlertas();
+
 
       // inicia mapas sin romper
       setTimeout(() => {
@@ -1351,6 +1380,319 @@
       if (est === "complicado") { prev.textContent = "🟡 Complicado"; prev.style.background = "#fef9c3"; }
       if (est === "intransitable") { prev.textContent = "🔴 Intransitable"; prev.style.background = "#fee2e2"; }
     });
+
+    /* ============================================================
+       VECINOS (FIRESTORE) ✅
+       Colección: "vecinos"
+       Campos: productorId, nombre, telefono, timestamp
+    ============================================================ */
+
+    const msgVecinos = document.getElementById("msgVecinos");
+    const listaVecinos = document.getElementById("listaVecinos");
+
+    function normalizarTel(tel) {
+      // deja solo números, útil para wa.me
+      return (tel || "").toString().replace(/\D/g, "");
+    }
+
+    function validarTelAR(tel) {
+      // No es obligatorio, pero ayuda.
+      // En Argentina suele ser 549 + código área + número (10 a 13 dígitos aprox)
+      return tel.length >= 10;
+    }
+
+    function mostrarMsg(el, texto, color = "#14532d", ms = 3500) {
+      if (!el) return;
+      el.textContent = texto;
+      el.style.color = color;
+      if (ms) setTimeout(() => el.textContent = "", ms);
+    }
+
+    async function agregarVecino() {
+      const nombre = document.getElementById("vecinoNombre").value.trim();
+      const telRaw = document.getElementById("vecinoTelefono").value.trim();
+      const telefono = normalizarTel(telRaw);
+
+      if (!productorId) return;
+
+      if (!nombre || !telefono) {
+        mostrarMsg(msgVecinos, "⚠️ Completá nombre y teléfono.", "#b91c1c");
+        return;
+      }
+
+      if (!validarTelAR(telefono)) {
+        mostrarMsg(msgVecinos, "⚠️ Teléfono inválido. Usá formato numérico (ej: 5493444xxxxxx).", "#b91c1c");
+        return;
+      }
+
+      try {
+        // Usamos el teléfono como ID del documento para evitar duplicados
+        await setDoc(doc(db, "vecinos", `${productorId}_${telefono}`), {
+          productorId,
+          nombre,
+          telefono,
+          timestamp: serverTimestamp()
+        });
+
+        mostrarMsg(msgVecinos, "✅ Vecino agregado correctamente.", "#166534");
+
+        document.getElementById("vecinoNombre").value = "";
+        document.getElementById("vecinoTelefono").value = "";
+      } catch (e) {
+        console.error("Error al agregar vecino:", e);
+        mostrarMsg(msgVecinos, "❌ No se pudo agregar el vecino (revisá permisos/reglas).", "#b91c1c", 5000);
+      }
+    }
+
+    function escucharVecinos() {
+      if (!productorId) return;
+
+      const qV = query(
+        collection(db, "vecinos"),
+        where("productorId", "==", productorId)
+      );
+
+      onSnapshot(qV, (snap) => {
+        listaVecinos.innerHTML = "";
+
+        if (snap.empty) {
+          listaVecinos.innerHTML = "<small>No hay vecinos cargados.</small>";
+          return;
+        }
+
+        snap.forEach((docSnap) => {
+          const v = docSnap.data();
+
+          const item = document.createElement("div");
+          item.className = "item-simple";
+
+          item.innerHTML = `
+        <div class="item-info">
+          <strong>🤝 ${v.nombre || ""}</strong><br>
+          <small>${v.telefono || ""}</small>
+        </div>
+      `;
+
+          // Botón mini para WhatsApp (opcional)
+          const btnWA = document.createElement("a");
+          btnWA.className = "btn-secundario";
+          btnWA.textContent = "WhatsApp";
+          btnWA.href = `https://wa.me/${normalizarTel(v.telefono)}?text=${encodeURIComponent("Hola " + (v.nombre || "") + ", te contacto desde Red Rural.")}`;
+          btnWA.target = "_blank";
+
+          item.appendChild(btnWA);
+          listaVecinos.appendChild(item);
+        });
+      }, (err) => {
+        console.error("Error escuchando vecinos:", err);
+        listaVecinos.innerHTML = "<small>❌ Sin permisos para leer vecinos (revisá reglas).</small>";
+      });
+    }
+
+
+    /* ============================================================
+   ✅ UI: VECINOS SELECCIONABLES PARA ALERTAS
+============================================================ */
+
+    const listaVecinosAlertas = document.getElementById("listaVecinosAlertas");
+    const btnSelTodosVecinos = document.getElementById("btnSelTodosVecinos");
+    const btnSelNingunoVecinos = document.getElementById("btnSelNingunoVecinos");
+
+    let vecinosCacheAlertas = []; // [{id, nombre, tel}]
+
+    function renderVecinosParaAlertas() {
+      if (!listaVecinosAlertas) return;
+
+      if (!vecinosCacheAlertas.length) {
+        listaVecinosAlertas.innerHTML = "<small>No hay vecinos cargados.</small>";
+        return;
+      }
+
+      listaVecinosAlertas.innerHTML = "";
+
+      vecinosCacheAlertas.forEach((v, i) => {
+        const item = document.createElement("div");
+        item.className = "item-simple";
+        item.style.alignItems = "flex-start";
+
+        item.innerHTML = `
+      <label style="display:flex; gap:10px; width:100%; cursor:pointer;">
+        <input class="chk-vecino-alerta" type="checkbox" data-tel="${v.tel}" style="margin-top:4px;">
+        <div class="item-info">
+          <strong>🤝 ${v.nombre}</strong><br>
+          <small>${v.tel}</small>
+        </div>
+      </label>
+    `;
+
+        listaVecinosAlertas.appendChild(item);
+      });
+    }
+
+    function setTodosVecinosAlertas(valor) {
+      document.querySelectorAll(".chk-vecino-alerta").forEach(chk => chk.checked = valor);
+    }
+
+    btnSelTodosVecinos?.addEventListener("click", () => setTodosVecinosAlertas(true));
+    btnSelNingunoVecinos?.addEventListener("click", () => setTodosVecinosAlertas(false));
+
+    function obtenerTelefonosSeleccionadosDesdeUI() {
+      const tels = [];
+      document.querySelectorAll(".chk-vecino-alerta").forEach(chk => {
+        if (chk.checked) {
+          const tel = chk.dataset.tel;
+          if (tel) tels.push(tel);
+        }
+      });
+      return tels;
+    }
+
+    // ✅ escucha vecinos y llena el selector visual de alertas
+    function escucharVecinosParaAlertas() {
+      if (!productorId) return;
+
+      const qV = query(collection(db, "vecinos"), where("productorId", "==", productorId));
+
+      onSnapshot(qV, (snap) => {
+        vecinosCacheAlertas = [];
+
+        snap.forEach((docSnap) => {
+          const v = docSnap.data();
+          const tel = normalizarTel(v.telefono);
+          if (tel) vecinosCacheAlertas.push({
+            id: docSnap.id,
+            nombre: v.nombre || "Vecino",
+            tel
+          });
+        });
+
+        renderVecinosParaAlertas();
+        // por defecto: no selecciona ninguno (si querés que seleccione todos, cambialo a true)
+        setTodosVecinosAlertas(false);
+      }, (err) => {
+        console.error("Error vecinos para alertas:", err);
+        if (listaVecinosAlertas) listaVecinosAlertas.innerHTML = "<small>❌ Sin permisos para leer vecinos.</small>";
+      });
+    }
+
+
+    /* ============================================================
+       ALERTAS (FIRESTORE + ENVÍO POR WHATSAPP) ✅
+       Guarda en colección "alertas" y prepara envío a vecinos
+    ============================================================ */
+
+    const msgAlertas = document.getElementById("msgAlertas");
+    const listaAlertas = document.getElementById("listaAlertas");
+
+    async function guardarAlertaFirestore(tipo, descripcion) {
+      // guarda la alerta para historial
+      return await addDoc(collection(db, "alertas"), {
+        productorId,
+        tipo,
+        descripcion,
+        fecha: Date.now(),
+        timestamp: serverTimestamp()
+      });
+    }
+
+    function escucharAlertas() {
+      if (!productorId) return;
+
+      const qA = query(
+        collection(db, "alertas"),
+        where("productorId", "==", productorId)
+      );
+
+      onSnapshot(qA, (snap) => {
+        listaAlertas.innerHTML = "";
+        if (snap.empty) {
+          listaAlertas.innerHTML = "<small>No hay alertas enviadas.</small>";
+          return;
+        }
+
+        snap.forEach((docSnap) => {
+          const a = docSnap.data();
+          const fechaTxt = a.fecha ? new Date(a.fecha).toLocaleString("es-AR") : "";
+
+          const item = document.createElement("div");
+          item.className = "item-simple";
+          item.innerHTML = `
+        <div class="item-info">
+          <strong>🚨 ${a.tipo || "Alerta"}</strong><br>
+          <small>${a.descripcion || ""}</small><br>
+          <small>${fechaTxt}</small>
+        </div>
+      `;
+
+          listaAlertas.appendChild(item);
+        });
+      });
+    }
+
+    async function obtenerTelefonosVecinos() {
+      const q = query(collection(db, "vecinos"), where("productorId", "==", productorId));
+      const snap = await getDocs(q);
+      const tels = [];
+      snap.forEach((d) => {
+        const tel = normalizarTel(d.data().telefono);
+        if (tel) tels.push(tel);
+      });
+      return tels;
+    }
+
+    function abrirWhatsAppLista(telefonos, mensaje) {
+      // Evita abrir 30 ventanas de golpe: las abre escalonadas.
+      // Aun así, el navegador puede bloquear si no permitís popups.
+      const msg = encodeURIComponent(mensaje);
+      telefonos.forEach((tel, i) => {
+        setTimeout(() => {
+          window.open(`https://wa.me/${tel}?text=${msg}`, "_blank");
+        }, i * 350);
+      });
+    }
+
+    document.getElementById("btnAgregarVecino").addEventListener("click", agregarVecino);
+
+    document.getElementById("btnEnviarAlerta").addEventListener("click", async () => {
+      const tipo = document.getElementById("alertaTipo").value;
+      const descripcion = document.getElementById("alertaDescripcion").value.trim();
+
+      if (!descripcion) {
+        mostrarMsg(msgAlertas, "⚠️ Completá la descripción de la alerta.", "#b91c1c");
+        return;
+      }
+
+      if (!productorId) return;
+
+      try {
+        // 1) Guardar alerta en Firestore
+        await guardarAlertaFirestore(tipo, descripcion);
+
+        // 2) Traer vecinos y abrir WhatsApp
+        const telsVecinos = obtenerTelefonosSeleccionadosDesdeUI();
+
+
+        if (!telsVecinos.length) {
+          mostrarMsg(msgAlertas, "⚠️ Alerta guardada, pero no hay vecinos cargados para enviar.", "#b45309", 6000);
+          document.getElementById("alertaDescripcion").value = "";
+          return;
+        }
+
+        const mensaje = `🚨 ALERTA RED RURAL\nTipo: ${tipo}\nDetalle: ${descripcion}\n\n📍 Esta alerta fue emitida desde el Panel del Productor para advertir una situación en la zona.`;
+        abrirWhatsAppLista(telsVecinos, mensaje);
+
+        mostrarMsg(msgAlertas, `✅ Alerta guardada y lista para enviar a ${telsVecinos.length} vecino(s).`, "#166534", 6000);
+
+        document.getElementById("alertaDescripcion").value = "";
+      } catch (e) {
+        console.error("Error enviando alerta:", e);
+        mostrarMsg(msgAlertas, "❌ Error al enviar alerta (revisá permisos/reglas).", "#b91c1c", 6000);
+      }
+    });
+
+
+
+
   </script>
 </body>
 
