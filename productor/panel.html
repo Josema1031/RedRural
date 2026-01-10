@@ -12,7 +12,9 @@
 
   <style>
     /* ✅ Responsive base */
-* { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -31,12 +33,27 @@
       padding: 20px;
       max-width: 1000px;
       margin: auto;
+      width: 100%;
     }
 
     h2 {
       margin-top: 25px;
       color: #14532d;
       font-weight: 800;
+      position: relative;
+      padding-bottom: 6px;
+      display: inline-block;
+    }
+
+    h2::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 35%;
+      height: 3px;
+      background: #14532d;
+      border-radius: 3px;
     }
 
     .fila {
@@ -52,6 +69,7 @@
       border-radius: 8px;
       border: 1px solid #ccc;
       flex: 1;
+      min-width: 220px;
     }
 
     .btn-primario {
@@ -86,15 +104,28 @@
       margin-top: 15px;
     }
 
+    /* Tarjetas elevadas estilo app */
     .item-simple {
       background: white;
-      padding: 12px;
-      border-radius: 10px;
-      margin-bottom: 10px;
+      padding: 14px;
+      border-radius: 14px;
+      margin-bottom: 14px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      transition: transform .12s ease, box-shadow .12s ease;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border: 1px solid #e5e7eb;
+      gap: 10px;
+    }
+
+    .item-simple:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .item-simple .item-info {
+      min-width: 0;
     }
 
     /* ========================================================= */
@@ -121,7 +152,6 @@
       border-color: #14532d;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
     }
-
 
     .chip-categoria {
       background: #d1fae5;
@@ -236,18 +266,6 @@
       transform: translateY(0);
     }
 
-    .camino-transitable {
-      color: #16a34a;
-    }
-
-    .camino-complicado {
-      color: #eab308;
-    }
-
-    .camino-intransitable {
-      color: #dc2626;
-    }
-
     .tooltip-camino {
       background: white;
       border: 1px solid #d1d5db;
@@ -256,39 +274,6 @@
       color: #111827;
       font-size: 12px;
       font-weight: bold;
-    }
-
-    /* Tarjetas elevadas estilo app */
-    .item-simple {
-      background: white;
-      padding: 14px;
-      border-radius: 14px;
-      margin-bottom: 14px;
-      border: 1px solid #e5e7eb;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-      transition: transform .12s ease, box-shadow .12s ease;
-    }
-
-    .item-simple:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-    }
-
-    h2 {
-      position: relative;
-      padding-bottom: 6px;
-      display: inline-block;
-    }
-
-    h2::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 35%;
-      height: 3px;
-      background: #14532d;
-      border-radius: 3px;
     }
 
     #mapCaminos,
@@ -315,63 +300,83 @@
       border: 1px solid #d1d5db;
     }
 
-    /* ============================= */
-/* ✅ RESPONSIVE (Panel Productor) */
-/* ============================= */
+    /* NAV: botones un poco más chicos en pantallas medianas */
+    @media (max-width: 900px) {
+      header {
+        padding: 12px;
+      }
 
-/* Ajustes generales */
-.container { width: 100%; }
-input, select { min-width: 220px; }
+      .container {
+        padding: 14px;
+      }
 
-/* Cards: que no “aprieten” el contenido */
-.item-simple { gap: 10px; }
-.item-simple .item-info { min-width: 0; }
+      .nav-btn {
+        min-width: 105px;
+        padding: 10px 0;
+      }
 
-/* NAV: botones un poco más chicos en pantallas medianas */
-@media (max-width: 900px) {
-  header { padding: 12px; }
-  .container { padding: 14px; }
+      .nav-btn .texto {
+        font-size: 13px;
+      }
+    }
 
-  .nav-btn { min-width: 105px; padding: 10px 0; }
-  .nav-btn .texto { font-size: 13px; }
-}
+    /* Móvil */
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 18px;
+      }
 
-/* Móvil */
-@media (max-width: 600px) {
-  header h1 { font-size: 18px; }
-  .container { padding: 12px; }
+      .container {
+        padding: 12px;
+      }
 
-  /* Filas: todo en columna */
-  .fila { flex-direction: column; gap: 8px; }
-  input, select { width: 100%; min-width: 0; }
+      .fila {
+        flex-direction: column;
+        gap: 8px;
+      }
 
-  /* Botones ocupan todo el ancho */
-  .btn-primario, .btn-secundario, .btn-mini {
-    width: 100%;
-  }
+      input,
+      select {
+        width: 100%;
+        min-width: 0;
+      }
 
-  /* Cards: que el botón “Enviar” baje abajo y no se rompa */
-  .item-simple {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .item-simple a.btn-primario,
-  .item-simple button.btn-secundario {
-    width: 100%;
-    text-align: center;
-  }
+      .btn-primario,
+      .btn-secundario,
+      .btn-mini {
+        width: 100%;
+      }
 
-  /* Mapas un poco más bajos para que entren mejor */
-  #mapCaminos, #mapMarcaciones { height: 240px !important; }
-}
+      .item-simple {
+        flex-direction: column;
+        align-items: flex-start;
+      }
 
-/* Muy chico (teléfonos compactos) */
-@media (max-width: 380px) {
-  .nav-btn { min-width: 95px; }
-  .nav-btn .icono { font-size: 18px; }
-  .nav-btn .texto { font-size: 12px; }
-}
+      .item-simple a.btn-primario,
+      .item-simple button.btn-secundario {
+        width: 100%;
+        text-align: center;
+      }
 
+      #mapCaminos,
+      #mapMarcaciones {
+        height: 240px !important;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .nav-btn {
+        min-width: 95px;
+      }
+
+      .nav-btn .icono {
+        font-size: 18px;
+      }
+
+      .nav-btn .texto {
+        font-size: 12px;
+      }
+    }
   </style>
 </head>
 
@@ -440,7 +445,6 @@ input, select { min-width: 220px; }
         <input type="text" id="empTelefono" placeholder="Teléfono (WhatsApp)">
         <input type="text" id="empClave" placeholder="Clave de acceso">
         <button class="btn-primario" id="btnAgregarEmpleado">➕ Agregar</button>
-
       </div>
 
       <p class="status-msg" id="msgEmpleado"></p>
@@ -471,7 +475,6 @@ input, select { min-width: 220px; }
       </div>
 
       <p class="status-msg" id="msgMarcOnline"></p>
-
       <div id="listaMarcOnline" class="lista-simple"></div>
     </section>
 
@@ -489,7 +492,6 @@ input, select { min-width: 220px; }
       </div>
 
       <p class="status-msg" id="msgVecinos"></p>
-
       <div id="listaVecinos" class="lista-simple"></div>
     </section>
 
@@ -518,9 +520,9 @@ input, select { min-width: 220px; }
     </section>
 
     <!-- ============================= -->
-    <!-- SECCIÓN: CAMINOS (PUNTOS) -->
+    <!-- SECCIÓN: CAMINOS -->
     <!-- ============================= -->
-    <section id="sec-caminos" style="position:relative;">
+    <section id="sec-caminos" style="position:relative;" class="hidden">
       <h2>Estado de caminos</h2>
       <small>Podés marcar puntos o tramos completos en el mapa.</small>
 
@@ -539,48 +541,43 @@ input, select { min-width: 220px; }
           color:#111;
         "></span>
 
-
         <button class="btn-primario" id="btnModoPunto">Marcar punto</button>
         <button class="btn-secundario" id="btnModoTramo">Marcar tramo</button>
         <button class="btn-primario" id="btnGuardarTramo" style="display:none;">Guardar tramo</button>
+        <button class="btn-secundario" id="btnCentrarUbicacion">📍 Centrar en mi ubicación</button>
+
       </div>
 
-      <!-- 🔍 FILTROS Y BORRADO -->
       <div class="fila" style="margin-top:10px; gap:8px;">
         <div class="filtro-chip" id="filtroTodos">Todos</div>
         <div class="filtro-chip" id="filtroTransitable">🟢 Transitable</div>
         <div class="filtro-chip" id="filtroComplicado">🟡 Complicado</div>
         <div class="filtro-chip" id="filtroIntransitable">🔴 Intransitable</div>
 
-        <button class="btn-mini" id="btnBorrarMisCaminosHoy">
-          🗑 Mis caminos de hoy
-        </button>
+        <button class="btn-mini" id="btnBorrarMisCaminosHoy">🗑 Mis caminos de hoy</button>
       </div>
-
-
 
       <div id="mapCaminos" style="width:100%; height:330px; margin-top:15px; background:#ddd; border-radius:10px;">
       </div>
+
       <div id="leyendaCaminos" style="
-          position:absolute;
-          bottom:25px; right:10px;
-          background:white;
-          padding:8px 12px;
-          border-radius:10px;
-          border:1px solid #d1d5db;
-          font-size:13px;
-          box-shadow:0px 2px 6px rgba(0,0,0,0.15);
-          line-height:18px;
-        ">
+        position:absolute;
+        bottom:25px; right:10px;
+        background:white;
+        padding:8px 12px;
+        border-radius:10px;
+        border:1px solid #d1d5db;
+        font-size:13px;
+        box-shadow:0px 2px 6px rgba(0,0,0,0.15);
+        line-height:18px;
+      ">
         <div>🟢 Transitable</div>
         <div>🟡 Complicado</div>
         <div>🔴 Intransitable</div>
       </div>
 
-
       <p id="msgCaminos" class="status-msg"></p>
     </section>
-
 
     <!-- ============================= -->
     <!-- SECCIÓN: TAREAS -->
@@ -616,13 +613,12 @@ input, select { min-width: 220px; }
       </div>
 
       <p class="status-msg" id="msgTareas"></p>
-
       <div id="listaTareas" class="lista-simple"></div>
 
       <button class="btn-mini" id="btnBorrarTareas">🗑 Borrar tareas locales</button>
     </section>
 
-  </div> <!-- cierre container -->
+  </div>
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -630,22 +626,33 @@ input, select { min-width: 220px; }
   <!-- Firebase -->
   <script type="module">
     import { auth, db } from "../firebase-init.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import {
       collection, addDoc, onSnapshot, query, where, serverTimestamp,
-      getDocs, updateDoc, doc, writeBatch
+      getDocs, updateDoc, doc, setDoc, writeBatch
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    /* ============================================================
-       1) PROTECCIÓN DE ACCESO
-    ============================================================ */
-    const productorId = localStorage.getItem("productorId");
-    if (!productorId) {
-      alert("Debes iniciar sesión primero.");
-      window.location.href = "login.html";
-    }
 
-    /* ============================================================
-       2) NAVEGACIÓN ENTRE SECCIONES
-    ============================================================ */
+    let productorId = null;
+
+    // =========================
+    // 1) GATE POR AUTH
+    // =========================
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        alert("Debes iniciar sesión como Productor.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      productorId = user.uid;
+      localStorage.setItem("productorId", productorId);
+
+      iniciarPanel();
+    });
+
+    // =========================
+    // 2) NAVEGACIÓN ENTRE SECCIONES
+    // =========================
     function navegar() {
       const botones = document.querySelectorAll(".nav-btn");
       const secciones = document.querySelectorAll("section");
@@ -685,6 +692,7 @@ input, select { min-width: 220px; }
         });
       });
 
+      // estado inicial
       secciones.forEach(sec => sec.classList.add("hidden"));
       const primera = document.getElementById("sec-empleados");
       primera.classList.remove("hidden");
@@ -693,14 +701,36 @@ input, select { min-width: 220px; }
 
     navegar();
 
-    /* ============================================================
-       3) EMPLEADOS (FIREBASE)
-    ============================================================ */
+    // =========================
+    // 3) INICIO DEL PANEL
+    // =========================
+    function iniciarPanel() {
+      cargarEmpleados();
+      escucharTareas();
+      escucharMarcacionesOnline();
 
+      // inicia mapas sin romper
+      setTimeout(() => {
+        initMapaMarcaciones();
+        initMapaCaminos();
+      }, 300);
+
+      // activar chip “Todos”
+      setTimeout(() => marcarChipActivo("filtroTodos"), 350);
+
+      // preview estado
+      document.getElementById("caminoEstado").dispatchEvent(new Event("change"));
+    }
+
+    /* ============================================================
+       EMPLEADOS (FIREBASE)
+    ============================================================ */
     const msgEmpleado = document.getElementById("msgEmpleado");
     const listaEmpleados = document.getElementById("listaEmpleados");
 
     async function cargarEmpleados() {
+      if (!productorId) return;
+
       listaEmpleados.innerHTML = "<small>Cargando...</small>";
 
       const ref = collection(db, "employees");
@@ -710,7 +740,6 @@ input, select { min-width: 220px; }
       listaEmpleados.innerHTML = "";
       if (snap.empty) {
         listaEmpleados.innerHTML = "<small>No hay empleados cargados.</small>";
-        return;
       }
 
       snap.forEach(s => {
@@ -719,16 +748,17 @@ input, select { min-width: 220px; }
         item.className = "item-simple";
 
         item.innerHTML = `
-        <div class="item-info">
-          <strong>👷 ${e.dni}</strong><br>
-          <small>${e.nombre ?? ""}</small>
-        </div>
-        <span class="chip chip-verde">Activo</span>
-      `;
+          <div class="item-info">
+            <strong>👷 ${e.dni}</strong><br>
+            <small>${e.nombre ?? ""}</small>
+          </div>
+          <span class="chip chip-verde">Activo</span>
+        `;
 
         listaEmpleados.appendChild(item);
       });
 
+      // cargar select tareas
       const sel = document.getElementById("tareaEmpleado");
       sel.innerHTML = `<option value="">(sin asignar)</option>`;
       snap.forEach(s => {
@@ -749,25 +779,24 @@ input, select { min-width: 220px; }
         return;
       }
 
-
       try {
-        await addDoc(collection(db, "employees"), {
+        await setDoc(doc(db, "employees", dni), {
           productorId,
           nombre,
           dni,
           telefono,
           clave,
           activo: true,
-          timestamp: serverTimestamp()
+          timestamp: serverTimestamp(),
+          authUid: null
         });
-
 
         msgEmpleado.style.color = "#166534";
         msgEmpleado.textContent = "✅ Empleado agregado.";
 
         document.getElementById("empNombre").value = "";
         document.getElementById("empDni").value = "";
-        document.getElementById("empTelefono").value = ""; // 👈 ACÁ
+        document.getElementById("empTelefono").value = "";
         document.getElementById("empClave").value = "";
 
         cargarEmpleados();
@@ -778,294 +807,9 @@ input, select { min-width: 220px; }
       }
     });
 
-    cargarEmpleados();
-
     /* ============================================================
-       4) MARCACIONES LOCALES
+       TAREAS
     ============================================================ */
-
-    const LS_MARC = `rc_marc_${productorId}`;
-    let marcLocal = JSON.parse(localStorage.getItem(LS_MARC) || "[]");
-
-    const listaMarcLocal = document.getElementById("listaMarcLocal");
-    const msgMarcLocal = document.getElementById("msgMarcLocal");
-
-    function renderMarcLocal() {
-      listaMarcLocal.innerHTML = "";
-      if (marcLocal.length === 0) {
-        listaMarcLocal.innerHTML = "<small>No hay marcaciones locales.</small>";
-        return;
-      }
-
-      marcLocal
-        .sort((a, b) => b.fecha - a.fecha)
-        .forEach(m => {
-          const d = new Date(m.fecha).toLocaleString("es-AR");
-          const item = document.createElement("div");
-          item.className = "item-simple";
-
-          item.innerHTML = `
-          <div class="item-info">
-            <strong>${m.tipo}</strong> — ${m.empleado}<br>
-            <small>${d}</small>
-          </div>
-          <span class="chip ${m.tipo === "IN" ? "chip-verde" : "chip-rojo"}">${m.tipo}</span>
-        `;
-
-          listaMarcLocal.appendChild(item);
-        });
-    }
-    renderMarcLocal();
-
-    document.getElementById("btnBorrarMarcLocal").addEventListener("click", () => {
-      if (!confirm("¿Borrar todas las marcaciones locales?")) return;
-      marcLocal = [];
-      localStorage.setItem(LS_MARC, "[]");
-      renderMarcLocal();
-    });
-
-    /* ============================================================
-       5) VECINOS
-    ============================================================ */
-
-    const LS_VEC = `rc_vec_${productorId}`;
-    let vecinos = JSON.parse(localStorage.getItem(LS_VEC) || "[]");
-
-    const listaVecinosDiv = document.getElementById("listaVecinos");
-    const msgVecinos = document.getElementById("msgVecinos");
-
-    function renderVecinos() {
-      listaVecinosDiv.innerHTML = "";
-      if (vecinos.length === 0) {
-        listaVecinosDiv.innerHTML = "<small>No hay vecinos cargados.</small>";
-        return;
-      }
-
-      vecinos.forEach((v, i) => {
-        const item = document.createElement("div");
-        item.className = "item-simple";
-
-        item.innerHTML = `
-        <div class="item-info">
-          <strong>${v.nombre}</strong><br>
-          <small>${v.telefono}</small>
-        </div>
-        <button class="btn-mini" data-i="${i}">✖</button>
-      `;
-
-        listaVecinosDiv.appendChild(item);
-      });
-
-      document.querySelectorAll("[data-i]").forEach(btn => {
-        btn.addEventListener("click", () => {
-          vecinos.splice(btn.dataset.i, 1);
-          localStorage.setItem(LS_VEC, JSON.stringify(vecinos));
-          renderVecinos();
-        });
-      });
-    }
-    renderVecinos();
-
-    document.getElementById("btnAgregarVecino").addEventListener("click", () => {
-      const nombre = document.getElementById("vecinoNombre").value.trim();
-      const tel = document.getElementById("vecinoTelefono").value.trim();
-
-      if (!nombre || !tel) {
-        msgVecinos.textContent = "⚠️ Completá nombre y teléfono.";
-        msgVecinos.style.color = "#b91c1c";
-        return;
-      }
-
-      vecinos.push({ nombre, telefono: tel });
-      localStorage.setItem(LS_VEC, JSON.stringify(vecinos));
-      renderVecinos();
-
-      document.getElementById("vecinoNombre").value = "";
-      document.getElementById("vecinoTelefono").value = "";
-
-      msgVecinos.style.color = "#166534";
-      msgVecinos.textContent = "✅ Vecino agregado.";
-    });
-
-    function normalizarTelefonoAR(raw) {
-  if (!raw) return "";
-  let n = String(raw).replace(/[^\d]/g, ""); // solo dígitos
-
-  // si ya viene con 54...
-  if (n.startsWith("54")) return n;
-
-  // si viene con 0 al inicio (ej 03444...), se lo quitamos
-  if (n.startsWith("0")) n = n.slice(1);
-
-  // asumimos Argentina
-  return "54" + n;
-}
-
-
-    /* ============================================================
-       6) ALERTAS
-    ============================================================ */
-
-    const LS_ALERT = `rc_alert_${productorId}`;
-    let alertas = JSON.parse(localStorage.getItem(LS_ALERT) || "[]");
-
-    const listaAlertas = document.getElementById("listaAlertas");
-    const msgAlertas = document.getElementById("msgAlertas");
-
-    function renderAlertas() {
-      listaAlertas.innerHTML = "";
-      if (alertas.length === 0) {
-        listaAlertas.innerHTML = "<small>No hay alertas registradas.</small>";
-        return;
-      }
-
-      alertas
-        .sort((a, b) => b.fecha - a.fecha)
-        .forEach(a => {
-          const d = new Date(a.fecha).toLocaleString("es-AR");
-          const item = document.createElement("div");
-          item.className = "item-simple";
-
-          item.innerHTML = `
-          <div class="item-info">
-            <strong>${a.tipo}</strong><br>
-            <small>${d}</small><br>
-            <small>${a.descripcion}</small>
-          </div>
-          <span class="chip chip-naranja">Alerta</span>
-        `;
-          listaAlertas.appendChild(item);
-        });
-    }
-    renderAlertas();
-
-    document.getElementById("btnEnviarAlerta").addEventListener("click", async () => {
-      const tipo = document.getElementById("alertaTipo").value;
-      const desc = document.getElementById("alertaDescripcion").value.trim();
-
-      if (!desc) {
-        msgAlertas.textContent = "⚠️ Escribí una descripción.";
-        msgAlertas.style.color = "#b91c1c";
-        return;
-      }
-
-      // 1) Armar mensaje único
-      const fechaTxt = new Date().toLocaleString("es-AR");
-      const mensaje = `🚨 ALERTA RURAL\nTipo: ${tipo}\nDetalle: ${desc}\nFecha/hora: ${fechaTxt}\n\n— RuralControl`;
-
-      // 2) Traer vecinos (localStorage) con nombre+tel
-const LS_VEC = `rc_vec_${productorId}`;
-const vecinos = JSON.parse(localStorage.getItem(LS_VEC) || "[]");
-
-const destVecinos = vecinos
-  .filter(v => v && v.telefono)
-  .map(v => ({
-    nombre: v.nombre || "Vecino",
-    telefono: normalizarTelefonoAR(v.telefono)
-  }))
-  .filter(d => d.telefono);
-
-// 3) Traer empleados (Firestore) con nombre+tel
-let destEmpleados = [];
-try {
-  const refE = collection(db, "employees");
-  const qE = query(refE, where("productorId", "==", productorId));
-  const snapE = await getDocs(qE);
-
-  snapE.forEach(s => {
-    const e = s.data();
-    if (e.telefono) {
-      destEmpleados.push({
-        nombre: e.nombre || `Empleado ${e.dni || ""}`.trim(),
-        telefono: normalizarTelefonoAR(e.telefono)
-      });
-    }
-  });
-} catch (e) {
-  console.error("No pude leer empleados para WhatsApp:", e);
-}
-
-// 4) Unificar y eliminar duplicados por teléfono
-const todos = [...destVecinos, ...destEmpleados].filter(d => d.telefono);
-
-const mapa = new Map(); // key = telefono, value = {nombre, telefono, origen}
-todos.forEach(d => {
-  if (!mapa.has(d.telefono)) {
-    mapa.set(d.telefono, d);
-  } else {
-    // si se repite, preferimos el que tenga nombre más “lindo”
-    const prev = mapa.get(d.telefono);
-    if ((prev.nombre || "").length < (d.nombre || "").length) mapa.set(d.telefono, d);
-  }
-});
-
-const unicos = Array.from(mapa.values());
-
-if (unicos.length === 0) {
-  msgAlertas.style.color = "#b91c1c";
-  msgAlertas.textContent = "⚠️ No hay teléfonos cargados (vecinos/empleados).";
-  return;
-}
-
-// 5) Guardar alerta en Firestore (historial) con nombres y teléfonos
-try {
-  await addDoc(collection(db, "alertas"), {
-    productorId,
-    tipo,
-    descripcion: desc,
-    mensaje,
-    timestamp: serverTimestamp(),
-    enviadosA: unicos // guarda [{nombre, telefono}, ...]
-  });
-} catch (e) {
-  console.error("No pude guardar alerta en Firestore:", e);
-}
-
-// 6) Mostrar links con nombre + teléfono
-listaAlertas.innerHTML = "";
-
-const info = document.createElement("div");
-info.className = "item-simple";
-info.innerHTML = `
-  <div class="item-info">
-    <strong>✅ Alerta lista para enviar</strong><br>
-    <small>Se generaron ${unicos.length} WhatsApp(s). Tocá cada uno para enviarlo.</small>
-  </div>
-`;
-listaAlertas.appendChild(info);
-
-unicos.forEach(dest => {
-  // Si por algún motivo viene mal, lo salteamos
-  if (!dest || !dest.telefono || typeof dest.telefono !== "string") return;
-
-  const tel = dest.telefono.trim();
-  if (!tel) return;
-
-  const url = `https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`;
-
-  const item = document.createElement("div");
-  item.className = "item-simple";
-  item.innerHTML = `
-    <div class="item-info">
-      <strong>📲 ${dest.nombre || "Contacto"}</strong><br>
-      <small>${tel}</small>
-    </div>
-    <a class="btn-primario" style="text-decoration:none" target="_blank" href="${url}">Enviar</a>
-  `;
-  listaAlertas.appendChild(item);
-});
-
-
-      msgAlertas.style.color = "#166534";
-      msgAlertas.textContent = "✅ Links generados. Enviá la alerta desde WhatsApp.";
-
-      document.getElementById("alertaDescripcion").value = "";
-    });
-
-    /* ============================================================
-       7) TAREAS
-    ============================================================ */
-
     const listaTareas = document.getElementById("listaTareas");
     const msgTareas = document.getElementById("msgTareas");
 
@@ -1099,6 +843,7 @@ unicos.forEach(dest => {
     }
 
     function escucharTareas() {
+      if (!productorId) return;
       const qT = query(collection(db, "tareas"), where("productorId", "==", productorId));
 
       onSnapshot(qT, snap => {
@@ -1115,14 +860,14 @@ unicos.forEach(dest => {
           item.className = "item-simple";
 
           item.innerHTML = `
-          <div class="item-info">
-            <strong>${t.texto}</strong><br>
-            <span class="chip-categoria">${t.categoria}</span>
-            <span class="chip-prioridad-${t.prioridad.toLowerCase()}">${t.prioridad}</span><br>
-            <small>Asignado a: ${t.empleadoId ?? "(sin asignar)"}</small><br>
-            <small>${t.completada ? "✔ Completada" : "Pendiente"}</small>
-          </div>
-        `;
+            <div class="item-info">
+              <strong>${t.texto}</strong><br>
+              <span class="chip-categoria">${t.categoria}</span>
+              <span class="chip-prioridad-${t.prioridad.toLowerCase()}">${t.prioridad}</span><br>
+              <small>Asignado a: ${t.empleadoId ?? "(sin asignar)"}</small><br>
+              <small>${t.completada ? "✔ Completada" : "Pendiente"}</small>
+            </div>
+          `;
 
           const btn = document.createElement("button");
           btn.className = "btn-secundario";
@@ -1138,32 +883,24 @@ unicos.forEach(dest => {
         });
       });
     }
-    escucharTareas();
-
 
     /* ============================================================
-       8) MAPAS — MARCACIONES + CAMINOS (PUNTOS)
+       MAPA MARCACIONES (simple)
     ============================================================ */
-
     let mapaMarcaciones = null;
     let capaMarcadores = null;
     let marcacionesOnline = [];
 
-    /* MAPA DE MARCACIONES */
     function initMapaMarcaciones() {
       if (mapaMarcaciones) return;
-
       mapaMarcaciones = L.map("mapMarcaciones").setView([-33, -59.3], 10);
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapaMarcaciones);
-
       capaMarcadores = L.layerGroup().addTo(mapaMarcaciones);
-
       setTimeout(() => mapaMarcaciones.invalidateSize(), 400);
     }
 
     function actualizarMarcacionesMapa() {
-      if (!mapaMarcaciones) return;
-
+      if (!mapaMarcaciones || !capaMarcadores) return;
       capaMarcadores.clearLayers();
       marcacionesOnline.forEach(m => {
         if (!m.lat || !m.lng) return;
@@ -1172,6 +909,7 @@ unicos.forEach(dest => {
     }
 
     function escucharMarcacionesOnline() {
+      if (!productorId) return;
       const qM = query(collection(db, "marcaciones"), where("productorId", "==", productorId));
 
       onSnapshot(qM, snap => {
@@ -1191,16 +929,10 @@ unicos.forEach(dest => {
         actualizarMarcacionesMapa();
       });
     }
-    escucharMarcacionesOnline();
-    /* ============================================================
-       CAMINOS — VERSIÓN COMPLETA (E)
-       - Puntos + Tramos
-       - Tooltips sin productor
-       - Filtros (todos, transitable, complicado, intransitable)
-       - Borrar MIS caminos del día
-       - Edición simple: cambiar estado
-    ============================================================ */
 
+    /* ============================================================
+       CAMINOS (Puntos + Tramos + Filtros + Alias)
+    ============================================================ */
     let mapaCaminos = null;
     let modoCamino = "punto";
     let tramoActual = [];
@@ -1208,28 +940,72 @@ unicos.forEach(dest => {
     let capaTramos = null;
     let capaPuntosCaminos = null;
 
-    let filtroEstado = "todos"; // nuevo filtro
+    let filtroEstado = "todos";
+    let unsubscribeCaminos = null; // ✅ evita listeners duplicados
 
-
-    // ======================================
-    // COLORES
-    // ======================================
     const coloresCamino = {
       transitable: "#16a34a",
       complicado: "#eab308",
       intransitable: "#dc2626"
     };
 
+    // ===============================
+    // 📍 GPS: centrar mapa + arrancar donde estás
+    // ===============================
+    let miUbicacionMarker = null;
 
-    // ======================================
-    // INICIAR MAPA
-    // ======================================
+    function pedirUbicacionActual(opts = { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }) {
+      return new Promise((resolve, reject) => {
+        if (!("geolocation" in navigator)) {
+          reject(new Error("Geolocalización no disponible en este dispositivo."));
+          return;
+        }
+        navigator.geolocation.getCurrentPosition(resolve, reject, opts);
+      });
+    }
+
+    async function centrarEnMiUbicacion() {
+      try {
+        mostrarMensaje("📡 Buscando tu ubicación...", "#14532d");
+
+        const pos = await pedirUbicacionActual();
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        const acc = Math.round(pos.coords.accuracy || 0);
+
+        if (!mapaCaminos) return;
+
+        // mover el mapa
+        mapaCaminos.setView([lat, lng], 15, { animate: true });
+
+        // marcador de mi ubicación (solo visual)
+        if (miUbicacionMarker) {
+          miUbicacionMarker.setLatLng([lat, lng]);
+        } else {
+          miUbicacionMarker = L.circleMarker([lat, lng], {
+            radius: 8,
+            weight: 2,
+            color: "#111827",
+            fillOpacity: 0.95
+          }).addTo(mapaCaminos);
+
+          miUbicacionMarker.bindPopup(`📍 Estás acá<br><small>Precisión aprox: ${acc} m</small>`);
+        }
+
+        mostrarMensaje("✅ Ubicación encontrada", "#166534");
+      } catch (e) {
+        console.error("GPS error:", e);
+        mostrarMensaje("❌ No pude obtener tu ubicación. Activá GPS y permisos.", "#b91c1c");
+      }
+    }
+
+
     function initMapaCaminos() {
       if (mapaCaminos) return;
+      if (!productorId) return;
 
       mapaCaminos = L.map("mapCaminos").setView([-33, -59.3], 10);
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png")
-        .addTo(mapaCaminos);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapaCaminos);
 
       capaTramos = L.layerGroup().addTo(mapaCaminos);
       capaPuntosCaminos = L.layerGroup().addTo(mapaCaminos);
@@ -1240,99 +1016,97 @@ unicos.forEach(dest => {
       setTimeout(() => mapaCaminos.invalidateSize(), 400);
     }
 
+    // ✅ intentar centrar automáticamente al iniciar el mapa (si el usuario permite)
+    setTimeout(() => centrarEnMiUbicacion(), 600);
 
-    // ======================================
-    // MODO PUNTO / TRAMO
-    // ======================================
+
+    const btnModoPunto = document.getElementById("btnModoPunto");
+    const btnModoTramo = document.getElementById("btnModoTramo");
+    const btnGuardarTramo = document.getElementById("btnGuardarTramo");
+    const btnCentrar = document.getElementById("btnCentrarUbicacion");
+    if (btnCentrar) btnCentrar.onclick = () => centrarEnMiUbicacion();
+
+
     btnModoPunto.onclick = () => {
       modoCamino = "punto";
       btnGuardarTramo.style.display = "none";
+      tramoActual = [];
+      if (capaTramos) capaTramos.clearLayers();
     };
 
     btnModoTramo.onclick = () => {
       modoCamino = "tramo";
       tramoActual = [];
       btnGuardarTramo.style.display = "inline-block";
+      if (capaTramos) capaTramos.clearLayers();
     };
 
-
-    // ======================================
-    // CLICK EN MAPA
-    // ======================================
     function manejarClickMapa(e) {
       const estado = document.getElementById("caminoEstado").value;
       const latlng = [e.latlng.lat, e.latlng.lng];
 
-      if (modoCamino === "punto") {
-        guardarPunto(latlng, estado);
-      }
-
+      if (modoCamino === "punto") guardarPunto(latlng, estado);
       if (modoCamino === "tramo") {
         tramoActual.push(latlng);
         dibujarTramoTemporal();
       }
     }
 
-
-    // ======================================
-    // GUARDAR PUNTO
-    // ======================================
     async function guardarPunto(latlng, estado) {
+      const alias = prompt("Nombre del lugar (opcional): ej. Puente, Entrada Potrero 3")?.trim() || "";
+
       try {
         await addDoc(collection(db, "caminos"), {
           productorId,
           tipo: "punto",
           estado,
+          alias,
           lat: latlng[0],
           lng: latlng[1],
           fecha: Date.now(),
           timestamp: serverTimestamp()
         });
 
-        mostrarMensaje("Punto guardado correctamente", "#166534");
+        mostrarMensaje("✅ Punto guardado", "#166534");
       } catch (err) {
         console.error(err);
-        mostrarMensaje("Error al guardar el punto", "#b91c1c");
+        mostrarMensaje("❌ Error al guardar el punto", "#b91c1c");
       }
     }
 
-
-    // ======================================
-    // GUARDAR TRAMO
-    // ======================================
     btnGuardarTramo.onclick = async () => {
       const estado = document.getElementById("caminoEstado").value;
 
       if (tramoActual.length < 2) {
-        mostrarMensaje("Necesitás al menos 2 puntos para un tramo", "#b91c1c");
+        mostrarMensaje("⚠️ Necesitás al menos 2 puntos para un tramo", "#b91c1c");
         return;
       }
 
       try {
+        const alias = prompt("Nombre del tramo (opcional): ej. Camino al galpón")?.trim() || "";
+
         await addDoc(collection(db, "caminos"), {
           productorId,
           tipo: "tramo",
           estado,
+          alias,
           puntos: tramoActual,
           fecha: Date.now(),
           timestamp: serverTimestamp()
         });
 
         tramoActual = [];
-        capaTramos.clearLayers();
+        if (capaTramos) capaTramos.clearLayers();
 
-        mostrarMensaje("Tramo guardado correctamente", "#166534");
+        mostrarMensaje("✅ Tramo guardado", "#166534");
       } catch (err) {
         console.error(err);
-        mostrarMensaje("Error al guardar tramo", "#b91c1c");
+        mostrarMensaje("❌ Error al guardar tramo", "#b91c1c");
       }
     };
 
-
-    // ======================================
-    // DIBUJO TEMPORAL DE TRAMO
-    // ======================================
     function dibujarTramoTemporal() {
+      if (!capaTramos) return;
       capaTramos.clearLayers();
 
       if (tramoActual.length >= 2) {
@@ -1344,11 +1118,6 @@ unicos.forEach(dest => {
       }
     }
 
-
-    // ======================================
-    // FILTROS (CHIPS MODERNOS)
-    // ======================================
-
     function marcarChipActivo(id) {
       document.querySelectorAll(".filtro-chip").forEach(c => c.classList.remove("activo"));
       document.getElementById(id).classList.add("activo");
@@ -1359,49 +1128,47 @@ unicos.forEach(dest => {
       marcarChipActivo("filtroTodos");
       cargarCaminosGuardados();
     };
-
     document.getElementById("filtroTransitable").onclick = () => {
       filtroEstado = "transitable";
       marcarChipActivo("filtroTransitable");
       cargarCaminosGuardados();
     };
-
     document.getElementById("filtroComplicado").onclick = () => {
       filtroEstado = "complicado";
       marcarChipActivo("filtroComplicado");
       cargarCaminosGuardados();
     };
-
     document.getElementById("filtroIntransitable").onclick = () => {
       filtroEstado = "intransitable";
       marcarChipActivo("filtroIntransitable");
       cargarCaminosGuardados();
     };
 
-    // activar el chip “Todos” al iniciar
-    setTimeout(() => marcarChipActivo("filtroTodos"), 500);
-
-
-    // ======================================
-    // CARGAR CAMINOS DESDE FIRESTORE
-    // ======================================
+    // ✅ ESTA ES LA FUNCIÓN CLAVE (corrigida)
     function cargarCaminosGuardados() {
-      const q = query(collection(db, "caminos"));
+      if (!productorId) return;
+      if (!capaPuntosCaminos || !capaTramos) return;
 
-      onSnapshot(q, snap => {
+      // ✅ evita múltiples listeners cada vez que tocás un filtro
+      if (typeof unsubscribeCaminos === "function") unsubscribeCaminos();
+
+      const q = query(
+        collection(db, "caminos"),
+        where("productorId", "==", productorId)
+      );
+
+      unsubscribeCaminos = onSnapshot(q, (snap) => {
         capaPuntosCaminos.clearLayers();
         capaTramos.clearLayers();
 
-        snap.forEach(docSnap => {
+        snap.forEach((docSnap) => {
           const d = docSnap.data();
 
-          // FILTRO
           if (filtroEstado !== "todos" && d.estado !== filtroEstado) return;
 
           const color = coloresCamino[d.estado];
           const fechaTxt = new Date(d.fecha).toLocaleString("es-AR");
 
-          // ===== PUNTO =====
           if (d.tipo === "punto") {
             const marker = L.circleMarker([d.lat, d.lng], {
               radius: 9,
@@ -1411,23 +1178,35 @@ unicos.forEach(dest => {
               fillOpacity: 0.95
             }).addTo(capaPuntosCaminos);
 
-            marker.bindTooltip(formaEstado(d.estado), {
+            const aliasTxt = d.alias ? `<b>📍 ${d.alias}</b><br>` : "";
+            const titulo = d.alias ? `📍 ${d.alias}` : formaEstado(d.estado);
+
+            marker.bindTooltip(titulo, {
               direction: "top",
               offset: [0, -12],
               opacity: 0.9,
               className: "tooltip-camino"
             });
 
+            const latTxt = Number(d.lat).toFixed(6);
+            const lngTxt = Number(d.lng).toFixed(6);
+            const gmaps = `https://www.google.com/maps?q=${latTxt},${lngTxt}`;
 
             marker.bindPopup(`
-          <b>${formaEstado(d.estado)}</b><br>
-          ${fechaTxt}<br>
-          <small>Punto</small><br><br>
-          <button onclick="cambiarEstadoCamino('${docSnap.id}')">Cambiar estado</button>
-        `);
+              ${aliasTxt}
+              <b>${formaEstado(d.estado)}</b><br>
+              ${fechaTxt}<br>
+              <small>Punto</small><br>
+              <small><b>Coord:</b> ${latTxt}, ${lngTxt}</small><br><br>
+
+              <button onclick="copiarCoord('${latTxt},${lngTxt}')">📋 Copiar coord</button>
+              <a href="${gmaps}" target="_blank">🧭 Abrir Maps</a>
+              <br><br>
+
+              <button onclick="cambiarEstadoCamino('${docSnap.id}')">Cambiar estado</button>
+            `);
           }
 
-          // ===== TRAMO =====
           if (d.tipo === "tramo") {
             const poly = L.polyline(d.puntos, {
               color,
@@ -1436,53 +1215,102 @@ unicos.forEach(dest => {
               dashArray: d.estado === "complicado" ? "6,4" : null
             }).addTo(capaTramos);
 
-            poly.bindTooltip(formaEstado(d.estado), {
+            const tituloTramo = d.alias ? `🛣️ ${d.alias}` : formaEstado(d.estado);
+
+            poly.bindTooltip(tituloTramo, {
               direction: "center",
               opacity: 0.9,
               className: "tooltip-camino"
             });
 
+            const p0 = d.puntos?.[0];
+            const p1 = d.puntos?.[d.puntos.length - 1];
+
+            const ini = p0 ? `${Number(p0[0]).toFixed(6)}, ${Number(p0[1]).toFixed(6)}` : "-";
+            const fin = p1 ? `${Number(p1[0]).toFixed(6)}, ${Number(p1[1]).toFixed(6)}` : "-";
+
+            const distKm = calcularDistanciaTramoKM(d.puntos || []);
+            const aliasTxt = d.alias ? `<b>🛣️ ${d.alias}</b><br>` : "";
 
             poly.bindPopup(`
-          <b>${formaEstado(d.estado)}</b><br>
-          ${fechaTxt}<br>
-          <small>Tramo</small><br><br>
-          <button onclick="cambiarEstadoCamino('${docSnap.id}')">Cambiar estado</button>
-        `);
+              ${aliasTxt}
+              <b>${formaEstado(d.estado)}</b><br>
+              ${fechaTxt}<br>
+              <small>Tramo</small><br>
+              <small><b>Inicio:</b> ${ini}</small><br>
+              <small><b>Fin:</b> ${fin}</small><br>
+              <small><b>Dist:</b> ${distKm.toFixed(2)} km</small><br><br>
+
+              <button onclick="copiarCoord('${ini}')">📋 Copiar inicio</button>
+              <button onclick="copiarCoord('${fin}')">📋 Copiar fin</button>
+              <br><br>
+
+              <button onclick="cambiarEstadoCamino('${docSnap.id}')">Cambiar estado</button>
+            `);
           }
         });
+
+      }, (err) => {
+        console.error("Error escuchando caminos:", err);
+        mostrarMensaje("❌ Sin permisos para leer caminos. Revisá reglas Firestore.", "#b91c1c");
       });
     }
 
-
-    // ======================================
-    // FORMATEAR ESTADO
-    // ======================================
     function formaEstado(e) {
       return e === "transitable" ? "🟢 Transitable"
         : e === "complicado" ? "🟡 Complicado"
           : "🔴 Intransitable";
     }
 
+    function haversineKM(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const toRad = x => x * Math.PI / 180;
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      return 2 * R * Math.asin(Math.sqrt(a));
+    }
 
-    // ======================================
-    // CAMBIAR ESTADO DESDE POPUP
-    // ======================================
+    function calcularDistanciaTramoKM(puntos) {
+      if (!Array.isArray(puntos) || puntos.length < 2) return 0;
+      let total = 0;
+      for (let i = 1; i < puntos.length; i++) {
+        const [lat1, lon1] = puntos[i - 1];
+        const [lat2, lon2] = puntos[i];
+        total += haversineKM(lat1, lon1, lat2, lon2);
+      }
+      return total;
+    }
+
+    // funciones globales para el popup
     window.cambiarEstadoCamino = async (id) => {
       const nuevo = prompt("Nuevo estado: transitable / complicado / intransitable");
-
       if (!["transitable", "complicado", "intransitable"].includes(nuevo)) {
         alert("Estado inválido");
         return;
       }
-
       await updateDoc(doc(db, "caminos", id), { estado: nuevo });
     };
 
+    window.copiarCoord = async (txt) => {
+      try {
+        await navigator.clipboard.writeText(txt);
+        mostrarMensaje("✅ Coordenadas copiadas: " + txt, "#166534");
+      } catch (e) {
+        const ta = document.createElement("textarea");
+        ta.value = txt;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        mostrarMensaje("✅ Coordenadas copiadas: " + txt, "#166534");
+      }
+    };
 
-    // ======================================
-    // BORRAR SOLO MIS CAMINOS DE HOY
-    // ======================================
+    // borrar caminos de hoy (solo del productor)
     document.getElementById("btnBorrarMisCaminosHoy").onclick = async () => {
       if (!confirm("¿Borrar SOLO tus caminos del día de hoy?")) return;
 
@@ -1504,30 +1332,16 @@ unicos.forEach(dest => {
       });
 
       await batch.commit();
-
-      mostrarMensaje("Se borraron tus caminos de HOY", "#166534");
+      mostrarMensaje("✅ Se borraron tus caminos de HOY", "#166534");
     };
 
-
-    // ======================================
-    // UTILIDAD
-    // ======================================
     function mostrarMensaje(msg, color = "#000") {
       const div = document.getElementById("msgCaminos");
+      if (!div) return;
       div.textContent = msg;
       div.style.color = color;
-      setTimeout(() => div.textContent = "", 3000);
+      setTimeout(() => div.textContent = "", 3500);
     }
-
-
-
-
-    /* Inicializar ambos mapas */
-    setTimeout(() => {
-      initMapaMarcaciones();
-      initMapaCaminos();
-    }, 300);
-
 
     document.getElementById("caminoEstado").addEventListener("change", e => {
       const est = e.target.value;
@@ -1537,10 +1351,6 @@ unicos.forEach(dest => {
       if (est === "complicado") { prev.textContent = "🟡 Complicado"; prev.style.background = "#fef9c3"; }
       if (est === "intransitable") { prev.textContent = "🔴 Intransitable"; prev.style.background = "#fee2e2"; }
     });
-
-    // iniciar
-    document.getElementById("caminoEstado").dispatchEvent(new Event("change"));
-
   </script>
 </body>
 

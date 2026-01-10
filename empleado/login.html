@@ -86,7 +86,7 @@
   <div class="card">
     <div class="row" style="justify-content:space-between">
       <h1>👷 Login Empleado</h1>
-      <a href="../index-page.html">⬅ Volver</a>
+      <a href="../index.html">⬅ Volver</a>
     </div>
 
     <label for="dni">DNI</label>
@@ -102,26 +102,38 @@
   </div>
 
   <script type="module">
-    import { db } from "../firebase-init.js";
+    import { auth, db } from "../firebase-init.js";
+    import { signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { collection, query, where, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const dniEl = document.getElementById("dni");
     const passEl = document.getElementById("pass");
     const errEl = document.getElementById("err");
+    const btn = document.getElementById("btnLogin");
 
     function showErr(t) {
       errEl.style.display = "block";
       errEl.textContent = t;
     }
 
-    document.getElementById("btnLogin").addEventListener("click", async () => {
+    btn.addEventListener("click", async () => {
       errEl.style.display = "none";
+
       const dni = (dniEl.value || "").trim();
       const clave = (passEl.value || "").trim();
 
       if (!dni || !clave) return showErr("Completá DNI y contraseña.");
 
+      btn.disabled = true;
+      btn.textContent = "Ingresando...";
+
       try {
+        // ✅ 1) Autenticación anónima (para que request.auth exista en Rules)
+        if (!auth.currentUser) {
+          await signInAnonymously(auth);
+        }
+
+        // ✅ 2) Buscar empleado por DNI
         const ref = collection(db, "employees");
         const qEmp = query(ref, where("dni", "==", dni), limit(1));
         const snap = await getDocs(qEmp);
@@ -131,17 +143,26 @@
         const docu = snap.docs[0];
         const data = docu.data();
 
+        // opcional: si manejás "activo"
+        if (data.activo === false) return showErr("Empleado inactivo. Consultá al productor.");
+
+        // ✅ 3) Validar clave (comparación simple)
         if ((data.clave || "") !== clave) return showErr("Contraseña incorrecta.");
 
-        // ✅ Guardar sesión simple
-        localStorage.setItem("empleadoDni", dni);     // clave real para tareas
-        localStorage.setItem("empleadoDocId", docu.id); // opcional (por si después lo usás)
+        // ✅ 4) Guardar sesión simple
+        localStorage.setItem("empleadoDni", dni);
+        localStorage.setItem("empleadoDocId", docu.id);
         localStorage.setItem("productorId", data.productorId || "");
 
+        // ✅ 5) Ir al panel de empleado
         location.href = "./panel.html";
+
       } catch (e) {
         console.error(e);
         showErr("Error de login. Revisá conexión y permisos.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Ingresar";
       }
     });
   </script>

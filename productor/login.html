@@ -84,7 +84,7 @@
 
     <p id="msg"></p>
 
-    <a href="../index-page.html">⬅ Volver</a>
+    <a href="../index.html">⬅ Volver</a>
   </div>
 
   <!-- Importamos Firebase desde TU archivo -->
@@ -119,8 +119,18 @@
         window.location.href = "panel.html";
 
       } catch (error) {
-        msg.textContent = "Error: " + limpiarError(error.message);
-      }
+  console.error(error);
+  msg.textContent = "Error: " + traducirAuthError(error.code);
+}
+
+function traducirAuthError(code) {
+  if (code === "auth/invalid-credential") return "Email o contraseña incorrectos (o usuario inexistente).";
+  if (code === "auth/user-disabled") return "Usuario deshabilitado.";
+  if (code === "auth/too-many-requests") return "Demasiados intentos. Probá más tarde.";
+  if (code === "auth/network-request-failed") return "Sin conexión o bloqueado por red.";
+  return code || "Error desconocido.";
+}
+
     }
 
     // Limpieza de errores de Firebase
