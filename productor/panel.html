@@ -399,11 +399,20 @@
       <div class="indicador"></div>
     </button>
 
+    <button data-target="sec-camiones" class="nav-btn">
+      <span class="icono">🚚</span>
+      <span class="texto">Camiones</span>
+      <div class="indicador"></div>
+    </button>
+
+
     <button data-target="sec-marcaciones-online" class="nav-btn">
       <span class="icono">📍</span>
       <span class="texto">Online</span>
       <div class="indicador"></div>
     </button>
+
+
 
     <button data-target="sec-caminos" class="nav-btn">
       <span class="icono">🛣️</span>
@@ -479,10 +488,23 @@
       <p class="status-msg" id="msgMarcOnline"></p>
       <div id="listaMarcOnline" class="lista-simple"></div>
     </section>
+    
 
+    
 
+    <!-- ============================= -->
+    <!-- SECCIÓN: CAMIONES (TRACKING) -->
+    <!-- ============================= -->
+    <section id="sec-camiones" class="hidden">
+      <h2>Monitoreo de camiones</h2>
+      <small>Ubicación en tiempo real del chofer (celular) con GPS.</small>
 
+      <div id="mapCamiones" style="width:100%; height:330px; margin-top:15px; background:#ddd; border-radius:10px;">
+      </div>
 
+      <p class="status-msg" id="msgCamiones"></p>
+      <div id="listaCamiones" class="lista-simple"></div>
+    </section>
 
 
     <!-- ============================= -->
@@ -511,8 +533,8 @@
 
       <div class="fila">
         <select id="alertaTipo">
-          <option value="Sospechoso">🚨 Sospechoso</option>
-          <option value="Animal perdido">🐄 Animal perdido</option>
+          <option value="Vehiculo Sospechoso">🚨Vehiculo Sospechoso</option>
+          <option value="Animal perdido">🐄 Animales perdido</option>
           <option value="Incendio">🔥 Incendio</option>
           <option value="Avería">🛠 Avería</option>
           <option value="Otro">📦 Otro</option>
@@ -535,14 +557,11 @@
         <div id="listaVecinosAlertas" class="lista-simple"></div>
 
         <small style="display:block;margin-top:8px;color:#6b7280;">
-        
+
         </small>
       </div>
 
     </section>
-
-
-
 
     <!-- ============================= -->
     <!-- SECCIÓN: CAMINOS -->
@@ -714,6 +733,14 @@
               if (mapaCaminos) mapaCaminos.invalidateSize();
             }, 200);
           }
+
+          if (target === "sec-camiones") {
+            setTimeout(() => {
+              initMapaCamiones();
+              if (mapaCamiones) mapaCamiones.invalidateSize();
+            }, 200);
+          }
+
         });
       });
 
@@ -729,27 +756,161 @@
     // =========================
     // 3) INICIO DEL PANEL
     // =========================
-    function iniciarPanel() {
-      cargarEmpleados();
-      escucharTareas();
-      escucharMarcacionesOnline();
-      escucharVecinos();
-      escucharVecinosParaAlertas();
-      escucharAlertas();
+   function iniciarPanel() {
+  cargarEmpleados();
+  escucharTareas();
+  escucharMarcacionesOnline();
+  escucharVecinos();
+  escucharVecinosParaAlertas();
+  escucharAlertas();
+
+  // ✅ AHORA sí (porque ya existe la función global)
+  escucharCamiones();
+
+  setTimeout(() => {
+    initMapaMarcaciones();
+    initMapaCaminos();
+  }, 300);
+
+  setTimeout(() => marcarChipActivo("filtroTodos"), 350);
+
+  document.getElementById("caminoEstado").dispatchEvent(new Event("change"));
+}
 
 
-      // inicia mapas sin romper
-      setTimeout(() => {
-        initMapaMarcaciones();
-        initMapaCaminos();
-      }, 300);
 
-      // activar chip “Todos”
-      setTimeout(() => marcarChipActivo("filtroTodos"), 350);
+    /* ============================================================
+   🚚 CAMIONES (TRACKING REALTIME)
+============================================================ */
+let mapaCamiones = null;
+let capaCamiones = null;
+const markersCamiones = new Map(); // camionId -> marker
 
-      // preview estado
-      document.getElementById("caminoEstado").dispatchEvent(new Event("change"));
+function initMapaCamiones() {
+  // ✅ si el div no está, salimos sin romper
+  const mapDiv = document.getElementById("mapCamiones");
+  if (!mapDiv) return;
+
+  if (mapaCamiones) return;
+  mapaCamiones = L.map("mapCamiones").setView([-33, -59.3], 10);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapaCamiones);
+  capaCamiones = L.layerGroup().addTo(mapaCamiones);
+}
+
+function renderCamionItem(c) {
+  const upd = c.lastSeen ? new Date(c.lastSeen).toLocaleString("es-AR") : "—";
+  const onlineTxt = c.online ? "🟢 Online" : "🔴 Offline";
+  const accTxt = (c.accuracy != null) ? `• ±${c.accuracy}m` : "";
+  return `
+    <div class="item-simple">
+      <div class="item-info">
+        <strong>🚚 ${c.camionId ?? "(sin ID)"}</strong><br>
+        <small>Chofer DNI: ${c.empleadoDni ?? "—"}</small><br>
+        <small>${onlineTxt} • Último ping: ${upd} ${accTxt}</small>
+      </div>
+      <button class="btn-secundario" data-zoom="${c.camionId ?? ""}">Ver</button>
+    </div>
+  `;
+}
+
+function upsertMarkerCamion(c) {
+  if (!mapaCamiones || !capaCamiones) return;
+
+  const camionId = c.camionId;
+  if (!camionId) return;
+
+  if (typeof c.lat !== "number" || typeof c.lng !== "number") return;
+
+  const popup = `
+    <b>🚚 ${camionId}</b><br>
+    Chofer: ${c.empleadoDni ?? "—"}<br>
+    Estado: ${c.online ? "🟢 Online" : "🔴 Offline"}<br>
+    Precisión: ${c.accuracy ?? "—"} m
+  `;
+
+  if (markersCamiones.has(camionId)) {
+    const m = markersCamiones.get(camionId);
+    m.setLatLng([c.lat, c.lng]);
+    m.setPopupContent(popup);
+  } else {
+    const m = L.marker([c.lat, c.lng]).addTo(capaCamiones);
+    m.bindPopup(popup);
+    markersCamiones.set(camionId, m);
+  }
+}
+
+function limpiarMarkersNoPresentes(setIdsActuales) {
+  for (const [id, marker] of markersCamiones.entries()) {
+    if (!setIdsActuales.has(id)) {
+      capaCamiones.removeLayer(marker);
+      markersCamiones.delete(id);
     }
+  }
+}
+
+function escucharCamiones() {
+  if (!productorId) return;
+
+  const msgCamiones = document.getElementById("msgCamiones");
+  const listaCamiones = document.getElementById("listaCamiones");
+
+  // ✅ Guard: si no existe la sección, no rompas
+  if (!msgCamiones || !listaCamiones) {
+    console.warn("Faltan elementos de Camiones (msgCamiones/listaCamiones).");
+    return;
+  }
+
+  const qC = query(collection(db, "camiones"), where("productorId", "==", productorId));
+
+  onSnapshot(qC, (snap) => {
+    initMapaCamiones();
+
+    listaCamiones.innerHTML = "";
+    msgCamiones.style.color = "#4b5563";
+
+    if (snap.empty) {
+      msgCamiones.textContent = "No hay camiones transmitiendo todavía.";
+      if (capaCamiones) capaCamiones.clearLayers();
+      markersCamiones.clear();
+      return;
+    }
+
+    const idsActuales = new Set();
+    const camiones = [];
+
+    snap.forEach((d) => {
+      const c = d.data();
+      camiones.push(c);
+      if (c.camionId) idsActuales.add(c.camionId);
+      upsertMarkerCamion(c);
+    });
+
+    limpiarMarkersNoPresentes(idsActuales);
+
+    camiones
+      .sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0))
+      .forEach((c) => {
+        listaCamiones.innerHTML += renderCamionItem(c);
+      });
+
+    msgCamiones.textContent = `Camiones encontrados: ${camiones.length}`;
+
+    listaCamiones.querySelectorAll("button[data-zoom]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-zoom");
+        const marker = markersCamiones.get(id);
+        if (!marker) return;
+        mapaCamiones.setView(marker.getLatLng(), 16, { animate: true });
+        marker.openPopup();
+      });
+    });
+
+  }, (err) => {
+    console.error("Snapshot camiones:", err);
+    msgCamiones.style.color = "#b91c1c";
+    msgCamiones.textContent = "Error escuchando camiones (permisos/reglas/índices).";
+  });
+}
 
     /* ============================================================
        EMPLEADOS (FIREBASE)
@@ -1489,10 +1650,9 @@
       });
     }
 
-
     /* ============================================================
    ✅ UI: VECINOS SELECCIONABLES PARA ALERTAS
-============================================================ */
+    ============================================================ */
 
     const listaVecinosAlertas = document.getElementById("listaVecinosAlertas");
     const btnSelTodosVecinos = document.getElementById("btnSelTodosVecinos");

@@ -36,25 +36,49 @@
     <p class="muted" id="sub"></p>
 
     <div class="grid">
-      <div class="card">
-        <h2 style="margin:0 0 8px">✅ Tareas asignadas</h2>
-        <div id="listaTareas" class="muted">Cargando...</div>
-      </div>
+  <div class="card">
+    <h2 style="margin:0 0 8px">✅ Tareas asignadas</h2>
+    <div id="listaTareas" class="muted">Cargando...</div>
+  </div>
 
-      <div class="card">
-        <h2 style="margin:0 0 8px">📣 Alertas del Productor</h2>
-        <div id="listaAlertas" class="muted">Cargando...</div>
-      </div>
+  <div class="card">
+    <h2 style="margin:0 0 8px">📣 Alertas del Productor</h2>
+    <div id="listaAlertas" class="muted">Cargando...</div>
+  </div>
+
+  <!-- ✅ NUEVO: Monitoreo Camión -->
+  <div class="card">
+    <h2 style="margin:0 0 8px">🚚 Monitoreo del camión</h2>
+    <div class="muted" style="margin-bottom:10px">
+      Enviá tu ubicación en tiempo real al Productor.
     </div>
+
+    <label style="display:block;font-size:.85rem;margin-top:8px;margin-bottom:4px;color:#374151">
+      ID / Patente del camión
+    </label>
+    <input id="camionId" placeholder="Ej: ABC123 o CAMION-1" style="width:100%;padding:10px;border-radius:10px;border:1px solid #e5e7eb"/>
+
+    <div class="actions" style="margin-top:10px">
+      <button class="btn-ok" id="btnStartTrack">▶ Iniciar</button>
+      <button class="btn" id="btnStopTrack" style="background:#7f1d1d;color:#fff;border-radius:10px;padding:8px 10px;font-weight:800" disabled>
+        ■ Detener
+      </button>
+    </div>
+
+    <div id="msgTrack" class="muted" style="margin-top:10px">Estado: detenido</div>
+  </div>
+</div>
+
   </div>
 
   <script type="module">
     import { auth, db } from "../firebase-init.js";
     import { onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import {
-      collection, query, where, onSnapshot, orderBy,
-      doc, updateDoc, serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+   import {
+  collection, query, where, onSnapshot, orderBy,
+  doc, updateDoc, setDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
 
     const empleadoDni = (localStorage.getItem("empleadoDni") || "").trim();
     const productorId = (localStorage.getItem("productorId") || "").trim();
@@ -199,6 +223,127 @@
           console.error("Snapshot alertas:", err);
           listaAlertas.textContent = "Error cargando alertas (reglas/índices).";
         });
+
+        // ===============================
+// 🚚 TRACKING CAMIÓN (GPS → Firestore)
+// ===============================
+let watchId = null;
+
+const camionIdEl = document.getElementById("camionId");
+const btnStartTrack = document.getElementById("btnStartTrack");
+const btnStopTrack = document.getElementById("btnStopTrack");
+const msgTrack = document.getElementById("msgTrack");
+
+function setMsg(t, ok = true) {
+  msgTrack.textContent = t;
+  msgTrack.style.color = ok ? "#14532d" : "#b91c1c";
+}
+
+async function upsertCamion(camionId, payload) {
+  // doc: camiones/{camionId}
+  await setDoc(doc(db, "camiones", camionId), payload, { merge: true });
+}
+
+btnStartTrack.addEventListener("click", async () => {
+  const camionId = (camionIdEl.value || "").trim();
+  if (!camionId) return setMsg("⚠️ Ingresá el ID/patente del camión.", false);
+
+  if (!("geolocation" in navigator)) {
+    return setMsg("❌ Este dispositivo no tiene geolocalización.", false);
+  }
+
+  // Evitar doble tracking
+  if (watchId) navigator.geolocation.clearWatch(watchId);
+
+  btnStartTrack.disabled = true;
+  btnStopTrack.disabled = false;
+
+  setMsg("📡 Iniciando monitoreo...");
+
+  // Primera escritura (online=true aunque todavía no llegó posición)
+  await upsertCamion(camionId, {
+    productorId,
+    camionId,
+    empleadoDni,
+    online: true,
+    updatedAt: serverTimestamp(),
+    lastSeen: Date.now()
+  });
+
+  watchId = navigator.geolocation.watchPosition(
+    async (pos) => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+
+      await upsertCamion(camionId, {
+        productorId,
+        camionId,
+        empleadoDni,
+        lat,
+        lng,
+        accuracy: Math.round(pos.coords.accuracy || 0),
+        speed: pos.coords.speed ?? null,     // m/s (puede venir null)
+        heading: pos.coords.heading ?? null, // grados (puede venir null)
+        online: true,
+        updatedAt: serverTimestamp(),
+        lastSeen: Date.now()
+      });
+
+      setMsg(`✅ Enviando ubicación… (${lat.toFixed(5)}, ${lng.toFixed(5)})`);
+    },
+    async (err) => {
+      console.error("GPS watch error:", err);
+
+      // si falla el GPS, dejamos online=false (opcional)
+      try {
+        const camionId = (camionIdEl.value || "").trim();
+        if (camionId) {
+          await upsertCamion(camionId, {
+            productorId,
+            camionId,
+            empleadoDni,
+            online: false,
+            updatedAt: serverTimestamp(),
+            lastSeen: Date.now()
+          });
+        }
+      } catch { /* ignore */ }
+
+      setMsg("❌ Error de GPS. Activá permisos/ubicación del celular.", false);
+      btnStartTrack.disabled = false;
+      btnStopTrack.disabled = true;
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 3000 }
+  );
+});
+
+btnStopTrack.addEventListener("click", async () => {
+  const camionId = (camionIdEl.value || "").trim();
+
+  if (watchId) {
+    navigator.geolocation.clearWatch(watchId);
+    watchId = null;
+  }
+
+  btnStartTrack.disabled = false;
+  btnStopTrack.disabled = true;
+
+  setMsg("⏹ Monitoreo detenido.");
+
+  // marcar offline
+  if (camionId) {
+    try {
+      await updateDoc(doc(db, "camiones", camionId), {
+        online: false,
+        updatedAt: serverTimestamp(),
+        lastSeen: Date.now()
+      });
+    } catch (e) {
+      console.warn("No pude marcar offline:", e);
+    }
+  }
+});
+
       }
     }
   </script>
