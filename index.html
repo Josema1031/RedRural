@@ -34,7 +34,14 @@
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Red Rural — Gestión de empleados, tareas y caminos" />
 <meta name="twitter:description" content="Control rural con mapa y GPS: empleados, marcaciones, tareas, alertas y caminos." />
-<meta name="twitter:image" content="https://chatgpt.com/backend-api/estuary/content?id=file_00000000eb90720e9864005735b08066&ts=491130&p=fs&cid=1&sig=f3e4278579d153862fb2641dd58b9dd03c658ea10a6377716beaadb6474346e7&v=0" />
+<meta name="twitter:image" content="https://josema1031.github.io/RedRural/img/logo.png" />
+
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#14532d">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
 
 <link rel="icon" href="img/logo.png" />
   <style>
@@ -89,6 +96,17 @@
   <a href="caminos/index.html" class="btn">🗺 Ver estado de los caminos</a>
   <a href="productor/login.html" class="btn">👨‍🌾 Entrar como Productor</a>
   <a href="empleado/login.html" class="btn">👷 Entrar como Empleado</a>
+
+  <script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./service-worker.js")
+        .then(() => console.log("✅ SW registrado"))
+        .catch((e) => console.warn("❌ SW error:", e));
+    });
+  }
+</script>
+
 
 </body>
 </html>

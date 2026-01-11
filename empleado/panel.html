@@ -5,6 +5,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Panel Empleado — RuralControl</title>
+  <link rel="manifest" href="../manifest.json">
+  <meta name="theme-color" content="#14532d">
+  <link rel="apple-touch-icon" href="../img/logo.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
   <style>
     body {
       margin: 0;
@@ -490,6 +495,16 @@
       }
     }
   </script>
+  <script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("../service-worker.js")
+        .then(() => console.log("✅ SW registrado (empleado)"))
+        .catch((e) => console.warn("❌ SW error (empleado):", e));
+    });
+  }
+</script>
+
 </body>
 
 </html>
