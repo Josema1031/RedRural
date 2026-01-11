@@ -6,20 +6,98 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Panel Empleado — RuralControl</title>
   <style>
-    body { margin:0; padding:18px; font-family:Arial,sans-serif; background:#f0f2f3 }
-    .top { display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap }
-    .top h1 { margin:0; font-size:20px }
-    .btn { border:0; border-radius:10px; padding:10px 12px; font-weight:800; cursor:pointer }
-    .btn-out { background:#111827; color:#fff }
-    .wrap { max-width:980px; margin:0 auto }
-    .grid { display:grid; grid-template-columns:1fr; gap:14px; margin-top:14px }
-    @media(min-width:900px){ .grid{ grid-template-columns:1fr 1fr } }
-    .card { background:#fff; border-radius:14px; padding:16px; box-shadow:0 10px 25px rgba(0,0,0,.10) }
-    .item { background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px; padding:12px; margin-top:10px }
-    .muted { color:#6b7280; font-size:13px }
-    .actions { margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; }
-    .btn-ok { background:#14532d; color:#fff; border:0; border-radius:10px; padding:8px 10px; font-weight:800; cursor:pointer; }
-    .btn-ok[disabled]{ opacity:.6; cursor:not-allowed; }
+    body {
+      margin: 0;
+      padding: 18px;
+      font-family: Arial, sans-serif;
+      background: #f0f2f3
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap
+    }
+
+    .top h1 {
+      margin: 0;
+      font-size: 20px
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-weight: 800;
+      cursor: pointer
+    }
+
+    .btn-out {
+      background: #111827;
+      color: #fff
+    }
+
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-top: 14px
+    }
+
+    @media(min-width:900px) {
+      .grid {
+        grid-template-columns: 1fr 1fr
+      }
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, .10)
+    }
+
+    .item {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px
+    }
+
+    .muted {
+      color: #6b7280;
+      font-size: 13px
+    }
+
+    .actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-ok {
+      background: #14532d;
+      color: #fff;
+      border: 0;
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .btn-ok[disabled] {
+      opacity: .6;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 
@@ -28,56 +106,58 @@
     <div class="top">
       <h1>📋 Panel del Empleado</h1>
       <div style="display:flex;gap:10px;align-items:center">
-        <a class="btn btn-out" href="../index.html" id="btnSalir"
-          style="text-decoration:none;display:inline-block">⬅ Salir</a>
+        <a class="btn btn-out" href="../index.html" id="btnSalir" style="text-decoration:none;display:inline-block">⬅
+          Salir</a>
       </div>
     </div>
 
     <p class="muted" id="sub"></p>
 
     <div class="grid">
-  <div class="card">
-    <h2 style="margin:0 0 8px">✅ Tareas asignadas</h2>
-    <div id="listaTareas" class="muted">Cargando...</div>
-  </div>
+      <div class="card">
+        <h2 style="margin:0 0 8px">✅ Tareas asignadas</h2>
+        <div id="listaTareas" class="muted">Cargando...</div>
+      </div>
 
-  <div class="card">
-    <h2 style="margin:0 0 8px">📣 Alertas del Productor</h2>
-    <div id="listaAlertas" class="muted">Cargando...</div>
-  </div>
+      <div class="card">
+        <h2 style="margin:0 0 8px">📣 Alertas del Productor</h2>
+        <div id="listaAlertas" class="muted">Cargando...</div>
+      </div>
 
-  <!-- ✅ NUEVO: Monitoreo Camión -->
-  <div class="card">
-    <h2 style="margin:0 0 8px">🚚 Monitoreo del camión</h2>
-    <div class="muted" style="margin-bottom:10px">
-      Enviá tu ubicación en tiempo real al Productor.
+      <!-- ✅ NUEVO: Monitoreo Camión -->
+      <div class="card">
+        <h2 style="margin:0 0 8px">🚚 Monitoreo del camión</h2>
+        <div class="muted" style="margin-bottom:10px">
+          Enviá tu ubicación en tiempo real al Productor.
+        </div>
+
+        <label style="display:block;font-size:.85rem;margin-top:8px;margin-bottom:4px;color:#374151">
+          ID / Patente del camión
+        </label>
+        <input id="camionId" placeholder="Ej: ABC123 o CAMION-1"
+          style="width:100%;padding:10px;border-radius:10px;border:1px solid #e5e7eb" />
+
+        <div class="actions" style="margin-top:10px">
+          <button class="btn-ok" id="btnStartTrack">▶ Iniciar</button>
+          <button class="btn" id="btnStopTrack"
+            style="background:#7f1d1d;color:#fff;border-radius:10px;padding:8px 10px;font-weight:800" disabled>
+            ■ Detener
+          </button>
+        </div>
+
+        <div id="msgTrack" class="muted" style="margin-top:10px">Estado: detenido</div>
+      </div>
     </div>
-
-    <label style="display:block;font-size:.85rem;margin-top:8px;margin-bottom:4px;color:#374151">
-      ID / Patente del camión
-    </label>
-    <input id="camionId" placeholder="Ej: ABC123 o CAMION-1" style="width:100%;padding:10px;border-radius:10px;border:1px solid #e5e7eb"/>
-
-    <div class="actions" style="margin-top:10px">
-      <button class="btn-ok" id="btnStartTrack">▶ Iniciar</button>
-      <button class="btn" id="btnStopTrack" style="background:#7f1d1d;color:#fff;border-radius:10px;padding:8px 10px;font-weight:800" disabled>
-        ■ Detener
-      </button>
-    </div>
-
-    <div id="msgTrack" class="muted" style="margin-top:10px">Estado: detenido</div>
-  </div>
-</div>
 
   </div>
 
   <script type="module">
     import { auth, db } from "../firebase-init.js";
     import { onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-   import {
-  collection, query, where, onSnapshot, orderBy,
-  doc, updateDoc, setDoc, serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import {
+      collection, query, where, onSnapshot, orderBy,
+      doc, updateDoc, setDoc, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
     const empleadoDni = (localStorage.getItem("empleadoDni") || "").trim();
@@ -90,11 +170,24 @@
     sub.textContent = empleadoDni ? `Sesión: DNI ${empleadoDni}` : "Sin sesión activa.";
 
     // Salida limpia
-    document.getElementById("btnSalir").addEventListener("click", () => {
+    document.getElementById("btnSalir").addEventListener("click", (e) => {
+      const activo = localStorage.getItem("trackingActivo") === "1";
+      if (activo) {
+        const ok = confirm("El monitoreo está INICIADO. Si salís, el GPS puede cortarse. ¿Querés salir igual?");
+        if (!ok) {
+          e.preventDefault();
+          return;
+        }
+        // ✅ NO borramos localStorage, así al volver reanuda
+        return;
+      }
+
+      // salida limpia normal
       localStorage.removeItem("empleadoDni");
       localStorage.removeItem("empleadoDocId");
       localStorage.removeItem("productorId");
     });
+
 
     if (!empleadoDni || !productorId) {
       listaTareas.textContent = "Tenés que iniciar sesión.";
@@ -225,124 +318,174 @@
         });
 
         // ===============================
-// 🚚 TRACKING CAMIÓN (GPS → Firestore)
-// ===============================
-let watchId = null;
+        // 🚚 TRACKING CAMIÓN — OPCIÓN 2
+        // - No se detiene por salir.
+        // - Reanuda solo si estaba activo.
+        // - WakeLock para evitar que el celular duerma.
+        // ===============================
+        let watchId = null;
 
-const camionIdEl = document.getElementById("camionId");
-const btnStartTrack = document.getElementById("btnStartTrack");
-const btnStopTrack = document.getElementById("btnStopTrack");
-const msgTrack = document.getElementById("msgTrack");
+        const camionIdEl = document.getElementById("camionId");
+        const btnStartTrack = document.getElementById("btnStartTrack");
+        const btnStopTrack = document.getElementById("btnStopTrack");
+        const msgTrack = document.getElementById("msgTrack");
 
-function setMsg(t, ok = true) {
-  msgTrack.textContent = t;
-  msgTrack.style.color = ok ? "#14532d" : "#b91c1c";
-}
+        const TRACK_KEY = "trackingActivo";
+        const TRACK_CAMION_KEY = "trackingCamionId";
 
-async function upsertCamion(camionId, payload) {
-  // doc: camiones/{camionId}
-  await setDoc(doc(db, "camiones", camionId), payload, { merge: true });
-}
+        function setMsg(t, ok = true) {
+          msgTrack.textContent = t;
+          msgTrack.style.color = ok ? "#14532d" : "#b91c1c";
+        }
 
-btnStartTrack.addEventListener("click", async () => {
-  const camionId = (camionIdEl.value || "").trim();
-  if (!camionId) return setMsg("⚠️ Ingresá el ID/patente del camión.", false);
+        async function upsertCamion(camionId, payload) {
+          await setDoc(doc(db, "camiones", camionId), payload, { merge: true });
+        }
 
-  if (!("geolocation" in navigator)) {
-    return setMsg("❌ Este dispositivo no tiene geolocalización.", false);
-  }
+        // --------------------
+        // Wake Lock
+        // --------------------
+        let wakeLock = null;
 
-  // Evitar doble tracking
-  if (watchId) navigator.geolocation.clearWatch(watchId);
+        async function activarWakeLock() {
+          try {
+            if ("wakeLock" in navigator) {
+              wakeLock = await navigator.wakeLock.request("screen");
+              console.log("✅ WakeLock activo");
+            }
+          } catch (e) {
+            console.warn("WakeLock no disponible:", e);
+          }
+        }
 
-  btnStartTrack.disabled = true;
-  btnStopTrack.disabled = false;
+        async function desactivarWakeLock() {
+          try {
+            if (wakeLock) {
+              await wakeLock.release();
+              wakeLock = null;
+              console.log("⏹ WakeLock liberado");
+            }
+          } catch { }
+        }
 
-  setMsg("📡 Iniciando monitoreo...");
+        // Si vuelve a primer plano y estaba activo, re-pedir WakeLock
+        document.addEventListener("visibilitychange", () => {
+          if (document.visibilityState === "visible" && localStorage.getItem(TRACK_KEY) === "1") {
+            activarWakeLock();
+          }
+        });
 
-  // Primera escritura (online=true aunque todavía no llegó posición)
-  await upsertCamion(camionId, {
-    productorId,
-    camionId,
-    empleadoDni,
-    online: true,
-    updatedAt: serverTimestamp(),
-    lastSeen: Date.now()
-  });
+        // --------------------
+        // Start
+        // --------------------
+        btnStartTrack.addEventListener("click", async () => {
+          const camionId = (camionIdEl.value || "").trim();
+          if (!camionId) return setMsg("⚠️ Ingresá el ID/patente del camión.", false);
 
-  watchId = navigator.geolocation.watchPosition(
-    async (pos) => {
-      const lat = pos.coords.latitude;
-      const lng = pos.coords.longitude;
+          if (!("geolocation" in navigator)) {
+            return setMsg("❌ Este dispositivo no tiene geolocalización.", false);
+          }
 
-      await upsertCamion(camionId, {
-        productorId,
-        camionId,
-        empleadoDni,
-        lat,
-        lng,
-        accuracy: Math.round(pos.coords.accuracy || 0),
-        speed: pos.coords.speed ?? null,     // m/s (puede venir null)
-        heading: pos.coords.heading ?? null, // grados (puede venir null)
-        online: true,
-        updatedAt: serverTimestamp(),
-        lastSeen: Date.now()
-      });
+          // Persistir estado para reanudar
+          localStorage.setItem(TRACK_KEY, "1");
+          localStorage.setItem(TRACK_CAMION_KEY, camionId);
+          await activarWakeLock();
 
-      setMsg(`✅ Enviando ubicación… (${lat.toFixed(5)}, ${lng.toFixed(5)})`);
-    },
-    async (err) => {
-      console.error("GPS watch error:", err);
+          // Evitar doble tracking
+          if (watchId) navigator.geolocation.clearWatch(watchId);
 
-      // si falla el GPS, dejamos online=false (opcional)
-      try {
-        const camionId = (camionIdEl.value || "").trim();
-        if (camionId) {
+          btnStartTrack.disabled = true;
+          btnStopTrack.disabled = false;
+
+          setMsg("📡 Iniciando monitoreo...");
+
+          // Primer ping
           await upsertCamion(camionId, {
             productorId,
             camionId,
             empleadoDni,
-            online: false,
+            online: true,
             updatedAt: serverTimestamp(),
             lastSeen: Date.now()
           });
+
+          watchId = navigator.geolocation.watchPosition(
+            async (pos) => {
+              const lat = pos.coords.latitude;
+              const lng = pos.coords.longitude;
+
+              await upsertCamion(camionId, {
+                productorId,
+                camionId,
+                empleadoDni,
+                lat,
+                lng,
+                accuracy: Math.round(pos.coords.accuracy || 0),
+                speed: pos.coords.speed ?? null,
+                heading: pos.coords.heading ?? null,
+                online: true,
+                updatedAt: serverTimestamp(),
+                lastSeen: Date.now()
+              });
+
+              setMsg(`✅ Enviando ubicación… (${lat.toFixed(5)}, ${lng.toFixed(5)})`);
+            },
+            (err) => {
+              console.error("GPS watch error:", err);
+              // ❗ No marcamos offline automáticamente
+              setMsg("❌ Error de GPS. Activá permisos/ubicación del celular.", false);
+              btnStartTrack.disabled = false;
+              btnStopTrack.disabled = true;
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 3000 }
+          );
+        });
+
+        // --------------------
+        // Stop (única forma de “detener” real)
+        // --------------------
+        btnStopTrack.addEventListener("click", async () => {
+          const camionId = (camionIdEl.value || "").trim();
+
+          localStorage.removeItem(TRACK_KEY);
+          localStorage.removeItem(TRACK_CAMION_KEY);
+          await desactivarWakeLock();
+
+          if (watchId) {
+            navigator.geolocation.clearWatch(watchId);
+            watchId = null;
+          }
+
+          btnStartTrack.disabled = false;
+          btnStopTrack.disabled = true;
+
+          setMsg("⏹ Monitoreo detenido.");
+
+          if (camionId) {
+            try {
+              await updateDoc(doc(db, "camiones", camionId), {
+                online: false,
+                updatedAt: serverTimestamp(),
+                lastSeen: Date.now()
+              });
+            } catch (e) {
+              console.warn("No pude marcar offline:", e);
+            }
+          }
+        });
+
+        // --------------------
+        // Auto-reanudar si estaba activo
+        // --------------------
+        const estabaActivo = localStorage.getItem(TRACK_KEY) === "1";
+        const camionGuardado = (localStorage.getItem(TRACK_CAMION_KEY) || "").trim();
+
+        if (estabaActivo && camionGuardado) {
+          camionIdEl.value = camionGuardado;
+          btnStartTrack.click();
         }
-      } catch { /* ignore */ }
 
-      setMsg("❌ Error de GPS. Activá permisos/ubicación del celular.", false);
-      btnStartTrack.disabled = false;
-      btnStopTrack.disabled = true;
-    },
-    { enableHighAccuracy: true, timeout: 10000, maximumAge: 3000 }
-  );
-});
 
-btnStopTrack.addEventListener("click", async () => {
-  const camionId = (camionIdEl.value || "").trim();
-
-  if (watchId) {
-    navigator.geolocation.clearWatch(watchId);
-    watchId = null;
-  }
-
-  btnStartTrack.disabled = false;
-  btnStopTrack.disabled = true;
-
-  setMsg("⏹ Monitoreo detenido.");
-
-  // marcar offline
-  if (camionId) {
-    try {
-      await updateDoc(doc(db, "camiones", camionId), {
-        online: false,
-        updatedAt: serverTimestamp(),
-        lastSeen: Date.now()
-      });
-    } catch (e) {
-      console.warn("No pude marcar offline:", e);
-    }
-  }
-});
 
       }
     }
