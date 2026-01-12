@@ -56,6 +56,15 @@
       border-radius: 3px;
     }
 
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 16px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, .10);
+    }
+
+
     .fila {
       display: flex;
       gap: 10px;
@@ -437,6 +446,14 @@
       <span class="texto">Tareas</span>
       <div class="indicador"></div>
     </button>
+
+    <button data-target="sec-calculadora" class="nav-btn">
+      <span class="icono">🧮</span>
+      <span class="texto">Calculadora</span>
+      <div class="indicador"></div>
+    </button>
+
+
   </nav>
 
   <div class="container">
@@ -488,9 +505,9 @@
       <p class="status-msg" id="msgMarcOnline"></p>
       <div id="listaMarcOnline" class="lista-simple"></div>
     </section>
-    
 
-    
+
+
 
     <!-- ============================= -->
     <!-- SECCIÓN: CAMIONES (TRACKING) -->
@@ -545,6 +562,8 @@
       </div>
 
       <p class="status-msg" id="msgAlertas"></p>
+      <div id="listaAlertas" class="lista-simple"></div>
+
       <!-- ✅ Selección visual de vecinos para enviar alerta -->
       <div style="margin-top:14px;">
         <h3 style="margin:10px 0 6px; color:#14532d;">📲 Enviar a vecinos</h3>
@@ -662,6 +681,72 @@
       <button class="btn-mini" id="btnBorrarTareas">🗑 Borrar tareas locales</button>
     </section>
 
+    <!-- ============================= -->
+    <!-- SECCIÓN: CALCULADORA -->
+    <!-- ============================= -->
+    <section id="sec-calculadora" class="hidden">
+      <h2>Calculadora agropecuaria</h2>
+      <small>Herramientas rápidas para campo (fertilización y más).</small>
+
+      <!-- 1) kg/ha → total -->
+      <div class="card" style="margin-top:14px;">
+        <h3 id="agroTitulo" style="margin:0 0 8px; color:#14532d;">🧪 Fertilizante total (por ha → total)</h3>
+
+
+        <div class="fila">
+          <input id="calcHa" type="number" step="0.01" placeholder="Hectáreas (ej: 25.5)">
+          <input id="calcKgHa" type="number" step="0.1" placeholder="Dosis por ha (ej: 120)">
+
+          <select id="agroUnidad">
+            <option value="kg">Kg/ha</option>
+            <option value="l">L/ha</option>
+          </select>
+
+          <button class="btn-primario" id="btnCalcTotal">Calcular</button>
+          <button class="btn-secundario" id="btnCalcTotalClear" type="button">Limpiar</button>
+             <p class="status-msg" id="resCalcTotal"></p>
+        </div>
+
+
+        <!-- 2) N requerido → Urea -->
+        <div class="card" style="margin-top:14px;">
+          <h3 style="margin:0 0 8px; color:#14532d;">🌿 Nitrógeno → Urea (46% N)</h3>
+          <div class="fila">
+            <input id="calcNkg" type="number" step="0.1" placeholder="N requerido (kg de N total)">
+            <button class="btn-primario" id="btnCalcUrea">Calcular</button>
+            <button class="btn-secundario" id="btnCalcUreaClear" type="button">Limpiar</button>
+          </div>
+          <p class="status-msg" id="resCalcUrea"></p>
+
+          <small style="display:block;color:#6b7280;margin-top:6px;">
+            Fórmula: Urea (kg) = N (kg) / 0.46
+          </small>
+        </div>
+
+        <!-- 3) GANADERÍA: Consumo Materia Seca -->
+        <div class="card" style="margin-top:14px;">
+          <h3 style="margin:0 0 8px; color:#14532d;">🐄 Ganadería: Consumo de Materia Seca</h3>
+          <div class="fila">
+            <input id="ganPeso" type="number" step="0.1" placeholder="Peso vivo (kg) ej: 380">
+            <input id="ganPorcMS" type="number" step="0.1" placeholder="% MS del PV ej: 2.5">
+            <input id="ganCabezas" type="number" step="1" placeholder="Cantidad de animales ej: 120">
+          </div>
+
+          <div class="fila">
+            <button class="btn-primario" id="btnCalcMS">Calcular</button>
+            <button class="btn-secundario" id="btnCalcMSClear" type="button">Limpiar</button>
+          </div>
+
+          <p class="status-msg" id="resCalcMS"></p>
+
+          <small style="display:block;color:#6b7280;margin-top:6px;">
+            Fórmulas: MS/día/cab = PV * (%MS/100) • Total/día = MS/cab * cabezas • Mes = Total/día * 30
+          </small>
+        </div>
+
+    </section>
+
+
   </div>
 
   <!-- Leaflet JS -->
@@ -672,9 +757,11 @@
     import { auth, db } from "../firebase-init.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import {
-      collection, addDoc, onSnapshot, query, where, serverTimestamp,
-      getDocs, updateDoc, doc, setDoc, writeBatch
+      collection, query, where, onSnapshot, orderBy,
+      doc, setDoc, updateDoc, deleteDoc, writeBatch, serverTimestamp,
+      getDocs, addDoc
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
 
     let productorId = null;
 
@@ -756,52 +843,54 @@
     // =========================
     // 3) INICIO DEL PANEL
     // =========================
-   function iniciarPanel() {
-  cargarEmpleados();
-  escucharTareas();
-  escucharMarcacionesOnline();
-  escucharVecinos();
-  escucharVecinosParaAlertas();
-  escucharAlertas();
+    function iniciarPanel() {
+      cargarEmpleados();
+      escucharTareas();
+      escucharMarcacionesOnline();
+      escucharVecinos();
+      escucharVecinosParaAlertas();
+      escucharAlertas();
 
-  // ✅ AHORA sí (porque ya existe la función global)
-  escucharCamiones();
+      // ✅ AHORA sí (porque ya existe la función global)
+      escucharCamiones();
+      initCalculadora();
 
-  setTimeout(() => {
-    initMapaMarcaciones();
-    initMapaCaminos();
-  }, 300);
 
-  setTimeout(() => marcarChipActivo("filtroTodos"), 350);
+      setTimeout(() => {
+        initMapaMarcaciones();
+        initMapaCaminos();
+      }, 300);
 
-  document.getElementById("caminoEstado").dispatchEvent(new Event("change"));
-}
+      setTimeout(() => marcarChipActivo("filtroTodos"), 350);
+
+      document.getElementById("caminoEstado").dispatchEvent(new Event("change"));
+    }
 
 
 
     /* ============================================================
    🚚 CAMIONES (TRACKING REALTIME)
 ============================================================ */
-let mapaCamiones = null;
-let capaCamiones = null;
-const markersCamiones = new Map(); // camionId -> marker
+    let mapaCamiones = null;
+    let capaCamiones = null;
+    const markersCamiones = new Map(); // camionId -> marker
 
-function initMapaCamiones() {
-  // ✅ si el div no está, salimos sin romper
-  const mapDiv = document.getElementById("mapCamiones");
-  if (!mapDiv) return;
+    function initMapaCamiones() {
+      // ✅ si el div no está, salimos sin romper
+      const mapDiv = document.getElementById("mapCamiones");
+      if (!mapDiv) return;
 
-  if (mapaCamiones) return;
-  mapaCamiones = L.map("mapCamiones").setView([-33, -59.3], 10);
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapaCamiones);
-  capaCamiones = L.layerGroup().addTo(mapaCamiones);
-}
+      if (mapaCamiones) return;
+      mapaCamiones = L.map("mapCamiones").setView([-33, -59.3], 10);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapaCamiones);
+      capaCamiones = L.layerGroup().addTo(mapaCamiones);
+    }
 
-function renderCamionItem(c) {
-  const upd = c.lastSeen ? new Date(c.lastSeen).toLocaleString("es-AR") : "—";
-  const onlineTxt = c.online ? "🟢 Online" : "🔴 Offline";
-  const accTxt = (c.accuracy != null) ? `• ±${c.accuracy}m` : "";
-  return `
+    function renderCamionItem(c) {
+      const upd = c.lastSeen ? new Date(c.lastSeen).toLocaleString("es-AR") : "—";
+      const onlineTxt = c.online ? "🟢 Online" : "🔴 Offline";
+      const accTxt = (c.accuracy != null) ? `• ±${c.accuracy}m` : "";
+      return `
     <div class="item-simple">
       <div class="item-info">
         <strong>🚚 ${c.camionId ?? "(sin ID)"}</strong><br>
@@ -811,106 +900,106 @@ function renderCamionItem(c) {
       <button class="btn-secundario" data-zoom="${c.camionId ?? ""}">Ver</button>
     </div>
   `;
-}
+    }
 
-function upsertMarkerCamion(c) {
-  if (!mapaCamiones || !capaCamiones) return;
+    function upsertMarkerCamion(c) {
+      if (!mapaCamiones || !capaCamiones) return;
 
-  const camionId = c.camionId;
-  if (!camionId) return;
+      const camionId = c.camionId;
+      if (!camionId) return;
 
-  if (typeof c.lat !== "number" || typeof c.lng !== "number") return;
+      if (typeof c.lat !== "number" || typeof c.lng !== "number") return;
 
-  const popup = `
+      const popup = `
     <b>🚚 ${camionId}</b><br>
     Chofer: ${c.empleadoDni ?? "—"}<br>
     Estado: ${c.online ? "🟢 Online" : "🔴 Offline"}<br>
     Precisión: ${c.accuracy ?? "—"} m
   `;
 
-  if (markersCamiones.has(camionId)) {
-    const m = markersCamiones.get(camionId);
-    m.setLatLng([c.lat, c.lng]);
-    m.setPopupContent(popup);
-  } else {
-    const m = L.marker([c.lat, c.lng]).addTo(capaCamiones);
-    m.bindPopup(popup);
-    markersCamiones.set(camionId, m);
-  }
-}
-
-function limpiarMarkersNoPresentes(setIdsActuales) {
-  for (const [id, marker] of markersCamiones.entries()) {
-    if (!setIdsActuales.has(id)) {
-      capaCamiones.removeLayer(marker);
-      markersCamiones.delete(id);
-    }
-  }
-}
-
-function escucharCamiones() {
-  if (!productorId) return;
-
-  const msgCamiones = document.getElementById("msgCamiones");
-  const listaCamiones = document.getElementById("listaCamiones");
-
-  // ✅ Guard: si no existe la sección, no rompas
-  if (!msgCamiones || !listaCamiones) {
-    console.warn("Faltan elementos de Camiones (msgCamiones/listaCamiones).");
-    return;
-  }
-
-  const qC = query(collection(db, "camiones"), where("productorId", "==", productorId));
-
-  onSnapshot(qC, (snap) => {
-    initMapaCamiones();
-
-    listaCamiones.innerHTML = "";
-    msgCamiones.style.color = "#4b5563";
-
-    if (snap.empty) {
-      msgCamiones.textContent = "No hay camiones transmitiendo todavía.";
-      if (capaCamiones) capaCamiones.clearLayers();
-      markersCamiones.clear();
-      return;
+      if (markersCamiones.has(camionId)) {
+        const m = markersCamiones.get(camionId);
+        m.setLatLng([c.lat, c.lng]);
+        m.setPopupContent(popup);
+      } else {
+        const m = L.marker([c.lat, c.lng]).addTo(capaCamiones);
+        m.bindPopup(popup);
+        markersCamiones.set(camionId, m);
+      }
     }
 
-    const idsActuales = new Set();
-    const camiones = [];
+    function limpiarMarkersNoPresentes(setIdsActuales) {
+      for (const [id, marker] of markersCamiones.entries()) {
+        if (!setIdsActuales.has(id)) {
+          capaCamiones.removeLayer(marker);
+          markersCamiones.delete(id);
+        }
+      }
+    }
 
-    snap.forEach((d) => {
-      const c = d.data();
-      camiones.push(c);
-      if (c.camionId) idsActuales.add(c.camionId);
-      upsertMarkerCamion(c);
-    });
+    function escucharCamiones() {
+      if (!productorId) return;
 
-    limpiarMarkersNoPresentes(idsActuales);
+      const msgCamiones = document.getElementById("msgCamiones");
+      const listaCamiones = document.getElementById("listaCamiones");
 
-    camiones
-      .sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0))
-      .forEach((c) => {
-        listaCamiones.innerHTML += renderCamionItem(c);
+      // ✅ Guard: si no existe la sección, no rompas
+      if (!msgCamiones || !listaCamiones) {
+        console.warn("Faltan elementos de Camiones (msgCamiones/listaCamiones).");
+        return;
+      }
+
+      const qC = query(collection(db, "camiones"), where("productorId", "==", productorId));
+
+      onSnapshot(qC, (snap) => {
+        initMapaCamiones();
+
+        listaCamiones.innerHTML = "";
+        msgCamiones.style.color = "#4b5563";
+
+        if (snap.empty) {
+          msgCamiones.textContent = "No hay camiones transmitiendo todavía.";
+          if (capaCamiones) capaCamiones.clearLayers();
+          markersCamiones.clear();
+          return;
+        }
+
+        const idsActuales = new Set();
+        const camiones = [];
+
+        snap.forEach((d) => {
+          const c = d.data();
+          camiones.push(c);
+          if (c.camionId) idsActuales.add(c.camionId);
+          upsertMarkerCamion(c);
+        });
+
+        limpiarMarkersNoPresentes(idsActuales);
+
+        camiones
+          .sort((a, b) => (b.lastSeen || 0) - (a.lastSeen || 0))
+          .forEach((c) => {
+            listaCamiones.innerHTML += renderCamionItem(c);
+          });
+
+        msgCamiones.textContent = `Camiones encontrados: ${camiones.length}`;
+
+        listaCamiones.querySelectorAll("button[data-zoom]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const id = btn.getAttribute("data-zoom");
+            const marker = markersCamiones.get(id);
+            if (!marker) return;
+            mapaCamiones.setView(marker.getLatLng(), 16, { animate: true });
+            marker.openPopup();
+          });
+        });
+
+      }, (err) => {
+        console.error("Snapshot camiones:", err);
+        msgCamiones.style.color = "#b91c1c";
+        msgCamiones.textContent = "Error escuchando camiones (permisos/reglas/índices).";
       });
-
-    msgCamiones.textContent = `Camiones encontrados: ${camiones.length}`;
-
-    listaCamiones.querySelectorAll("button[data-zoom]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const id = btn.getAttribute("data-zoom");
-        const marker = markersCamiones.get(id);
-        if (!marker) return;
-        mapaCamiones.setView(marker.getLatLng(), 16, { animate: true });
-        marker.openPopup();
-      });
-    });
-
-  }, (err) => {
-    console.error("Snapshot camiones:", err);
-    msgCamiones.style.color = "#b91c1c";
-    msgCamiones.textContent = "Error escuchando camiones (permisos/reglas/índices).";
-  });
-}
+    }
 
     /* ============================================================
        EMPLEADOS (FIREBASE)
@@ -1394,6 +1483,8 @@ function escucharCamiones() {
               <br><br>
 
               <button onclick="cambiarEstadoCamino('${docSnap.id}')">Cambiar estado</button>
+              <button onclick="borrarCamino('${docSnap.id}')">🗑️ Eliminar</button>
+
             `);
           }
 
@@ -1484,6 +1575,18 @@ function escucharCamiones() {
       }
       await updateDoc(doc(db, "caminos", id), { estado: nuevo });
     };
+
+    window.borrarCamino = async (id) => {
+      if (!confirm("¿Eliminar este punto/tramo de camino?")) return;
+      try {
+        await deleteDoc(doc(db, "caminos", id));
+        mostrarMensaje("🗑️ Camino eliminado", "#b91c1c");
+      } catch (e) {
+        console.error("Error borrando camino:", e);
+        alert("No se pudo eliminar (revisá permisos/reglas).");
+      }
+    };
+
 
     window.copiarCoord = async (txt) => {
       try {
@@ -1634,21 +1737,103 @@ function escucharCamiones() {
         </div>
       `;
 
-          // Botón mini para WhatsApp (opcional)
+          // WhatsApp
           const btnWA = document.createElement("a");
           btnWA.className = "btn-secundario";
           btnWA.textContent = "WhatsApp";
-          btnWA.href = `https://wa.me/${normalizarTel(v.telefono)}?text=${encodeURIComponent("Hola " + (v.nombre || "") + ", te contacto desde Red Rural.")}`;
+          btnWA.href = `https://wa.me/${normalizarTel(v.telefono)}?text=${encodeURIComponent(
+            "Hola " + (v.nombre || "") + ", te contacto desde Red Rural."
+          )}`;
           btnWA.target = "_blank";
 
+          // Editar
+          const btnEdit = document.createElement("button");
+          btnEdit.className = "btn-secundario";
+          btnEdit.textContent = "Editar";
+          btnEdit.onclick = () => editarVecino(docSnap.id, v);
+
+          // Eliminar
+          const btnDel = document.createElement("button");
+          btnDel.className = "btn-secundario";
+          btnDel.textContent = "Eliminar";
+          btnDel.onclick = () => eliminarVecino(docSnap.id, v);
+
           item.appendChild(btnWA);
+          item.appendChild(btnEdit);
+          item.appendChild(btnDel);
+
           listaVecinos.appendChild(item);
         });
+
       }, (err) => {
         console.error("Error escuchando vecinos:", err);
         listaVecinos.innerHTML = "<small>❌ Sin permisos para leer vecinos (revisá reglas).</small>";
       });
     }
+
+
+    async function eliminarVecino(docId, v) {
+      if (!confirm(`¿Eliminar a ${v.nombre || "este vecino"}?`)) return;
+      try {
+        await deleteDoc(doc(db, "vecinos", docId));
+        mostrarMsg(msgVecinos, "🗑️ Vecino eliminado.", "#b91c1c");
+      } catch (e) {
+        console.error("Error eliminando vecino:", e);
+        mostrarMsg(msgVecinos, "❌ No se pudo eliminar (permisos/reglas).", "#b91c1c", 5000);
+      }
+    }
+
+    async function editarVecino(docId, v) {
+      const nuevoNombre = prompt("Nuevo nombre:", v.nombre || "");
+      if (nuevoNombre === null) return;
+
+      const telNuevoRaw = prompt("Nuevo teléfono (solo números):", v.telefono || "");
+      if (telNuevoRaw === null) return;
+
+      const telNuevo = normalizarTel(telNuevoRaw);
+
+      if (!nuevoNombre.trim() || !telNuevo.trim()) {
+        mostrarMsg(msgVecinos, "⚠️ Nombre y teléfono son obligatorios.", "#b91c1c");
+        return;
+      }
+      if (!validarTelAR(telNuevo)) {
+        mostrarMsg(msgVecinos, "⚠️ Teléfono inválido.", "#b91c1c");
+        return;
+      }
+
+      try {
+        // ✅ Caso 1: No cambió el teléfono → update normal
+        if (telNuevo === (v.telefono || "")) {
+          await updateDoc(doc(db, "vecinos", docId), {
+            nombre: nuevoNombre.trim(),
+            telefono: telNuevo,
+            timestamp: serverTimestamp()
+          });
+          mostrarMsg(msgVecinos, "✅ Vecino actualizado.", "#166534");
+          return;
+        }
+
+        // ✅ Caso 2 (tu caso): el ID del doc usa teléfono → hay que “mover” el doc
+        // vos creás con ID `${productorId}_${telefono}` :contentReference[oaicite:5]{index=5}
+        const nuevoId = `${productorId}_${telNuevo}`;
+
+        const batch = writeBatch(db);
+        batch.set(doc(db, "vecinos", nuevoId), {
+          productorId,
+          nombre: nuevoNombre.trim(),
+          telefono: telNuevo,
+          timestamp: serverTimestamp()
+        });
+        batch.delete(doc(db, "vecinos", docId));
+        await batch.commit();
+
+        mostrarMsg(msgVecinos, "✅ Vecino actualizado (teléfono cambiado).", "#166534");
+      } catch (e) {
+        console.error("Error editando vecino:", e);
+        mostrarMsg(msgVecinos, "❌ No se pudo editar (permisos/reglas).", "#b91c1c", 5000);
+      }
+    }
+
 
     /* ============================================================
    ✅ UI: VECINOS SELECCIONABLES PARA ALERTAS
@@ -1849,6 +2034,130 @@ function escucharCamiones() {
         mostrarMsg(msgAlertas, "❌ Error al enviar alerta (revisá permisos/reglas).", "#b91c1c", 6000);
       }
     });
+
+    function initCalculadora() {
+      const ha = document.getElementById("calcHa");
+      const kgHa = document.getElementById("calcKgHa");
+      const agroUnidad = document.getElementById("agroUnidad");
+      const agroTitulo = document.getElementById("agroTitulo");
+
+
+      const btnTotal = document.getElementById("btnCalcTotal");
+
+      const btnTotalClear = document.getElementById("btnCalcTotalClear");
+      const resTotal = document.getElementById("resCalcTotal");
+
+      const nkg = document.getElementById("calcNkg");
+      const btnUrea = document.getElementById("btnCalcUrea");
+      const btnUreaClear = document.getElementById("btnCalcUreaClear");
+      const resUrea = document.getElementById("resCalcUrea");
+      // 🐄 Ganadería: MS
+      const ganPeso = document.getElementById("ganPeso");
+      const ganPorcMS = document.getElementById("ganPorcMS");
+      const ganCabezas = document.getElementById("ganCabezas");
+      const btnMS = document.getElementById("btnCalcMS");
+      const btnMSClear = document.getElementById("btnCalcMSClear");
+      const resMS = document.getElementById("resCalcMS");
+
+
+      // ✅ Guard: si la sección no está (por algún error), no rompe
+      if (!btnTotal || !btnUrea || !btnMS) return;
+
+      const fmt = (n) => new Intl.NumberFormat("es-AR", { maximumFractionDigits: 2 }).format(n);
+
+      function actualizarUIAgroUnidad() {
+        const unidad = agroUnidad?.value || "kg";
+        const uHaTxt = unidad === "l" ? "L/ha" : "kg/ha";
+        const uTotTxt = unidad === "l" ? "Litros" : "kg";
+
+        if (agroTitulo) agroTitulo.textContent = `🧪 Fertilizante total (${uHaTxt} → ${uTotTxt})`;
+
+        // cambia el placeholder del input de dosis
+        if (kgHa) kgHa.placeholder = `Dosis ${uHaTxt} (ej: ${unidad === "l" ? "8" : "120"})`;
+      }
+      if (agroUnidad) {
+        agroUnidad.addEventListener("change", actualizarUIAgroUnidad);
+        actualizarUIAgroUnidad(); // estado inicial apenas carga
+      }
+
+
+      btnTotal.addEventListener("click", () => {
+        const haVal = Number(ha.value);
+        const kgHaVal = Number(kgHa.value);
+
+        if (!haVal || !kgHaVal || haVal <= 0 || kgHaVal <= 0) {
+          resTotal.style.color = "#b91c1c";
+          resTotal.textContent = "⚠️ Completá hectáreas y kg/ha con valores mayores a 0.";
+          return;
+        }
+
+        const total = haVal * kgHaVal;
+
+        const unidad = agroUnidad?.value || "kg"; // por si no existiera, cae en kg
+        const uTxt = unidad === "l" ? "Litros" : "kg";
+        const uHaTxt = unidad === "l" ? "L/ha" : "kg/ha";
+
+        resTotal.style.color = "#166534";
+        resTotal.textContent = `✅ Total: ${fmt(total)} ${uTxt} (para ${fmt(haVal)} ha a ${fmt(kgHaVal)} ${uHaTxt}).`;
+
+      });
+
+      btnTotalClear.addEventListener("click", () => {
+        ha.value = "";
+        kgHa.value = "";
+        if (agroUnidad) agroUnidad.value = "kg";
+        resTotal.textContent = "";
+
+      });
+
+      btnUrea.addEventListener("click", () => {
+        const nVal = Number(nkg.value);
+        if (!nVal || nVal <= 0) {
+          resUrea.style.color = "#b91c1c";
+          resUrea.textContent = "⚠️ Ingresá kg de N total (mayor a 0).";
+          return;
+        }
+
+        const ureaKg = nVal / 0.46;
+        resUrea.style.color = "#166534";
+        resUrea.textContent = `✅ Urea necesaria: ${fmt(ureaKg)} kg (para aportar ${fmt(nVal)} kg de N).`;
+      });
+
+      btnUreaClear.addEventListener("click", () => {
+        nkg.value = "";
+        resUrea.textContent = "";
+      });
+
+      // ✅ Consumo de Materia Seca
+      btnMS.addEventListener("click", () => {
+        const pv = Number(ganPeso.value);
+        const porc = Number(ganPorcMS.value);
+        const cab = Number(ganCabezas.value);
+
+        if (!pv || !porc || !cab || pv <= 0 || porc <= 0 || cab <= 0) {
+          resMS.style.color = "#b91c1c";
+          resMS.textContent = "⚠️ Completá peso, %MS y cabezas con valores mayores a 0.";
+          return;
+        }
+
+        const msPorCabDia = pv * (porc / 100);
+        const totalDia = msPorCabDia * cab;
+        const totalMes = totalDia * 30;
+
+        resMS.style.color = "#166534";
+        resMS.textContent =
+          `✅ MS por animal/día: ${fmt(msPorCabDia)} kg • Total/día: ${fmt(totalDia)} kg • Total/mes: ${fmt(totalMes)} kg`;
+      });
+
+      btnMSClear.addEventListener("click", () => {
+        ganPeso.value = "";
+        ganPorcMS.value = "";
+        ganCabezas.value = "";
+        resMS.textContent = "";
+      });
+
+    }
+
 
 
 
