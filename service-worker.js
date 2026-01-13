@@ -6,6 +6,7 @@ const APP_SHELL = [
   "./firebase-init.js",
   "./icons/icon-192.png",
   "./empleado/login.html",
+   "./productor/login.html",
   "./icons/icon-512.png"
   // Si tu panel empleado está en otra ruta, agregalo:
   // "./empleado/panel.html"
