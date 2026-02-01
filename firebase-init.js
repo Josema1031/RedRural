@@ -7,7 +7,7 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-aut
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // --- CONFIG ---
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyCRpSuQ3nSVvThu246TT0ai-G4OB9_yn_g",
   authDomain: "red-rural.firebaseapp.com",
   projectId: "red-rural",

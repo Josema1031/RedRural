@@ -386,6 +386,36 @@
         font-size: 12px;
       }
     }
+   /* ============================
+   HOY – Botones en fila (mobile)
+   ============================ */
+@media (max-width: 600px) {
+
+  /* Forzamos fila horizontal SOLO en este bloque */
+  .fila {
+    display: flex !important;
+    flex-direction: row !important; /* 🔥 clave */
+    flex-wrap: wrap !important;
+    gap: 10px;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .fila .btn-primario,
+  .fila .btn-secundario {
+    width: auto !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    font-size: 13px;
+    border-radius: 10px;
+    white-space: nowrap;
+    margin: 0 !important; /* por si hay márgenes viejos */
+  }
+}
+
+
   </style>
 </head>
 
@@ -393,20 +423,46 @@
   <header>
     <h1>Panel del Productor</h1>
   </header>
+  <!-- ✅ BANNER DE PLAN (monetización) -->
+  <div id="bannerPlan" style="background:#fff; border-bottom:1px solid #e5e7eb;">
+    <div
+      style="max-width:1000px;margin:auto;padding:12px 16px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;">
+      <div>
+        <strong id="planTitulo">Plan: —</strong>
+        <div id="planSub" style="font-size:13px;color:#6b7280;margin-top:2px;">—</div>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <button class="btn-secundario" id="btnComoActivarPro" type="button">Cómo activar PRO</button>
+        <button class="btn-primario" id="btnSimularPro" type="button" style="display:none;">(Admin) Activar PRO</button>
+      </div>
+    </div>
+  </div>
+
+
 
   <!-- NAV -->
   <nav class="nav-panel">
-    <button data-target="sec-empleados" class="nav-btn activo">
+
+    <button data-target="sec-hoy" class="nav-btn activo">
+      <span class="icono">📌</span>
+      <span class="texto">HOY</span>
+      <div class="indicador"></div>
+    </button>
+
+    <button data-target="sec-empleados" class="nav-btn">
       <span class="icono">👷</span>
       <span class="texto">Empleados</span>
       <div class="indicador"></div>
     </button>
 
-    <button data-target="sec-marcaciones-locales" class="nav-btn">
-      <span class="icono">📌</span>
-      <span class="texto">Locales</span>
+
+    <button data-target="sec-clima" class="nav-btn">
+      <span class="icono">🌦️</span>
+      <span class="texto">Clima</span>
       <div class="indicador"></div>
     </button>
+
 
     <button data-target="sec-camiones" class="nav-btn">
       <span class="icono">🚚</span>
@@ -477,20 +533,76 @@
       <div id="listaEmpleados" class="lista-simple"></div>
     </section>
 
-
-
     <!-- ============================= -->
-    <!-- SECCIÓN: MARCACIONES LOCALES -->
+    <!-- SECCIÓN: HOY (DASHBOARD) -->
     <!-- ============================= -->
-    <section id="sec-marcaciones-locales" class="hidden">
-      <h2>Marcaciones del día (modo local)</h2>
-      <small>Se registran solo en este dispositivo.</small>
+    <section id="sec-hoy" class="hidden">
+      <h2>📌 HOY</h2>
+      <small>Resumen rápido y tareas críticas del día.</small>
 
-      <p id="msgMarcLocal" class="status-msg"></p>
-      <div id="listaMarcLocal" class="lista-simple"></div>
+      <div class="card" style="margin-top:14px;">
+        <div class="fila" style="align-items:stretch;">
+          <div class="card" style="flex:1; min-width:220px;">
+            <strong>👷 Empleados</strong>
+            <div id="hoyEmpleados" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
+            <div class="muted" style="margin-top:6px;">Registrados</div>
+          </div>
 
-      <button class="btn-mini" id="btnBorrarMarcLocal">🗑 Borrar marcaciones locales</button>
+          <div class="card" style="flex:1; min-width:220px;">
+            <strong>📝 Pendientes</strong>
+            <div id="hoyPendientes" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
+            <div class="muted" style="margin-top:6px;">Tareas sin completar</div>
+          </div>
+
+          <div class="card" style="flex:1; min-width:220px;">
+            <strong>🚨 Alertas (24h)</strong>
+            <div id="hoyAlertas24" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
+            <div class="muted" style="margin-top:6px;">Generadas en las últimas 24h</div>
+          </div>
+
+          <div class="card" style="flex:1; min-width:220px;">
+            <strong>🛣️ Caminos mal</strong>
+            <div id="hoyCaminosMalos" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
+            <div class="muted" style="margin-top:6px;">Complicados/Intransitables hoy</div>
+          </div>
+
+          <div class="card" style="flex:1; min-width:220px;">
+            <strong>🚚 Camiones</strong>
+            <div id="hoyCamionesOff" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
+            <div class="muted" style="margin-top:6px;">Disponible ahora</div>
+          </div>
+        </div>
+
+        <div class="fila" style="margin-top:12px;">
+          <button class="btn-primario" id="btnHoyRefrescar">🔄 Actualizar HOY</button>
+          <button class="btn-secundario" id="btnHoyIrTareas" type="button">📝 Ir a Tareas</button>
+          <button class="btn-secundario" id="btnHoyIrCaminos" type="button">🛣️ Ir a Caminos</button>
+          <button class="btn-secundario" id="btnHoyIrAlertas" type="button">🚨 Ir a Alertas</button>
+          <button class="btn-secundario" id="btnHoyIrCamiones" type="button">🚚 Ir a Camiones</button>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <strong>⚡ Pendientes críticos</strong>
+          <div id="hoyListaPendientes" class="lista-simple" style="margin-top:10px;">
+            <small class="muted">Cargando...</small>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <strong>📣 Últimas alertas</strong>
+          <div id="hoyListaAlertas" class="lista-simple" style="margin-top:10px;">
+            <small class="muted">Cargando...</small>
+          </div>
+        </div>
+
+        <p id="hoyMsg" class="status-msg"></p>
+      </div>
     </section>
+
+
+
+
+   
 
     <!-- ============================= -->
     <!-- SECCIÓN: MARCACIONES ONLINE -->
@@ -681,6 +793,42 @@
       <button class="btn-mini" id="btnBorrarTareas">🗑 Borrar tareas locales</button>
     </section>
 
+
+    <!-- ============================= -->
+    <!-- SECCIÓN: CLIMA -->
+    <!-- ============================= -->
+
+    <section id="sec-clima" class="hidden">
+      <h2>Clima</h2>
+      <small>Pronóstico y alertas para el campo.</small>
+
+      <div class="card" style="margin-top:14px;">
+        <div class="fila">
+          <input id="climaLugar" type="text" placeholder="Buscar lugar (ej: Gualeguay, Entre Ríos)">
+          <button class="btn-secundario" id="btnClimaBuscar" type="button">Buscar</button>
+          <button class="btn-secundario" id="btnClimaGPS" type="button">📍 Mi ubicación</button>
+        </div>
+
+        <p class="status-msg" id="msgClima"></p>
+
+        <div id="climaActual" class="card" style="margin-top:12px;">
+          <strong>Ahora</strong>
+          <div id="climaActualBody" style="margin-top:8px; color:#374151;"></div>
+        </div>
+
+        <div id="climaAlertas" class="card" style="margin-top:12px;">
+          <strong>Alertas</strong>
+          <div id="climaAlertasBody" style="margin-top:8px; color:#374151;"></div>
+        </div>
+
+        <div id="clima7dias" class="card" style="margin-top:12px;">
+          <strong>7 días</strong>
+          <div id="clima7diasBody" style="margin-top:10px;"></div>
+        </div>
+      </div>
+    </section>
+
+
     <!-- ============================= -->
     <!-- SECCIÓN: CALCULADORA -->
     <!-- ============================= -->
@@ -704,7 +852,7 @@
 
           <button class="btn-primario" id="btnCalcTotal">Calcular</button>
           <button class="btn-secundario" id="btnCalcTotalClear" type="button">Limpiar</button>
-             <p class="status-msg" id="resCalcTotal"></p>
+          <p class="status-msg" id="resCalcTotal"></p>
         </div>
 
 
@@ -754,21 +902,26 @@
 
   <!-- Firebase -->
   <script type="module">
-    import { auth, db } from "../firebase-init.js";
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { auth, db, firebaseConfig } from "../firebase-init.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { onAuthStateChanged, getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import {
       collection, query, where, onSnapshot, orderBy,
       doc, setDoc, updateDoc, deleteDoc, writeBatch, serverTimestamp,
-      getDocs, addDoc
+      getDocs, getDoc, addDoc
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+    const secondaryApp = initializeApp(firebaseConfig, "secondary");
+    const secondaryAuth = getAuth(secondaryApp);
 
     let productorId = null;
 
     // =========================
     // 1) GATE POR AUTH
     // =========================
-    onAuthStateChanged(auth, (user) => {
+    let planActual = "free"; // default
+
+    onAuthStateChanged(auth, async (user) => {
       if (!user) {
         alert("Debes iniciar sesión como Productor.");
         window.location.href = "login.html";
@@ -778,8 +931,288 @@
       productorId = user.uid;
       localStorage.setItem("productorId", productorId);
 
+      // ✅ asegurar doc de productor y leer plan
+      await asegurarPlanProductor();
+
       iniciarPanel();
     });
+
+    async function asegurarPlanProductor() {
+      const ref = doc(db, "productores", productorId);
+      const snap = await getDoc(ref);
+
+      if (!snap.exists()) {
+        await setDoc(ref, {
+          plan: "free",
+          creadoEn: serverTimestamp(),
+          actualizadoEn: serverTimestamp()
+        });
+        planActual = "free";
+      } else {
+        planActual = (snap.data().plan || "free").toLowerCase();
+      }
+
+      // refrescar badge/estado en UI
+      renderBannerPlan();
+      aplicarBloqueosPorPlan();
+
+    }
+
+    function renderBannerPlan() {
+      const t = document.getElementById("planTitulo");
+      const s = document.getElementById("planSub");
+      const btnAdmin = document.getElementById("btnSimularPro");
+
+      if (!t || !s) return;
+
+      if (planActual === "pro") {
+        t.textContent = "Plan: PRO ✅ ";
+        s.textContent = "Tracking de camiones y alertas a vecinos habilitadas.";
+        btnAdmin && (btnAdmin.style.display = "none");
+      } else {
+        t.textContent = "Plan: FREE 🆓";
+        s.textContent = "FREE bloquea: 🚚 Camiones y 📲 Alertas a vecinos. Pasate a PRO para habilitar seguridad total.";
+        // para pruebas internas (solo vos)
+        btnAdmin && (btnAdmin.style.display = "inline-block");
+      }
+    }
+
+    document.getElementById("btnComoActivarPro")?.addEventListener("click", () => {
+      alert(
+        `✅ Cómo activar PRO ($50.000/mes)
+
+1) Realizá el pago por Mercado Pago / Transferencia.
+2) Enviame el comprobante.
+3) Te activo el plan PRO en el sistema.
+
+📌 PRO habilita:
+• 🚚 Tracking de camiones en tiempo real
+• 📲 Alertas a vecinos
+• Seguridad y control total
+
+(En breve agregaremos pago automático.)`
+      );
+    });
+
+    // ✅ botón oculto para pruebas: activar PRO
+    document.getElementById("btnSimularPro")?.addEventListener("click", async () => {
+      try {
+        const ref = doc(db, "productores", productorId);
+        await setDoc(ref, { plan: "pro", actualizadoEn: serverTimestamp() }, { merge: true });
+        planActual = "pro";
+        renderBannerPlan();
+        alert("✅ PRO activado (modo admin/prueba).");
+      } catch (e) {
+        console.error(e);
+        alert("No se pudo activar PRO.");
+      }
+    });
+
+
+    /* ============================================================
+   📌 HOY — DASHBOARD (engagement diario)
+   Lee Firestore y arma resumen para entrar todos los días
+============================================================ */
+
+    function inicioDelDiaMs() {
+      const d = new Date();
+      d.setHours(0, 0, 0, 0);
+      return d.getTime();
+    }
+
+    function hace24hMs() {
+      return Date.now() - (24 * 60 * 60 * 1000);
+    }
+
+    function setHoyMsg(txt, ok = true) {
+      const el = document.getElementById("hoyMsg");
+      if (!el) return;
+      el.textContent = txt;
+      el.style.color = ok ? "#166534" : "#b91c1c";
+      setTimeout(() => (el.textContent = ""), 3500);
+    }
+
+    function renderMiniItem(titulo, subtitulo) {
+      return `
+    <div class="item-simple" style="align-items:flex-start;">
+      <div class="item-info">
+        <strong>${titulo}</strong><br>
+        <small>${subtitulo || ""}</small>
+      </div>
+      <span class="chip-categoria">HOY</span>
+    </div>
+  `;
+    }
+
+    async function actualizarHoy() {
+      if (!productorId) return;
+
+      const elEmp = document.getElementById("hoyEmpleados");
+      const elPen = document.getElementById("hoyPendientes");
+      const elAl24 = document.getElementById("hoyAlertas24");
+      const elCam = document.getElementById("hoyCaminosMalos");
+      const elOff = document.getElementById("hoyCamionesOff");
+
+      const listaPend = document.getElementById("hoyListaPendientes");
+      const listaAl = document.getElementById("hoyListaAlertas");
+
+      const inicioMs = (() => { const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime(); })();
+      const desde24 = Date.now() - (24 * 60 * 60 * 1000);
+
+      try {
+        // 1) Empleados (query por productorId)
+        const qE = query(collection(db, "employees"), where("productorId", "==", productorId));
+        const sE = await getDocs(qE);
+        elEmp.textContent = sE.size;
+
+        // 2) Tareas pendientes (query por productorId + completada)
+        const qT = query(
+          collection(db, "tareas"),
+          where("productorId", "==", productorId),
+          where("completada", "==", false)
+        );
+        const sT = await getDocs(qT);
+        elPen.textContent = sT.size;
+
+        // Pendientes críticos (máx 6)
+        const pendientes = [];
+        sT.forEach((d) => pendientes.push({ id: d.id, ...d.data() }));
+
+        const prio = (p) => (p === "Alta" ? 3 : p === "Media" ? 2 : 1);
+        pendientes.sort((a, b) => {
+          const pa = prio(a.prioridad), pb = prio(b.prioridad);
+          if (pb !== pa) return pb - pa;
+          const ta = a.timestamp?.seconds || 0;
+          const tb = b.timestamp?.seconds || 0;
+          return tb - ta;
+        });
+
+        listaPend.innerHTML = "";
+        if (pendientes.length === 0) {
+          listaPend.innerHTML = `<small class="muted">✅ No tenés pendientes. Excelente.</small>`;
+        } else {
+          pendientes.slice(0, 6).forEach((t) => {
+            const cat = t.categoria ? `• ${t.categoria}` : "";
+            const pr = t.prioridad ? `• ${t.prioridad}` : "";
+            const emp = t.empleadoId ? `• DNI ${t.empleadoId}` : "• (sin asignar)";
+            listaPend.innerHTML += `
+          <div class="item-simple" style="align-items:flex-start;">
+            <div class="item-info">
+              <strong>📝 ${t.texto || "(sin texto)"}</strong><br>
+              <small>${cat} ${pr} ${emp}</small>
+            </div>
+            <span class="chip-categoria">HOY</span>
+          </div>
+        `;
+          });
+        }
+
+        // 3) Alertas 24h (query por productorId)
+        const qA = query(
+          collection(db, "alertas"),
+          where("productorId", "==", productorId)
+        );
+        const sA = await getDocs(qA);
+
+        let cant24 = 0;
+        const alertas = [];
+        sA.forEach((d) => {
+          const a = d.data();
+          const f = a.fecha || 0;
+          if (f >= desde24) cant24++;
+          alertas.push({ id: d.id, ...a });
+        });
+
+        elAl24.textContent = cant24;
+
+        alertas.sort((a, b) => (b.fecha || 0) - (a.fecha || 0));
+        listaAl.innerHTML = "";
+        if (alertas.length === 0) {
+          listaAl.innerHTML = `<small class="muted">Sin alertas todavía.</small>`;
+        } else {
+          alertas.slice(0, 6).forEach((a) => {
+            const ft = a.fecha ? new Date(a.fecha).toLocaleString("es-AR") : "";
+            listaAl.innerHTML += `
+          <div class="item-simple" style="align-items:flex-start;">
+            <div class="item-info">
+              <strong>🚨 ${a.tipo || "Alerta"}</strong><br>
+              <small>${a.descripcion || ""} • ${ft}</small>
+            </div>
+            <span class="chip-categoria">HOY</span>
+          </div>
+        `;
+          });
+        }
+
+        // 4) Caminos “malos” hoy (complicado / intransitable)
+        // OJO: caminos es read público, pero igual filtramos por productorId para HOY
+        const qC = query(
+          collection(db, "caminos"),
+          where("productorId", "==", productorId)
+        );
+        const sC = await getDocs(qC);
+
+        let malos = 0;
+        sC.forEach((d) => {
+          const c = d.data();
+          const f = c.fecha || 0;
+          const est = (c.estado || "").toString().toLowerCase();
+          if (f >= inicioMs && (est === "complicado" || est === "intransitable")) malos++;
+        });
+        elCam.textContent = malos;
+
+        // 5) Camiones offline (query por productorId)
+        const qM = query(
+          collection(db, "camiones"),
+          where("productorId", "==", productorId)
+        );
+        const sM = await getDocs(qM);
+
+        let off = 0;
+        sM.forEach((d) => {
+          const c = d.data();
+          if (c.online === false) off++;
+        });
+        elOff.textContent = off;
+
+        // mensaje OK
+        const el = document.getElementById("hoyMsg");
+        if (el) {
+          el.textContent = "✅ HOY actualizado.";
+          el.style.color = "#166534";
+          setTimeout(() => (el.textContent = ""), 2500);
+        }
+
+      } catch (e) {
+        console.error("Error actualizarHoy:", e);
+        const el = document.getElementById("hoyMsg");
+        if (el) {
+          el.textContent = "❌ No se pudo actualizar HOY (permisos/índices).";
+          el.style.color = "#b91c1c";
+        }
+      }
+    }
+
+
+    function initHoy() {
+      const btn = document.getElementById("btnHoyRefrescar");
+      btn?.addEventListener("click", actualizarHoy);
+
+      // accesos rápidos (usa el nav existente)
+      document.getElementById("btnHoyIrTareas")?.addEventListener("click", () => {
+        document.querySelector('[data-target="sec-tareas"]')?.click();
+      });
+      document.getElementById("btnHoyIrCaminos")?.addEventListener("click", () => {
+        document.querySelector('[data-target="sec-caminos"]')?.click();
+      });
+      document.getElementById("btnHoyIrAlertas")?.addEventListener("click", () => {
+        document.querySelector('[data-target="sec-alertas"]')?.click();
+      });
+      document.getElementById("btnHoyIrCamiones")?.addEventListener("click", () => {
+        document.querySelector('[data-target="sec-camiones"]')?.click();
+      });
+    }
+
 
     // =========================
     // 2) NAVEGACIÓN ENTRE SECCIONES
@@ -828,12 +1261,18 @@
             }, 200);
           }
 
+          if (target === "sec-hoy") {
+            setTimeout(() => actualizarHoy(), 150);
+          }
+
+
+
         });
       });
 
       // estado inicial
       secciones.forEach(sec => sec.classList.add("hidden"));
-      const primera = document.getElementById("sec-empleados");
+      const primera = document.getElementById("sec-hoy");
       primera.classList.remove("hidden");
       primera.classList.add("visible");
     }
@@ -854,6 +1293,11 @@
       // ✅ AHORA sí (porque ya existe la función global)
       escucharCamiones();
       initCalculadora();
+      initClima();
+      initHoy();
+      actualizarHoy();
+
+
 
 
       setTimeout(() => {
@@ -1048,30 +1492,31 @@
 
     document.getElementById("btnAgregarEmpleado").addEventListener("click", async () => {
       const nombre = document.getElementById("empNombre").value.trim();
-      const dni = document.getElementById("empDni").value.trim();
+      const dni = document.getElementById("empDni").value.trim().replace(/\D/g, "");
       const telefono = document.getElementById("empTelefono").value.trim();
-      const clave = document.getElementById("empClave").value.trim();
+      const clave = document.getElementById("empClave").value.trim(); // ✅ clave Firestore
 
       if (!nombre || !dni || !telefono || !clave) {
-        msgEmpleado.textContent = "⚠️ Completá todos los campos (incluido teléfono).";
+        msgEmpleado.textContent = "⚠️ Completá todos los campos.";
         msgEmpleado.style.color = "#b91c1c";
         return;
       }
 
       try {
+        // ✅ Guardar empleado por DNI (docId = DNI)
         await setDoc(doc(db, "employees", dni), {
           productorId,
           nombre,
           dni,
           telefono,
-          clave,
+          clave,          // ✅ se guarda en Firestore
           activo: true,
           timestamp: serverTimestamp(),
-          authUid: null
+          authUid: null   // opcional, por compatibilidad con rules
         });
 
         msgEmpleado.style.color = "#166534";
-        msgEmpleado.textContent = "✅ Empleado agregado.";
+        msgEmpleado.textContent = "✅ Empleado agregado (Firestore).";
 
         document.getElementById("empNombre").value = "";
         document.getElementById("empDni").value = "";
@@ -1085,6 +1530,7 @@
         msgEmpleado.textContent = "❌ Error al registrar empleado.";
       }
     });
+
 
     /* ============================================================
        TAREAS
@@ -2155,6 +2601,265 @@
       });
 
     }
+
+    function initClima() {
+      const inpLugar = document.getElementById("climaLugar");
+      const btnBuscar = document.getElementById("btnClimaBuscar");
+      const btnGPS = document.getElementById("btnClimaGPS");
+      const msg = document.getElementById("msgClima");
+
+      const actualBody = document.getElementById("climaActualBody");
+      const alertasBody = document.getElementById("climaAlertasBody");
+      const diasBody = document.getElementById("clima7diasBody");
+
+      if (!btnBuscar || !btnGPS || !msg || !actualBody || !alertasBody || !diasBody) return;
+
+      const setMsg = (t, c = "#14532d") => { msg.textContent = t; msg.style.color = c; };
+
+      const fmt = (n) => new Intl.NumberFormat("es-AR", { maximumFractionDigits: 1 }).format(n);
+
+      // ✅ Open-Meteo Geocoding: https://geocoding-api.open-meteo.com/v1/search (name=...) :contentReference[oaicite:0]{index=0}
+      async function geocodeLugar(texto) {
+        const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(texto)}&count=5&language=es&format=json`;
+        const r = await fetch(url);
+        const data = await r.json();
+        const first = data?.results?.[0];
+        if (!first) return null;
+        return {
+          name: `${first.name}${first.admin1 ? ", " + first.admin1 : ""}${first.country ? ", " + first.country : ""}`,
+          lat: first.latitude,
+          lon: first.longitude,
+          tz: first.timezone
+        };
+      }
+
+      // ✅ Forecast API base: https://api.open-meteo.com/v1/forecast ... :contentReference[oaicite:1]{index=1}
+      async function pedirPronostico(lat, lon, timezone = "auto") {
+        // daily variables como temperature_2m_min/max, precipitation_sum, windspeed_10m_max, weathercode :contentReference[oaicite:2]{index=2}
+        const url =
+          `https://api.open-meteo.com/v1/forecast` +
+          `?latitude=${encodeURIComponent(lat)}` +
+          `&longitude=${encodeURIComponent(lon)}` +
+          `&timezone=${encodeURIComponent(timezone)}` +
+          `&current=temperature_2m,wind_speed_PM10,precipitation,weather_code,wind_speed_10m` +
+          `&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max,weather_code` +
+          `&forecast_days=7`;
+
+        const r = await fetch(url);
+        if (!r.ok) throw new Error("No se pudo obtener pronóstico");
+        return await r.json();
+      }
+
+      function codeToText(code) {
+        // Mapa simple (podemos ampliarlo después)
+        const m = {
+          0: "Despejado",
+          1: "Mayormente despejado",
+          2: "Parcialmente nublado",
+          3: "Nublado",
+          45: "Niebla",
+          48: "Niebla con escarcha",
+          51: "Llovizna leve",
+          53: "Llovizna",
+          55: "Llovizna intensa",
+          61: "Lluvia leve",
+          63: "Lluvia",
+          65: "Lluvia intensa",
+          71: "Nieve leve",
+          73: "Nieve",
+          75: "Nieve intensa",
+          95: "Tormenta"
+        };
+        return m[code] ?? `Código ${code}`;
+      }
+
+      function render(data, tituloLugar) {
+        // ACTUAL
+        const c = data.current;
+        if (!c) {
+          actualBody.innerHTML = "No hay datos actuales.";
+          return;
+        }
+
+        const t = c.temperature_2m;
+        const viento = c.wind_speed_10m;
+        const precip = c.precipitation;
+        const wc = c.weather_code;
+
+        actualBody.innerHTML = `
+      <div><b>📍 ${tituloLugar}</b></div>
+      <div>🌡️ Temp: <b>${fmt(t)}°C</b></div>
+      <div>💨 Viento: <b>${fmt(viento)} km/h</b></div>
+      <div>🌧️ Precip: <b>${fmt(precip)} mm</b></div>
+      <div>🧾 Estado: <b>${codeToText(wc)}</b></div>
+    `;
+
+        // 7 DÍAS
+        const d = data.daily;
+        if (!d?.time?.length) {
+          diasBody.innerHTML = "No hay pronóstico diario.";
+          return;
+        }
+
+        const rows = d.time.map((date, i) => {
+          const tmin = d.temperature_2m_min?.[i];
+          const tmax = d.temperature_2m_max?.[i];
+          const p = d.precipitation_sum?.[i];
+          const w = d.wind_speed_10m_max?.[i];
+          const wcD = d.weather_code?.[i];
+
+          const f = new Date(date + "T00:00:00");
+          const dia = f.toLocaleDateString("es-AR", { weekday: "short", day: "2-digit", month: "2-digit" });
+
+          return `
+        <div class="item-simple" style="gap:14px;">
+          <div class="item-info">
+            <strong>${dia}</strong><br>
+            <small>${codeToText(wcD)}</small><br>
+            <small>🌡️ ${fmt(tmin)}° / ${fmt(tmax)}° • 🌧️ ${fmt(p)} mm • 💨 ${fmt(w)} km/h</small>
+          </div>
+        </div>
+      `;
+        }).join("");
+
+        diasBody.innerHTML = rows;
+
+        // ALERTAS (reglas simples)
+        const alerts = [];
+        const hoyP = d.precipitation_sum?.[0] ?? 0;
+        const hoyMin = d.temperature_2m_min?.[0];
+        const hoyV = d.wind_speed_10m_max?.[0] ?? 0;
+
+        if (hoyP >= 20) alerts.push("🌧️ Lluvia fuerte hoy (≥ 20 mm): planificá labores / caminos.");
+        if (hoyMin != null && hoyMin <= 0) alerts.push("❄️ Riesgo de helada (mín ≤ 0°C).");
+        if (hoyV >= 40) alerts.push("💨 Viento fuerte (≥ 40 km/h): ojo fumigación / incendios.");
+
+        alertasBody.innerHTML = alerts.length
+          ? `<ul style="margin:0; padding-left:18px;">${alerts.map(a => `<li>${a}</li>`).join("")}</ul>`
+          : "✅ Sin alertas destacadas (según reglas simples).";
+      }
+
+      async function usarGPS() {
+        try {
+          setMsg("📡 Buscando tu ubicación...", "#14532d");
+          const pos = await pedirUbicacionActual();
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+
+          const data = await pedirPronostico(lat, lon, "auto");
+          render(data, "Mi ubicación");
+          setMsg("✅ Clima actualizado (GPS).", "#166534");
+        } catch (e) {
+          console.error(e);
+          setMsg("❌ No pude obtener el clima por GPS. Revisá permisos/ubicación.", "#b91c1c");
+        }
+      }
+
+      async function buscarLugar() {
+        const texto = (inpLugar.value || "").trim();
+        if (!texto) {
+          setMsg("⚠️ Escribí un lugar (ej: Gualeguay, Entre Ríos).", "#b91c1c");
+          return;
+        }
+
+        try {
+          setMsg("🔎 Buscando lugar...", "#14532d");
+          const loc = await geocodeLugar(texto);
+          if (!loc) {
+            setMsg("❌ No encontré ese lugar. Probá agregando provincia/país.", "#b91c1c");
+            return;
+          }
+          setMsg("📡 Consultando pronóstico...", "#14532d");
+          const data = await pedirPronostico(loc.lat, loc.lon, loc.tz || "auto");
+          render(data, loc.name);
+          setMsg("✅ Clima actualizado.", "#166534");
+        } catch (e) {
+          console.error(e);
+          setMsg("❌ Error consultando clima. Probá de nuevo.", "#b91c1c");
+        }
+      }
+
+      btnBuscar.addEventListener("click", buscarLugar);
+      btnGPS.addEventListener("click", usarGPS);
+
+      // carga inicial: si querés que arranque con GPS, descomentá:
+      // usarGPS();
+    }
+
+    function aplicarBloqueosPorPlan() {
+
+      const esPro = (planActual === "pro");
+
+      // =========================
+      // A) BLOQUEO CAMIONES
+      // =========================
+      const btnCamiones = document.querySelector('[data-target="sec-camiones"]');
+      const secCamiones = document.getElementById("sec-camiones");
+
+      if (!esPro) {
+        // FREE → ocultar camiones
+        if (btnCamiones) btnCamiones.style.display = "none";
+
+        if (secCamiones) {
+          secCamiones.innerHTML = `
+        <h2>🚚 Monitoreo de camiones</h2>
+        <div class="card" style="margin-top:14px;">
+          <strong>Función PRO</strong>
+          <p style="margin-top:8px;color:#374151;">
+            El tracking de camiones en tiempo real está disponible en el plan 
+            <b>PRO ($50.000/mes)</b>.
+          </p>
+          <button class="btn-primario"
+            onclick="document.getElementById('btnComoActivarPro').click()">
+            Activar PRO
+          </button>
+        </div>
+      `;
+        }
+      } else {
+        // PRO → mostrar camiones
+        if (btnCamiones) btnCamiones.style.display = "";
+      }
+
+      // =========================
+      // B) BLOQUEO ENVIAR A VECINOS
+      // =========================
+      const b1 = document.getElementById("btnSelTodosVecinos");
+      const b2 = document.getElementById("btnSelNingunoVecinos");
+      const lista = document.getElementById("listaVecinosAlertas");
+
+      if (!esPro) {
+        // FREE → bloquear vecinos
+        if (b1) b1.disabled = true;
+        if (b2) b2.disabled = true;
+
+        if (lista) {
+          lista.innerHTML = `
+        <div class="card">
+          <strong>📲 Enviar a vecinos es PRO</strong>
+          <p style="margin-top:8px;color:#374151;">
+            En FREE solo podés enviar alertas a tus empleados.
+            Para avisar a vecinos necesitás el plan 
+            <b>PRO ($50.000/mes)</b>.
+          </p>
+          <button class="btn-primario"
+            onclick="document.getElementById('btnComoActivarPro').click()">
+            Activar PRO
+          </button>
+        </div>
+      `;
+        }
+      } else {
+        // PRO → habilitar vecinos
+        if (b1) b1.disabled = false;
+        if (b2) b2.disabled = false;
+      }
+    }
+
+
+
+
+
 
 
 
