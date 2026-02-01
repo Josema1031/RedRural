@@ -432,13 +432,22 @@
         <strong id="planTitulo">Plan: —</strong>
         <div id="planSub" style="font-size:13px;color:#6b7280;margin-top:2px;">—</div>
       </div>
+      <button id="btnProWhats" class="btn-pro">Pasar a PRO</button>
 
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-        <button class="btn-secundario" id="btnComoActivarPro" type="button">Cómo activar PRO</button>
-        <button class="btn-primario" id="btnSimularPro" type="button" style="display:none;">(Admin) Activar PRO</button>
-      </div>
     </div>
   </div>
+  <div id="adminProBox" style="display:none; width:100%; margin-top:10px;">
+    <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+      <input id="adminUidInput" placeholder="UID del productor (del WhatsApp)"
+        style="flex:1; min-width:240px; padding:10px; border-radius:8px; border:1px solid #ccc;">
+      <button id="adminActivarPro" class="btn-primario" type="button">✅ Activar PRO</button>
+      <button id="adminPonerFree" class="btn-secundario" type="button">↩ Volver a FREE</button>
+    </div>
+    <small style="display:block; margin-top:6px; color:#6b7280;">
+      (Visible solo para admin)
+    </small>
+  </div>
+
 
 
 
@@ -891,6 +900,19 @@
     // =========================
     let planActual = "free"; // default
 
+    // =========================
+    // ✅ ADMIN: tu UID
+    // =========================
+    // 🔴 Reemplazá por TU UID real (Firebase Auth UID)
+    const ADMIN_UIDS = new Set([
+      "TU_UID_ADMIN_AQUI"
+    ]);
+
+    function soyAdmin() {
+      return auth.currentUser && ADMIN_UIDS.has(auth.currentUser.uid);
+    }
+
+
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
         alert("Debes iniciar sesión como Productor.");
@@ -903,7 +925,7 @@
 
       // ✅ asegurar doc de productor y leer plan
       await asegurarPlanProductor();
-
+      renderAdminBox();
       iniciarPanel();
     });
 
@@ -977,6 +999,82 @@
         alert("No se pudo activar PRO.");
       }
     });
+
+    // =========================
+    // ✅ WHATSAPP: solicitar PRO
+    // =========================
+    const NUMERO_WHATSAPP_PRO = "5492644429649"; // AR + 9 + 264... (sin 0 y sin 15)
+
+    function abrirWhatsAppSolicitudPro() {
+      const user = auth.currentUser;
+      if (!user) {
+        alert("Tenés que iniciar sesión para solicitar PRO.");
+        return;
+      }
+
+      const uid = user.uid;
+      const email = user.email || "sin-email";
+
+      const texto =
+        `Hola! Quiero activar PLAN PRO en Red Rural.\n` +
+        `UID: ${uid}\n` +
+        `Email: ${email}\n` +
+        `Fecha: ${new Date().toLocaleString("es-AR")}\n` +
+        `Plan actual: ${String(planActual || "free").toUpperCase()}`;
+
+      const url = `https://wa.me/${NUMERO_WHATSAPP_PRO}?text=${encodeURIComponent(texto)}`;
+      window.open(url, "_blank");
+    }
+
+    // Botón del banner (ya existe en tu HTML)
+    document.getElementById("btnProWhats")?.addEventListener("click", () => {
+      if (String(planActual).toLowerCase() === "pro") {
+        alert("✅ Ya tenés Plan PRO.");
+        return;
+      }
+      abrirWhatsAppSolicitudPro();
+    });
+
+    function renderAdminBox() {
+      const box = document.getElementById("adminProBox");
+      if (!box) return;
+      box.style.display = soyAdmin() ? "block" : "none";
+    }
+
+    async function setPlanUsuario(uid, nuevoPlan) {
+      const ref = doc(db, "productores", uid);
+      await setDoc(ref, { plan: nuevoPlan, actualizadoEn: serverTimestamp() }, { merge: true });
+    }
+
+    document.getElementById("adminActivarPro")?.addEventListener("click", async () => {
+      try {
+        if (!soyAdmin()) return alert("No sos admin.");
+        const uid = document.getElementById("adminUidInput").value.trim();
+        if (!uid) return alert("Pegá el UID del productor.");
+
+        await setPlanUsuario(uid, "pro");
+        alert("✅ PRO habilitado para: " + uid);
+      } catch (e) {
+        console.error(e);
+        alert("❌ No se pudo activar PRO.");
+      }
+    });
+
+    document.getElementById("adminPonerFree")?.addEventListener("click", async () => {
+      try {
+        if (!soyAdmin()) return alert("No sos admin.");
+        const uid = document.getElementById("adminUidInput").value.trim();
+        if (!uid) return alert("Pegá el UID del productor.");
+
+        await setPlanUsuario(uid, "free");
+        alert("✅ Usuario vuelto a FREE: " + uid);
+      } catch (e) {
+        console.error(e);
+        alert("❌ No se pudo volver a FREE.");
+      }
+    });
+
+
 
 
     /* ============================================================

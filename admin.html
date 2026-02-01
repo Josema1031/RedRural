@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Red Rural — Admin Planes</title>
+    <style>
+        body {
+            font-family: system-ui, Arial;
+            background: #f3f4f6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .card {
+            max-width: 720px;
+            margin: auto;
+            background: white;
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .08);
+        }
+
+        h1 {
+            margin: 0 0 8px;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        input,
+        select,
+        button {
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #d1d5db;
+            font-size: 16px;
+        }
+
+        input,
+        select {
+            flex: 1;
+            min-width: 240px;
+        }
+
+        button {
+            cursor: pointer;
+            border: 0;
+            background: #14532d;
+            color: white;
+        }
+
+        button.sec {
+            background: #334155;
+        }
+
+        button.danger {
+            background: #b91c1c;
+        }
+
+        .muted {
+            color: #6b7280;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #e5e7eb;
+            font-size: 12px;
+        }
+
+        pre {
+            background: #0b1020;
+            color: #e5e7eb;
+            padding: 12px;
+            border-radius: 12px;
+            overflow: auto;
+            white-space: pre-wrap;
+        }
+
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h1>Admin — Planes Red Rural</h1>
+        <div class="muted">Gestioná el plan en <b>Firestore</b> (colección <b>productores</b>).</div>
+
+        <hr style="border:none; border-top:1px solid #e5e7eb; margin:16px 0;">
+
+        <div id="estado" class="badge">Estado: no logueado</div>
+
+        <h3 style="margin:14px 0 6px;">1) Login Admin</h3>
+        <div class="row">
+            <input id="email" type="email" placeholder="Email admin" autocomplete="email" />
+            <input id="pass" type="password" placeholder="Password" autocomplete="current-password" />
+            <button id="btnLogin">Entrar</button>
+            <button id="btnLogout" class="sec hide">Salir</button>
+        </div>
+
+        <h3 style="margin:18px 0 6px;">2) Gestión de Plan</h3>
+        <div class="muted">
+            Pegá el <b>UID</b> que te mandan por WhatsApp (desde el botón “Pasar a PRO”).
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+            <input id="uid" placeholder="UID del productor (desde WhatsApp)" />
+            <select id="plan">
+                <option value="free">FREE</option>
+                <option value="pro">PRO</option>
+            </select>
+            <button id="btnAplicar" class="hide">Aplicar</button>
+            <button id="btnBajar" class="danger hide">Volver a FREE</button>
+        </div>
+
+        <h3 style="margin:18px 0 6px;">Logs</h3>
+        <pre id="log">Listo. Pegá tu Firebase config y logueate.</pre>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+        // =========================
+        // 🔴 PEGÁ TU CONFIG ACÁ (igual que panel.html)
+        // =========================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRpSuQ3nSVvThu246TT0ai-G4OB9_yn_g",
+            authDomain: "red-rural.firebaseapp.com",
+            projectId: "red-rural",
+            storageBucket: "red-rural.firebasestorage.app",
+            messagingSenderId: "30695077122",
+            appId: "1:30695077122:web:2c700973abeac5914dbe1b"
+        };
+
+        // ✅ TU UID ADMIN (ya definido)
+        const ADMIN_UID = "mfCEucZxwne4vGJcMIvfm3hOe173";
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const $ = (id) => document.getElementById(id);
+        const log = (m) => { $("log").textContent = m; };
+
+        function setUIAuthed(isAuthed) {
+            $("btnLogin").classList.toggle("hide", isAuthed);
+            $("btnLogout").classList.toggle("hide", !isAuthed);
+            $("btnAplicar").classList.toggle("hide", !isAuthed);
+            $("btnBajar").classList.toggle("hide", !isAuthed);
+        }
+
+        async function leerPlan(uid) {
+            const ref = doc(db, "productores", uid);
+            const snap = await getDoc(ref);
+            if (!snap.exists()) return { plan: "free", exists: false };
+            return { plan: snap.data().plan || "free", exists: true, data: snap.data() };
+        }
+
+        async function setPlan(uid, plan) {
+            const ref = doc(db, "productores", uid);
+            await setDoc(ref, {
+                plan,
+                actualizadoEn: serverTimestamp()
+            }, { merge: true });
+        }
+
+        $("btnLogin").addEventListener("click", async () => {
+            try {
+                const email = $("email").value.trim();
+                const pass = $("pass").value;
+                if (!email || !pass) return log("⚠️ Completá email y password.");
+
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (e) {
+                console.error(e);
+                log("❌ Error login: " + (e?.message || e));
+            }
+        });
+
+        $("btnLogout").addEventListener("click", async () => {
+            try { await signOut(auth); } catch (e) { console.error(e); }
+        });
+
+        $("btnAplicar").addEventListener("click", async () => {
+            try {
+                const user = auth.currentUser;
+                if (!user) return log("⚠️ Logueate primero.");
+
+                if (user.uid !== ADMIN_UID) {
+                    return log("❌ Este usuario no es admin (UID no coincide).");
+                }
+
+                const uid = $("uid").value.trim();
+                const plan = $("plan").value;
+                if (!uid) return log("⚠️ Pegá el UID del productor.");
+
+                await setPlan(uid, plan);
+                const info = await leerPlan(uid);
+
+                log(`✅ Listo.\nUID: ${uid}\nPlan actual: ${info.plan.toUpperCase()}\nDoc existe: ${info.exists}\n\nSi te da PERMISSION_DENIED, revisá las rules.`);
+            } catch (e) {
+                console.error(e);
+                log("❌ No se pudo aplicar. Error: " + (e?.message || e));
+            }
+        });
+
+        $("btnBajar").addEventListener("click", async () => {
+            $("plan").value = "free";
+            $("btnAplicar").click();
+        });
+
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                $("estado").textContent = "Estado: no logueado";
+                setUIAuthed(false);
+                log("Listo. Iniciá sesión para gestionar planes.");
+                return;
+            }
+
+            $("estado").textContent = "Estado: logueado (" + user.email + ")";
+            setUIAuthed(true);
+
+            if (user.uid === ADMIN_UID) {
+                log("✅ Admin OK. Pegá el UID del productor y aplicá el plan.");
+            } else {
+                log("⚠️ Logueado, pero NO sos admin. Cerrá sesión e ingresá con la cuenta admin.");
+            }
+        });
+    </script>
+</body>
+
+</html>
