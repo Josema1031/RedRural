@@ -386,36 +386,37 @@
         font-size: 12px;
       }
     }
-   /* ============================
+
+    /* ============================
    HOY – Botones en fila (mobile)
    ============================ */
-@media (max-width: 600px) {
+    @media (max-width: 600px) {
 
-  /* Forzamos fila horizontal SOLO en este bloque */
-  .fila {
-    display: flex !important;
-    flex-direction: row !important; /* 🔥 clave */
-    flex-wrap: wrap !important;
-    gap: 10px;
-    justify-content: flex-start;
-    align-items: center;
-  }
+      /* Forzamos fila horizontal SOLO en este bloque */
+      .filaHoy {
+        display: flex !important;
+        flex-direction: row !important;
+        /* 🔥 clave */
+        flex-wrap: wrap !important;
+        gap: 10px;
+        justify-content: flex-start;
+        align-items: center;
+      }
 
-  .fila .btn-primario,
-  .fila .btn-secundario {
-    width: auto !important;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px 12px;
-    font-size: 13px;
-    border-radius: 10px;
-    white-space: nowrap;
-    margin: 0 !important; /* por si hay márgenes viejos */
-  }
-}
-
-
+      .filaHoy .btn-primario,
+      .filaHoy .btn-secundario {
+        width: auto !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 12px;
+        font-size: 13px;
+        border-radius: 10px;
+        white-space: nowrap;
+        margin: 0 !important;
+        /* por si hay márgenes viejos */
+      }
+    }
   </style>
 </head>
 
@@ -469,15 +470,6 @@
       <span class="texto">Camiones</span>
       <div class="indicador"></div>
     </button>
-
-
-    <button data-target="sec-marcaciones-online" class="nav-btn">
-      <span class="icono">📍</span>
-      <span class="texto">Online</span>
-      <div class="indicador"></div>
-    </button>
-
-
 
     <button data-target="sec-caminos" class="nav-btn">
       <span class="icono">🛣️</span>
@@ -573,7 +565,7 @@
           </div>
         </div>
 
-        <div class="fila" style="margin-top:12px;">
+        <div class="filaHoy" style="margin-top:12px;">
           <button class="btn-primario" id="btnHoyRefrescar">🔄 Actualizar HOY</button>
           <button class="btn-secundario" id="btnHoyIrTareas" type="button">📝 Ir a Tareas</button>
           <button class="btn-secundario" id="btnHoyIrCaminos" type="button">🛣️ Ir a Caminos</button>
@@ -598,28 +590,6 @@
         <p id="hoyMsg" class="status-msg"></p>
       </div>
     </section>
-
-
-
-
-   
-
-    <!-- ============================= -->
-    <!-- SECCIÓN: MARCACIONES ONLINE -->
-    <!-- ============================= -->
-    <section id="sec-marcaciones-online" class="hidden">
-      <h2>Marcaciones online</h2>
-      <small>Se registran en tiempo real vía GPS.</small>
-
-      <div id="mapMarcaciones" style="width:100%; height:300px; margin-top:15px; border-radius:10px; background:#ddd;">
-      </div>
-
-      <p class="status-msg" id="msgMarcOnline"></p>
-      <div id="listaMarcOnline" class="lista-simple"></div>
-    </section>
-
-
-
 
     <!-- ============================= -->
     <!-- SECCIÓN: CAMIONES (TRACKING) -->
@@ -790,7 +760,7 @@
       <p class="status-msg" id="msgTareas"></p>
       <div id="listaTareas" class="lista-simple"></div>
 
-      <button class="btn-mini" id="btnBorrarTareas">🗑 Borrar tareas locales</button>
+
     </section>
 
 
@@ -902,7 +872,7 @@
 
   <!-- Firebase -->
   <script type="module">
-    import { auth, db, firebaseConfig } from "../firebase-init.js";
+    import { auth, db, firebaseConfig } from "../firebase-init.js?v=2";
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { onAuthStateChanged, getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import {
@@ -2635,13 +2605,12 @@
 
       // ✅ Forecast API base: https://api.open-meteo.com/v1/forecast ... :contentReference[oaicite:1]{index=1}
       async function pedirPronostico(lat, lon, timezone = "auto") {
-        // daily variables como temperature_2m_min/max, precipitation_sum, windspeed_10m_max, weathercode :contentReference[oaicite:2]{index=2}
         const url =
           `https://api.open-meteo.com/v1/forecast` +
           `?latitude=${encodeURIComponent(lat)}` +
           `&longitude=${encodeURIComponent(lon)}` +
           `&timezone=${encodeURIComponent(timezone)}` +
-          `&current=temperature_2m,wind_speed_PM10,precipitation,weather_code,wind_speed_10m` +
+          `&current=temperature_2m,wind_speed_10m,precipitation,weather_code` +
           `&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max,weather_code` +
           `&forecast_days=7`;
 
@@ -2649,6 +2618,7 @@
         if (!r.ok) throw new Error("No se pudo obtener pronóstico");
         return await r.json();
       }
+
 
       function codeToText(code) {
         // Mapa simple (podemos ampliarlo después)
