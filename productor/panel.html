@@ -91,6 +91,16 @@
       font-weight: bold;
     }
 
+    .btn-pro {
+      background-color: #14532d;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
     .btn-secundario {
       background: #e5e7eb;
       border: none;
@@ -432,7 +442,7 @@
         <strong id="planTitulo">Plan: —</strong>
         <div id="planSub" style="font-size:13px;color:#6b7280;margin-top:2px;">—</div>
       </div>
-      <button id="btnProWhats" class="btn-pro">Pasar a PRO</button>
+      <button id="btnProWhats" class="btn-pro">Plan PRO</button>
 
     </div>
   </div>
@@ -440,7 +450,7 @@
     <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
       <input id="adminUidInput" placeholder="UID del productor (del WhatsApp)"
         style="flex:1; min-width:240px; padding:10px; border-radius:8px; border:1px solid #ccc;">
-      <button id="adminActivarPro" class="btn-primario" type="button">✅ Activar PRO</button>
+      <button id="adminActivarPro" class="btn-primario" type="button">✅ Plan PRO</button>
       <button id="adminPonerFree" class="btn-secundario" type="button">↩ Volver a FREE</button>
     </div>
     <small style="display:block; margin-top:6px; color:#6b7280;">
@@ -954,18 +964,22 @@
       const t = document.getElementById("planTitulo");
       const s = document.getElementById("planSub");
       const btnAdmin = document.getElementById("btnSimularPro");
+      const btnPlan = document.getElementById("btnProWhats");
 
       if (!t || !s) return;
 
       if (planActual === "pro") {
-        t.textContent = "Plan: PRO ✅ ";
+        t.textContent = "Plan: PRO ✅";
         s.textContent = "Tracking de camiones y alertas a vecinos habilitadas.";
         btnAdmin && (btnAdmin.style.display = "none");
+
+        if (btnPlan) btnPlan.textContent = "Volver a FREE";
       } else {
         t.textContent = "Plan: FREE 🆓";
         s.textContent = "FREE bloquea: 🚚 Camiones y 📲 Alertas a vecinos. Pasate a PRO para habilitar seguridad total.";
-        // para pruebas internas (solo vos)
         btnAdmin && (btnAdmin.style.display = "inline-block");
+
+        if (btnPlan) btnPlan.textContent = "Pasar a PRO";
       }
     }
 
@@ -1026,14 +1040,41 @@
       window.open(url, "_blank");
     }
 
-    // Botón del banner (ya existe en tu HTML)
-    document.getElementById("btnProWhats")?.addEventListener("click", () => {
-      if (String(planActual).toLowerCase() === "pro") {
-        alert("✅ Ya tenés Plan PRO.");
+    function abrirWhatsAppCancelarPro() {
+      const user = auth.currentUser;
+      if (!user) {
+        alert("Tenés que iniciar sesión para solicitar la baja.");
         return;
       }
-      abrirWhatsAppSolicitudPro();
+
+      const uid = user.uid;
+      const email = user.email || "sin-email";
+
+      const texto =
+        `Hola! Quiero VOLVER A FREE (cancelar PRO) en Red Rural.\n` +
+        `UID: ${uid}\n` +
+        `Email: ${email}\n` +
+        `Fecha: ${new Date().toLocaleString("es-AR")}\n` +
+        `Plan actual: ${String(planActual || "free").toUpperCase()}`;
+
+      const url = `https://wa.me/${NUMERO_WHATSAPP_PRO}?text=${encodeURIComponent(texto)}`;
+      window.open(url, "_blank");
+    }
+
+    // Botón del banner (ya existe en tu HTML)
+    document.getElementById("btnProWhats")?.addEventListener("click", () => {
+      const esPro = String(planActual).toLowerCase() === "pro";
+
+      if (!esPro) {
+        // FREE → solicitar PRO
+        abrirWhatsAppSolicitudPro();
+        return;
+      }
+
+      // PRO → solicitar volver a FREE (cancelación)
+      abrirWhatsAppCancelarPro();
     });
+
 
     function renderAdminBox() {
       const box = document.getElementById("adminProBox");
@@ -1386,6 +1427,16 @@
     let mapaCamiones = null;
     let capaCamiones = null;
     const markersCamiones = new Map(); // camionId -> marker
+    // 🧭 RUTAS (recorrido) por camión
+    let capaRutasCamiones = null;
+
+    // camionId -> { latlngs: [ [lat,lng], ... ], polyline: L.Polyline }
+    const rutasCamiones = new Map();
+
+    // (opcional) para no llenar de puntos si manda muy seguido
+    const UMBRAL_METROS_RUTA = 20;     // agrega punto si se movió +20m
+    const MAX_PUNTOS_RUTA = 800;       // límite por camión (performance)
+
 
     function initMapaCamiones() {
       // ✅ si el div no está, salimos sin romper
@@ -1393,10 +1444,15 @@
       if (!mapDiv) return;
 
       if (mapaCamiones) return;
+
       mapaCamiones = L.map("mapCamiones").setView([-33, -59.3], 10);
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapaCamiones);
+
+      // ✅ primero rutas, después marcadores (para que el marker quede arriba)
+      capaRutasCamiones = L.layerGroup().addTo(mapaCamiones);
       capaCamiones = L.layerGroup().addTo(mapaCamiones);
     }
+
 
     function renderCamionItem(c) {
       const upd = c.lastSeen ? new Date(c.lastSeen).toLocaleString("es-AR") : "—";
@@ -1414,6 +1470,62 @@
   `;
     }
 
+    function distMetros(lat1, lng1, lat2, lng2) {
+      // Haversine
+      const R = 6371000;
+      const toRad = (x) => (x * Math.PI) / 180;
+      const dLat = toRad(lat2 - lat1);
+      const dLng = toRad(lng2 - lng1);
+
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+        Math.sin(dLng / 2) * Math.sin(dLng / 2);
+
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+
+    function upsertRutaCamion(camionId, lat, lng) {
+      if (!mapaCamiones || !capaRutasCamiones) return;
+
+      const key = camionId;
+      if (!rutasCamiones.has(key)) {
+        const latlngs = [[lat, lng]];
+        const poly = L.polyline(latlngs, {
+          weight: 4,
+          opacity: 0.9
+        }).addTo(capaRutasCamiones);
+
+        rutasCamiones.set(key, { latlngs, polyline: poly });
+        return;
+      }
+
+      const obj = rutasCamiones.get(key);
+      const last = obj.latlngs[obj.latlngs.length - 1];
+      const d = distMetros(last[0], last[1], lat, lng);
+
+      // ✅ evita agregar puntos “pegados” (ruido GPS)
+      if (d < UMBRAL_METROS_RUTA) return;
+
+      obj.latlngs.push([lat, lng]);
+
+      // ✅ límite por rendimiento
+      if (obj.latlngs.length > MAX_PUNTOS_RUTA) {
+        obj.latlngs.splice(0, obj.latlngs.length - MAX_PUNTOS_RUTA);
+      }
+
+      obj.polyline.setLatLngs(obj.latlngs);
+    }
+
+    function borrarRutaCamion(camionId) {
+      const obj = rutasCamiones.get(camionId);
+      if (!obj) return;
+      if (capaRutasCamiones) capaRutasCamiones.removeLayer(obj.polyline);
+      rutasCamiones.delete(camionId);
+    }
+
+
     function upsertMarkerCamion(c) {
       if (!mapaCamiones || !capaCamiones) return;
 
@@ -1421,6 +1533,9 @@
       if (!camionId) return;
 
       if (typeof c.lat !== "number" || typeof c.lng !== "number") return;
+
+      // ✅ dibujar recorrido
+      upsertRutaCamion(camionId, c.lat, c.lng);
 
       const popup = `
     <b>🚚 ${camionId}</b><br>
@@ -1445,9 +1560,13 @@
         if (!setIdsActuales.has(id)) {
           capaCamiones.removeLayer(marker);
           markersCamiones.delete(id);
+
+          // ✅ borrar ruta también
+          borrarRutaCamion(id);
         }
       }
     }
+
 
     function escucharCamiones() {
       if (!productorId) return;
@@ -1474,6 +1593,9 @@
           if (capaCamiones) capaCamiones.clearLayers();
           markersCamiones.clear();
           return;
+          if (capaRutasCamiones) capaRutasCamiones.clearLayers();
+          rutasCamiones.clear();
+
         }
 
         const idsActuales = new Set();
@@ -1685,12 +1807,20 @@
     let marcacionesOnline = [];
 
     function initMapaMarcaciones() {
+      // ✅ si el div no está, no inicializamos (evita Map container not found)
+      const mapDiv = document.getElementById("mapMarcaciones");
+      if (!mapDiv) return;
+
       if (mapaMarcaciones) return;
+
       mapaMarcaciones = L.map("mapMarcaciones").setView([-33, -59.3], 10);
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapaMarcaciones);
       capaMarcadores = L.layerGroup().addTo(mapaMarcaciones);
-      setTimeout(() => mapaMarcaciones.invalidateSize(), 400);
+
+      // ✅ cuando se muestra la sección, Leaflet necesita recalcular tamaños
+      setTimeout(() => mapaMarcaciones.invalidateSize(), 350);
     }
+
 
     function actualizarMarcacionesMapa() {
       if (!mapaMarcaciones || !capaMarcadores) return;
@@ -1794,23 +1924,31 @@
 
 
     function initMapaCaminos() {
-      if (mapaCaminos) return;
-      if (!productorId) return;
+  if (mapaCaminos) return;
+  if (!productorId) return;
 
-      mapaCaminos = L.map("mapCaminos").setView([-33, -59.3], 10);
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapaCaminos);
+  // ✅ si el div no está, salimos sin romper
+  const mapDiv = document.getElementById("mapCaminos");
+  if (!mapDiv) return;
 
-      capaTramos = L.layerGroup().addTo(mapaCaminos);
-      capaPuntosCaminos = L.layerGroup().addTo(mapaCaminos);
+  mapaCaminos = L.map("mapCaminos").setView([-33, -59.3], 10);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapaCaminos);
 
-      mapaCaminos.on("click", manejarClickMapa);
+  capaTramos = L.layerGroup().addTo(mapaCaminos);
+  capaPuntosCaminos = L.layerGroup().addTo(mapaCaminos);
 
-      cargarCaminosGuardados();
-      setTimeout(() => mapaCaminos.invalidateSize(), 400);
-    }
+  mapaCaminos.on("click", manejarClickMapa);
+
+  cargarCaminosGuardados();
+  setTimeout(() => mapaCaminos.invalidateSize(), 400);
+
+  // ⚠️ si querés auto-centrar, lo hacemos SOLO cuando el mapa ya existe:
+  // setTimeout(() => centrarEnMiUbicacion(), 600);
+}
+
 
     // ✅ intentar centrar automáticamente al iniciar el mapa (si el usuario permite)
-    setTimeout(() => centrarEnMiUbicacion(), 600);
+   // setTimeout(() => centrarEnMiUbicacion(), 600);
 
 
     const btnModoPunto = document.getElementById("btnModoPunto");
@@ -2855,74 +2993,36 @@
     }
 
     function aplicarBloqueosPorPlan() {
+      const esFree = planActual !== "pro";
 
-      const esPro = (planActual === "pro");
+      // ======================
+      // NAV PRINCIPAL
+      // ======================
+      const navCamiones = document.querySelector('[data-target="sec-camiones"]');
+      const navAlertas = document.querySelector('[data-target="sec-alertas"]');
 
-      // =========================
-      // A) BLOQUEO CAMIONES
-      // =========================
-      const btnCamiones = document.querySelector('[data-target="sec-camiones"]');
+      if (navCamiones) navCamiones.style.display = esFree ? "none" : "flex";
+      if (navAlertas) navAlertas.style.display = esFree ? "none" : "flex";
+
+      // ======================
+      // ACCESOS RÁPIDOS HOY
+      // ======================
+      const btnHoyCamiones = document.getElementById("btnHoyIrCamiones");
+      const btnHoyAlertas = document.getElementById("btnHoyIrAlertas");
+
+      if (btnHoyCamiones) btnHoyCamiones.style.display = esFree ? "none" : "inline-flex";
+      if (btnHoyAlertas) btnHoyAlertas.style.display = esFree ? "none" : "inline-flex";
+
+      // ======================
+      // SECCIONES (seguridad extra)
+      // ======================
       const secCamiones = document.getElementById("sec-camiones");
+      const secAlertas = document.getElementById("sec-alertas");
 
-      if (!esPro) {
-        // FREE → ocultar camiones
-        if (btnCamiones) btnCamiones.style.display = "none";
-
-        if (secCamiones) {
-          secCamiones.innerHTML = `
-        <h2>🚚 Monitoreo de camiones</h2>
-        <div class="card" style="margin-top:14px;">
-          <strong>Función PRO</strong>
-          <p style="margin-top:8px;color:#374151;">
-            El tracking de camiones en tiempo real está disponible en el plan 
-            <b>PRO ($50.000/mes)</b>.
-          </p>
-          <button class="btn-primario"
-            onclick="document.getElementById('btnComoActivarPro').click()">
-            Activar PRO
-          </button>
-        </div>
-      `;
-        }
-      } else {
-        // PRO → mostrar camiones
-        if (btnCamiones) btnCamiones.style.display = "";
-      }
-
-      // =========================
-      // B) BLOQUEO ENVIAR A VECINOS
-      // =========================
-      const b1 = document.getElementById("btnSelTodosVecinos");
-      const b2 = document.getElementById("btnSelNingunoVecinos");
-      const lista = document.getElementById("listaVecinosAlertas");
-
-      if (!esPro) {
-        // FREE → bloquear vecinos
-        if (b1) b1.disabled = true;
-        if (b2) b2.disabled = true;
-
-        if (lista) {
-          lista.innerHTML = `
-        <div class="card">
-          <strong>📲 Enviar a vecinos es PRO</strong>
-          <p style="margin-top:8px;color:#374151;">
-            En FREE solo podés enviar alertas a tus empleados.
-            Para avisar a vecinos necesitás el plan 
-            <b>PRO ($50.000/mes)</b>.
-          </p>
-          <button class="btn-primario"
-            onclick="document.getElementById('btnComoActivarPro').click()">
-            Activar PRO
-          </button>
-        </div>
-      `;
-        }
-      } else {
-        // PRO → habilitar vecinos
-        if (b1) b1.disabled = false;
-        if (b2) b2.disabled = false;
-      }
+      if (secCamiones && esFree) secCamiones.classList.add("hidden");
+      if (secAlertas && esFree) secAlertas.classList.add("hidden");
     }
+
 
 
 

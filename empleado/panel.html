@@ -437,12 +437,23 @@
             },
             (err) => {
               console.error("GPS watch error:", err);
-              // ❗ No marcamos offline automáticamente
-              setMsg("❌ Error de GPS. Activá permisos/ubicación del celular.", false);
+
+              let msg = "❌ Error de GPS. Activá permisos/ubicación del celular.";
+              if (err?.code === 1) msg = "❌ Permiso denegado. Activá ubicación para este sitio.";
+              if (err?.code === 2) msg = "❌ No se pudo obtener señal GPS. Probá al aire libre.";
+              if (err?.code === 3) msg = "❌ Timeout GPS. Reintentá o movete a un lugar con mejor señal.";
+
+              setMsg(msg, false);
               btnStartTrack.disabled = false;
               btnStopTrack.disabled = true;
-            },
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 3000 }
+            }
+            ,
+            {
+              enableHighAccuracy: true,
+              timeout: 20000,      // más tiempo
+              maximumAge: 10000    // aceptá cache 10s
+            }
+
           );
         });
 
@@ -496,14 +507,14 @@
     }
   </script>
   <script>
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("../service-worker.js")
-        .then(() => console.log("✅ SW registrado (empleado)"))
-        .catch((e) => console.warn("❌ SW error (empleado):", e));
-    });
-  }
-</script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("../service-worker.js")
+          .then(() => console.log("✅ SW registrado (empleado)"))
+          .catch((e) => console.warn("❌ SW error (empleado):", e));
+      });
+    }
+  </script>
 
 </body>
 
