@@ -9,6 +9,9 @@
   <meta name="theme-color" content="#14532d">
   <link rel="apple-touch-icon" href="../img/logo.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+
+
 
   <style>
     body {
@@ -161,7 +164,7 @@
     import { onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import {
       collection, query, where, onSnapshot, orderBy,
-      doc, updateDoc, setDoc, serverTimestamp
+      doc, updateDoc, setDoc, serverTimestamp, addDoc
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
@@ -329,6 +332,31 @@
         // - WakeLock para evitar que el celular duerma.
         // ===============================
         let watchId = null;
+        // ===============================
+        // 📍 Ruta + Distancia (para guardar al detener)
+        // ===============================
+        let rutaPts = [];          // [{lat,lng,t}, ...]
+        let lastPt = null;         // {lat,lng}
+        let distanciaM = 0;        // acumulado
+        let inicioMs = 0;
+
+        const UMBRAL_METROS_GUARDAR = 5;   // evita ruido GPS
+        const MAX_PUNTOS_GUARDAR = 2000;    // límite por seguridad (doc size)
+
+        // Haversine
+        function distMetros(lat1, lon1, lat2, lon2) {
+          const R = 6371000;
+          const toRad = (x) => x * Math.PI / 180;
+          const dLat = toRad(lat2 - lat1);
+          const dLon = toRad(lon2 - lon1);
+          const a =
+            Math.sin(dLat / 2) ** 2 +
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+            Math.sin(dLon / 2) ** 2;
+          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+          return Math.round(R * c);
+        }
+
 
         const camionIdEl = document.getElementById("camionId");
         const btnStartTrack = document.getElementById("btnStartTrack");
@@ -404,6 +432,13 @@
 
           setMsg("📡 Iniciando monitoreo...");
 
+          // 🟢 Nuevo viaje
+          rutaPts = [];
+          lastPt = null;
+          distanciaM = 0;
+          inicioMs = Date.now();
+
+
           // Primer ping
           await upsertCamion(camionId, {
             productorId,
@@ -418,6 +453,27 @@
             async (pos) => {
               const lat = pos.coords.latitude;
               const lng = pos.coords.longitude;
+
+              // ✅ guardar ruta (local) + calcular distancia
+              const t = Date.now();
+
+              if (!lastPt) {
+                lastPt = { lat, lng };
+                rutaPts.push({ lat, lng, t });
+              } else {
+                const d = distMetros(lastPt.lat, lastPt.lng, lat, lng);
+                if (d >= UMBRAL_METROS_GUARDAR) {
+                  distanciaM += d;
+                  lastPt = { lat, lng };
+                  rutaPts.push({ lat, lng, t });
+
+                  // límite (evita doc enorme)
+                  if (rutaPts.length > MAX_PUNTOS_GUARDAR) {
+                    rutaPts.splice(0, rutaPts.length - MAX_PUNTOS_GUARDAR);
+                  }
+                }
+              }
+
 
               await upsertCamion(camionId, {
                 productorId,
@@ -487,6 +543,34 @@
             } catch (e) {
               console.warn("No pude marcar offline:", e);
             }
+            // ✅ Guardar viaje al detener
+            try {
+              const finMs = Date.now();
+              // ✅ forzar punto final si solo hay 1 punto
+              if (rutaPts.length === 1 && lastPt) {
+                rutaPts.push({ lat: lastPt.lat, lng: lastPt.lng, t: Date.now() });
+              }
+
+              // Solo guardo si tengo mínimo 2 puntos
+              if (camionId && rutaPts.length >= 2 && inicioMs) {
+                await addDoc(collection(db, "viajes_camiones"), {
+                  productorId,
+                  camionId,
+                  empleadoDni,
+                  inicioMs,
+                  finMs,
+                  distanciaM: Math.round(distanciaM),
+                  ruta: rutaPts,
+                  createdAt: serverTimestamp()
+                });
+              }
+            } catch (e) {
+              console.warn("No pude guardar el viaje:", e);
+            }
+            console.log("STOP => camionId:", camionId);
+console.log("STOP => puntos:", rutaPts.length, "distanciaM:", distanciaM, "inicioMs:", inicioMs);
+
+
           }
         });
 

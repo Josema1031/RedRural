@@ -622,6 +622,20 @@
 
       <p class="status-msg" id="msgCamiones"></p>
       <div id="listaCamiones" class="lista-simple"></div>
+      <hr style="margin:14px 0; border:none; border-top:1px solid #e5e7eb;">
+
+      <h3 style="margin:10px 0 6px; color:#14532d;">📒 Registro de recorridos</h3>
+      <small class="muted">Guardados cuando el chofer toca “Detener”.</small>
+
+      <p class="status-msg" id="msgViajes"></p>
+      <div id="listaViajes" class="lista-simple"></div>
+
+      <div class="fila" style="margin-top:10px;">
+        <button class="btn-secundario" id="btnLimpiarRuta">🧹 Limpiar ruta del mapa</button>
+
+      </div>
+
+
     </section>
 
 
@@ -1388,6 +1402,76 @@
 
     navegar();
 
+
+    function escucharViajesCamiones() {
+      if (!productorId) return;
+
+      const msgViajes = document.getElementById("msgViajes");
+      const listaViajes = document.getElementById("listaViajes");
+      if (!msgViajes || !listaViajes) return;
+
+      msgViajes.style.color = "#4b5563";
+      msgViajes.textContent = "Cargando recorridos...";
+
+      const qV = query(
+        collection(db, "viajes_camiones"),
+        where("productorId", "==", productorId),
+        orderBy("inicioMs", "desc")
+      );
+
+      onSnapshot(qV, (snap) => {
+        listaViajes.innerHTML = "";
+
+        if (snap.empty) {
+          msgViajes.textContent = "Todavía no hay recorridos guardados.";
+          return;
+        }
+
+        msgViajes.textContent = `Recorridos: ${snap.size}`;
+
+        snap.forEach((d) => {
+          const v = d.data();
+
+          const ini = v.inicioMs ? new Date(v.inicioMs).toLocaleString("es-AR") : "—";
+          const fin = v.finMs ? new Date(v.finMs).toLocaleString("es-AR") : "—";
+
+          listaViajes.innerHTML += `
+        <div class="item-simple">
+          <div class="item-info">
+            <strong>🚚 ${v.camionId || "—"}</strong><br>
+            <small>Chofer DNI: ${v.empleadoDni || "—"}</small><br>
+            <small>Inicio: ${ini}</small><br>
+            <small>Fin: ${fin}</small><br>
+            <small><b>Distancia:</b> ${fmtKm(v.distanciaM)} km</small>
+          </div>
+          <button class="btn-secundario" data-verviaje="${d.id}">Ver ruta</button>
+        </div>
+      `;
+        });
+
+        // ✅ Event delegation (más estable que agregar listeners uno por uno)
+        listaViajes.onclick = (e) => {
+          const btn = e.target.closest("button[data-verviaje]");
+          if (!btn) return;
+
+          const id = btn.getAttribute("data-verviaje");
+
+          // buscar en el snap actual (sin hacer otro fetch)
+          const doc = snap.docs.find(x => x.id === id);
+          if (!doc) return;
+
+          const v = doc.data();
+          dibujarRutaGuardadaEnMapa(v);
+        };
+
+      }, (err) => {
+        console.error("Snapshot viajes:", err);
+        msgViajes.style.color = "#b91c1c";
+        msgViajes.textContent = "Error cargando recorridos (reglas/índices).";
+      });
+    }
+
+
     // =========================
     // 3) INICIO DEL PANEL
     // =========================
@@ -1401,12 +1485,11 @@
 
       // ✅ AHORA sí (porque ya existe la función global)
       escucharCamiones();
+      escucharViajesCamiones();
       initCalculadora();
       initClima();
       initHoy();
       actualizarHoy();
-
-
 
 
       setTimeout(() => {
@@ -1416,6 +1499,9 @@
 
       setTimeout(() => marcarChipActivo("filtroTodos"), 350);
 
+      document.getElementById("btnLimpiarRuta")?.addEventListener("click", () => {
+        limpiarRutaGuardada();
+      });
       document.getElementById("caminoEstado").dispatchEvent(new Event("change"));
     }
 
@@ -1425,6 +1511,11 @@
    🚚 CAMIONES (TRACKING REALTIME)
 ============================================================ */
     let mapaCamiones = null;
+    // ✅ Capa para “ruta guardada” (recorrido histórico seleccionado)
+    let capaRutaGuardada = null;
+    let polyRutaGuardada = null;
+    let markerInicio = null;
+    let markerFin = null;
     let capaCamiones = null;
     const markersCamiones = new Map(); // camionId -> marker
     // 🧭 RUTAS (recorrido) por camión
@@ -1451,6 +1542,9 @@
       // ✅ primero rutas, después marcadores (para que el marker quede arriba)
       capaRutasCamiones = L.layerGroup().addTo(mapaCamiones);
       capaCamiones = L.layerGroup().addTo(mapaCamiones);
+      // ✅ capa para ruta guardada (arriba del tile, debajo de markers)
+      if (!capaRutaGuardada) capaRutaGuardada = L.layerGroup().addTo(mapaCamiones);
+
     }
 
 
@@ -1567,6 +1661,12 @@
       }
     }
 
+    function fmtKm(m) {
+      const km = (m || 0) / 1000;
+      return km.toFixed(2).replace(".", ",");
+    }
+
+   
 
     function escucharCamiones() {
       if (!productorId) return;
@@ -1634,6 +1734,63 @@
         msgCamiones.textContent = "Error escuchando camiones (permisos/reglas/índices).";
       });
     }
+
+    function limpiarRutaGuardada() {
+      if (!capaRutaGuardada) return;
+      capaRutaGuardada.clearLayers();
+      polyRutaGuardada = null;
+      markerInicio = null;
+      markerFin = null;
+    }
+
+    function dibujarRutaGuardadaEnMapa(viaje) {
+      initMapaCamiones();
+      if (!mapaCamiones || !capaRutaGuardada) return;
+
+      limpiarRutaGuardada();
+
+      const ruta = Array.isArray(viaje.ruta) ? viaje.ruta : [];
+      if (ruta.length < 2) {
+        alert("Este recorrido no tiene suficientes puntos para dibujar.");
+        return;
+      }
+
+      // ruta guardada viene como: [{lat,lng,t}, ...]
+      const latlngs = ruta
+        .filter(p => typeof p.lat === "number" && typeof p.lng === "number")
+        .map(p => [p.lat, p.lng]);
+
+      if (latlngs.length < 2) {
+        alert("Recorrido inválido.");
+        return;
+      }
+
+      // ✅ Polyline del recorrido guardado
+      polyRutaGuardada = L.polyline(latlngs, {
+        weight: 5,
+        opacity: 0.95,
+        dashArray: "10 8" // se distingue del tracking en vivo
+      }).addTo(capaRutaGuardada);
+
+      // ✅ Inicio y fin
+      const ini = latlngs[0];
+      const fin = latlngs[latlngs.length - 1];
+
+      markerInicio = L.circleMarker(ini, { radius: 7, weight: 2 }).addTo(capaRutaGuardada);
+      markerFin = L.circleMarker(fin, { radius: 7, weight: 2 }).addTo(capaRutaGuardada);
+
+      const km = viaje.distanciaM ? (viaje.distanciaM / 1000) : null;
+
+      markerInicio.bindPopup(`🟢 Inicio<br>🚚 ${viaje.camionId || "—"}<br>👤 DNI: ${viaje.empleadoDni || "—"}`);
+      markerFin.bindPopup(`🔴 Fin<br>${km != null ? `📏 ${km.toFixed(2)} km` : ""}`);
+
+      // ✅ Zoom automático a toda la ruta
+      mapaCamiones.fitBounds(polyRutaGuardada.getBounds(), { padding: [20, 20] });
+
+      // opcional: abrir popup inicio
+      markerInicio.openPopup();
+    }
+
 
     /* ============================================================
        EMPLEADOS (FIREBASE)
@@ -1924,31 +2081,31 @@
 
 
     function initMapaCaminos() {
-  if (mapaCaminos) return;
-  if (!productorId) return;
+      if (mapaCaminos) return;
+      if (!productorId) return;
 
-  // ✅ si el div no está, salimos sin romper
-  const mapDiv = document.getElementById("mapCaminos");
-  if (!mapDiv) return;
+      // ✅ si el div no está, salimos sin romper
+      const mapDiv = document.getElementById("mapCaminos");
+      if (!mapDiv) return;
 
-  mapaCaminos = L.map("mapCaminos").setView([-33, -59.3], 10);
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapaCaminos);
+      mapaCaminos = L.map("mapCaminos").setView([-33, -59.3], 10);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapaCaminos);
 
-  capaTramos = L.layerGroup().addTo(mapaCaminos);
-  capaPuntosCaminos = L.layerGroup().addTo(mapaCaminos);
+      capaTramos = L.layerGroup().addTo(mapaCaminos);
+      capaPuntosCaminos = L.layerGroup().addTo(mapaCaminos);
 
-  mapaCaminos.on("click", manejarClickMapa);
+      mapaCaminos.on("click", manejarClickMapa);
 
-  cargarCaminosGuardados();
-  setTimeout(() => mapaCaminos.invalidateSize(), 400);
+      cargarCaminosGuardados();
+      setTimeout(() => mapaCaminos.invalidateSize(), 400);
 
-  // ⚠️ si querés auto-centrar, lo hacemos SOLO cuando el mapa ya existe:
-  // setTimeout(() => centrarEnMiUbicacion(), 600);
-}
+      // ⚠️ si querés auto-centrar, lo hacemos SOLO cuando el mapa ya existe:
+      // setTimeout(() => centrarEnMiUbicacion(), 600);
+    }
 
 
     // ✅ intentar centrar automáticamente al iniciar el mapa (si el usuario permite)
-   // setTimeout(() => centrarEnMiUbicacion(), 600);
+    // setTimeout(() => centrarEnMiUbicacion(), 600);
 
 
     const btnModoPunto = document.getElementById("btnModoPunto");
@@ -3022,17 +3179,6 @@
       if (secCamiones && esFree) secCamiones.classList.add("hidden");
       if (secAlertas && esFree) secAlertas.classList.add("hidden");
     }
-
-
-
-
-
-
-
-
-
-
-
   </script>
 </body>
 
