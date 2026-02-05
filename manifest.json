@@ -2,20 +2,20 @@
   "name": "Red Rural Gualeguay",
   "short_name": "Red Rural",
   "description": "Herramientas digitales para el trabajo rural: tareas, alertas, caminos y monitoreo.",
-  "start_url": "/RedRural/index.html",
-  "scope": "/RedRural/",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#f0f2f3",
   "theme_color": "#14532d",
   "icons": [
     {
-      "src": "/RedRural/icons/icon-192.png",
+      "src": "./icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/RedRural/icons/icon-512.png",
+      "src": "./icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

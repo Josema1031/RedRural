@@ -1,4 +1,4 @@
-const CACHE_NAME = "red-rural-v1";
+const CACHE_NAME = "red-rural-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -32,19 +32,20 @@ self.addEventListener("activate", (event) => {
 
 // Fetch: cache-first para same-origin; network-first para CDNs
 self.addEventListener("fetch", (event) => {
-  const req = event.request;
-  const url = new URL(req.url);
+  event.respondWith((async () => {
+    try {
+      const cached = await caches.match(event.request);
+      if (cached) return cached;
 
-  // Para otros dominios (Firebase, gstatic, unpkg, etc) → network-first
-  if (url.origin !== self.location.origin) {
-    event.respondWith(
-      fetch(req).catch(() => caches.match(req))
-    );
-    return;
-  }
-
-  // Same-origin: cache-first (rápido)
-  event.respondWith(
-    caches.match(req).then((cached) => cached || fetch(req))
-  );
+      const net = await fetch(event.request);
+      return net; // ✅ Response válido
+    } catch (err) {
+      // ✅ fallback: Response válido aunque no haya red
+      return new Response("Offline", {
+        status: 503,
+        headers: { "Content-Type": "text/plain; charset=utf-8" }
+      });
+    }
+  })());
 });
+

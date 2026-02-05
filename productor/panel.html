@@ -627,6 +627,23 @@
       <h3 style="margin:10px 0 6px; color:#14532d;">📒 Registro de recorridos</h3>
       <small class="muted">Guardados cuando el chofer toca “Detener”.</small>
 
+      <!-- 🔎 Filtros de recorridos -->
+      <div class="fila" style="margin-top:10px; gap:8px; flex-wrap:wrap;">
+        <select id="filtroPatente">
+          <option value="">🚚 Todas las patentes</option>
+        </select>
+
+        <input type="date" id="filtroDesde" />
+        <input type="date" id="filtroHasta" />
+
+        <button class="btn-secundario" id="btnAplicarFiltrosViajes">🔎 Aplicar</button>
+        <button class="btn-mini" id="btnLimpiarFiltrosViajes">🧽 Limpiar</button>
+      </div>
+
+      <!-- 📊 Resumen -->
+      <div id="resumenViajes" class="status-msg" style="margin-top:8px; color:#374151;"></div>
+
+
       <p class="status-msg" id="msgViajes"></p>
       <div id="listaViajes" class="lista-simple"></div>
 
@@ -902,6 +919,8 @@
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
 
   <!-- Firebase -->
   <script type="module">
@@ -1403,15 +1422,153 @@
     navegar();
 
 
+    let viajesCache = []; // [{id, ...data}]
+
+    function msInicioDia(dateStr) {
+      // dateStr: "YYYY-MM-DD"
+      if (!dateStr) return null;
+      const [y, m, d] = dateStr.split("-").map(Number);
+      return new Date(y, m - 1, d, 0, 0, 0, 0).getTime();
+    }
+    function msFinDia(dateStr) {
+      if (!dateStr) return null;
+      const [y, m, d] = dateStr.split("-").map(Number);
+      return new Date(y, m - 1, d, 23, 59, 59, 999).getTime();
+    }
+    function fmtMinutos(min) {
+      if (!isFinite(min) || min < 0) return "—";
+      const h = Math.floor(min / 60);
+      const m = Math.round(min % 60);
+      return h > 0 ? `${h} h ${m} min` : `${m} min`;
+    }
+
+    function renderViajes(lista, listaViajesEl, resumenEl) {
+      listaViajesEl.innerHTML = "";
+
+      if (!lista.length) {
+        resumenEl.textContent = "Sin recorridos para ese filtro.";
+        return;
+      }
+
+      // resumen
+      const totalKm = lista.reduce((acc, v) => acc + (Number(v.distanciaM) || 0), 0) / 1000;
+      const totalMin = lista.reduce((acc, v) => {
+        const ini = Number(v.inicioMs) || 0;
+        const fin = Number(v.finMs) || 0;
+        if (!ini || !fin || fin <= ini) return acc;
+        return acc + (fin - ini) / 60000;
+      }, 0);
+
+      resumenEl.textContent = `Mostrando ${lista.length} recorrido(s) — Total: ${totalKm.toFixed(2)} km — Tiempo: ${fmtMinutos(totalMin)}`;
+
+      // lista
+      lista.forEach((v) => {
+        const iniTxt = v.inicioMs ? new Date(v.inicioMs).toLocaleString("es-AR") : "—";
+        const finTxt = v.finMs ? new Date(v.finMs).toLocaleString("es-AR") : "—";
+        const durMin = (v.inicioMs && v.finMs && v.finMs > v.inicioMs) ? (v.finMs - v.inicioMs) / 60000 : null;
+
+        listaViajesEl.innerHTML += `
+      <div class="item-simple">
+        <div class="item-info">
+          <strong>🚚 ${v.camionId || "—"}</strong><br>
+          <small>Chofer DNI: ${v.empleadoDni || "—"}</small><br>
+          <small>Inicio: ${iniTxt}</small><br>
+          <small>Fin: ${finTxt}</small><br>
+          <small><b>Distancia:</b> ${fmtKm(v.distanciaM)} km</small><br>
+          <small><b>Tiempo:</b> ${durMin != null ? fmtMinutos(durMin) : "—"}</small>
+        </div>
+
+        <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+          <button class="btn-secundario" data-verviaje="${v.id}">Ver ruta</button>
+          <button class="btn-mini" data-pdfviaje="${v.id}">📄 Exportar PDF</button>
+        </div>
+      </div>
+    `;
+      });
+    }
+
+    function exportarViajePDF(v) {
+      // jsPDF UMD
+      const { jsPDF } = window.jspdf || {};
+      if (!jsPDF) {
+        alert("No se cargó jsPDF. Revisá que agregaste el <script> de jsPDF.");
+        return;
+      }
+
+      const docp = new jsPDF();
+      const iniTxt = v.inicioMs ? new Date(v.inicioMs).toLocaleString("es-AR") : "—";
+      const finTxt = v.finMs ? new Date(v.finMs).toLocaleString("es-AR") : "—";
+      const km = (Number(v.distanciaM) || 0) / 1000;
+      const durMin = (v.inicioMs && v.finMs && v.finMs > v.inicioMs) ? (v.finMs - v.inicioMs) / 60000 : null;
+
+      docp.setFontSize(14);
+      docp.text("Red Rural — Recorrido de camión", 14, 18);
+
+      docp.setFontSize(11);
+      docp.text(`Patente / Camión: ${v.camionId || "—"}`, 14, 30);
+      docp.text(`Chofer DNI: ${v.empleadoDni || "—"}`, 14, 37);
+      docp.text(`Inicio: ${iniTxt}`, 14, 44);
+      docp.text(`Fin: ${finTxt}`, 14, 51);
+      docp.text(`Distancia: ${km.toFixed(2)} km`, 14, 58);
+      docp.text(`Tiempo: ${durMin != null ? fmtMinutos(durMin) : "—"}`, 14, 65);
+
+      const pts = Array.isArray(v.rutaPts) ? v.rutaPts.length : 0;
+      docp.text(`Puntos de ruta: ${pts}`, 14, 72);
+
+      // mini resumen de primer/último punto
+      const p1 = v.rutaPts?.[0];
+      const p2 = v.rutaPts?.[v.rutaPts?.length - 1];
+      if (p1 && p2) {
+        docp.text(`Inicio GPS: ${Number(p1.lat).toFixed(5)}, ${Number(p1.lng).toFixed(5)}`, 14, 82);
+        docp.text(`Fin GPS: ${Number(p2.lat).toFixed(5)}, ${Number(p2.lng).toFixed(5)}`, 14, 89);
+      }
+
+      docp.save(`recorrido_${v.camionId || "camion"}_${v.id}.pdf`);
+    }
+
+    function aplicarFiltrosYRender(listaViajesEl, resumenEl) {
+      const patente = (document.getElementById("filtroPatente")?.value || "").trim();
+      const desde = document.getElementById("filtroDesde")?.value || "";
+      const hasta = document.getElementById("filtroHasta")?.value || "";
+
+      const desdeMs = msInicioDia(desde);
+      const hastaMs = msFinDia(hasta);
+
+      let filtrados = [...viajesCache];
+
+      if (patente) filtrados = filtrados.filter(v => (v.camionId || "") === patente);
+
+      if (desdeMs != null) filtrados = filtrados.filter(v => (Number(v.inicioMs) || 0) >= desdeMs);
+      if (hastaMs != null) filtrados = filtrados.filter(v => (Number(v.inicioMs) || 0) <= hastaMs);
+
+      renderViajes(filtrados, listaViajesEl, resumenEl);
+    }
+
     function escucharViajesCamiones() {
       if (!productorId) return;
 
       const msgViajes = document.getElementById("msgViajes");
       const listaViajes = document.getElementById("listaViajes");
-      if (!msgViajes || !listaViajes) return;
+      const resumenEl = document.getElementById("resumenViajes");
+
+      if (!msgViajes || !listaViajes || !resumenEl) return;
 
       msgViajes.style.color = "#4b5563";
       msgViajes.textContent = "Cargando recorridos...";
+
+      // botones filtro (una sola vez)
+      document.getElementById("btnAplicarFiltrosViajes")?.addEventListener("click", () => {
+        aplicarFiltrosYRender(listaViajes, resumenEl);
+      });
+      document.getElementById("btnLimpiarFiltrosViajes")?.addEventListener("click", () => {
+        const fp = document.getElementById("filtroPatente");
+        const fd = document.getElementById("filtroDesde");
+        const fh = document.getElementById("filtroHasta");
+        if (fp) fp.value = "";
+        if (fd) fd.value = "";
+        if (fh) fh.value = "";
+        aplicarFiltrosYRender(listaViajes, resumenEl);
+      });
 
       const qV = query(
         collection(db, "viajes_camiones"),
@@ -1420,56 +1577,49 @@
       );
 
       onSnapshot(qV, (snap) => {
-        listaViajes.innerHTML = "";
-
         if (snap.empty) {
+          viajesCache = [];
           msgViajes.textContent = "Todavía no hay recorridos guardados.";
+          resumenEl.textContent = "";
+          listaViajes.innerHTML = "";
           return;
         }
 
         msgViajes.textContent = `Recorridos: ${snap.size}`;
 
-        snap.forEach((d) => {
-          const v = d.data();
+        viajesCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
 
-          const ini = v.inicioMs ? new Date(v.inicioMs).toLocaleString("es-AR") : "—";
-          const fin = v.finMs ? new Date(v.finMs).toLocaleString("es-AR") : "—";
+        // render inicial (sin filtros o con filtros actuales)
+        aplicarFiltrosYRender(listaViajes, resumenEl);
 
-          listaViajes.innerHTML += `
-        <div class="item-simple">
-          <div class="item-info">
-            <strong>🚚 ${v.camionId || "—"}</strong><br>
-            <small>Chofer DNI: ${v.empleadoDni || "—"}</small><br>
-            <small>Inicio: ${ini}</small><br>
-            <small>Fin: ${fin}</small><br>
-            <small><b>Distancia:</b> ${fmtKm(v.distanciaM)} km</small>
-          </div>
-          <button class="btn-secundario" data-verviaje="${d.id}">Ver ruta</button>
-        </div>
-      `;
-        });
-
-        // ✅ Event delegation (más estable que agregar listeners uno por uno)
+        // delegación de eventos: ver ruta + pdf
         listaViajes.onclick = (e) => {
-          const btn = e.target.closest("button[data-verviaje]");
-          if (!btn) return;
+          const btnRuta = e.target.closest("button[data-verviaje]");
+          const btnPdf = e.target.closest("button[data-pdfviaje]");
 
-          const id = btn.getAttribute("data-verviaje");
+          if (btnRuta) {
+            const id = btnRuta.getAttribute("data-verviaje");
+            const v = viajesCache.find(x => x.id === id);
+            if (!v) return;
+            dibujarRutaGuardadaEnMapa(v);
+            return;
+          }
 
-          // buscar en el snap actual (sin hacer otro fetch)
-          const doc = snap.docs.find(x => x.id === id);
-          if (!doc) return;
-
-          const v = doc.data();
-          dibujarRutaGuardadaEnMapa(v);
+          if (btnPdf) {
+            const id = btnPdf.getAttribute("data-pdfviaje");
+            const v = viajesCache.find(x => x.id === id);
+            if (!v) return;
+            exportarViajePDF(v);
+            return;
+          }
         };
-
       }, (err) => {
         console.error("Snapshot viajes:", err);
         msgViajes.style.color = "#b91c1c";
         msgViajes.textContent = "Error cargando recorridos (reglas/índices).";
       });
     }
+
 
 
     // =========================
@@ -1667,7 +1817,89 @@
       return km.toFixed(2).replace(".", ",");
     }
 
-   
+
+    // ============================================================
+    // 🚨 ALERTA AUTOMÁTICA: CAMIÓN DETENIDO
+    // ============================================================
+    const STOP_MIN_MS = 20 * 60 * 1000;     // 20 minutos detenido (ajustable)
+    const STOP_COOLDOWN_MS = 30 * 60 * 1000; // 30 minutos de cooldown por camión
+    const SPEED_MOVING_MS = 1.0;            // >1 m/s (~3.6 km/h) lo considero "moviendo"
+    const MIN_MOVE_METERS = 35;             // si se mueve >35m, lo considero "moviendo"
+
+    const lastPosByCamion = new Map();      // camionId -> {lat,lng}
+    const lastMoveAtByCamion = new Map();   // camionId -> ms
+    function keyStopAlert(camionId) {
+      return `RR_STOP_ALERT_${productorId || "noProd"}_${camionId}`;
+    }
+
+    function yaSeAlertoReciente(camionId, nowMs) {
+      const k = keyStopAlert(camionId);
+      const last = Number(localStorage.getItem(k) || 0);
+      return last && (nowMs - last) < STOP_COOLDOWN_MS;
+    }
+
+    function marcarAlerta(camionId, nowMs) {
+      localStorage.setItem(keyStopAlert(camionId), String(nowMs));
+    }
+
+    async function chequearCamionDetenido(c) {
+      // c = doc.data() de "camiones"
+      const camionId = c.camionId;
+      if (!camionId) return;
+
+      // si está offline, no dispares (es normal)
+      if (!c.online) return;
+
+      // tomamos como referencia el último ping real
+      const nowMs = Number(c.lastSeen) || Date.now();
+
+      // 1) detectamos si "se movió" por velocidad o por distancia
+      const speed = (typeof c.speed === "number") ? c.speed : null;
+
+      let seMueve = false;
+
+      if (speed != null && speed > SPEED_MOVING_MS) seMueve = true;
+
+      const prev = lastPosByCamion.get(camionId);
+      if (prev && typeof c.lat === "number" && typeof c.lng === "number") {
+        const d = distMetros(prev.lat, prev.lng, c.lat, c.lng);
+        if (d > MIN_MOVE_METERS) seMueve = true;
+      }
+
+      // actualizar caches
+      if (typeof c.lat === "number" && typeof c.lng === "number") {
+        lastPosByCamion.set(camionId, { lat: c.lat, lng: c.lng });
+      }
+
+      if (seMueve) {
+        lastMoveAtByCamion.set(camionId, nowMs);
+        return; // si se mueve, no es detenido
+      }
+
+      // si no se movió, calculamos hace cuánto fue el último movimiento
+      const lastMove = lastMoveAtByCamion.get(camionId) || nowMs;
+      const detenidoMs = nowMs - lastMove;
+
+      // si todavía no pasó el umbral, no hacemos nada
+      if (detenidoMs < STOP_MIN_MS) return;
+
+      // evitar spam
+      if (yaSeAlertoReciente(camionId, nowMs)) return;
+
+      // armamos descripción
+      const min = Math.round(detenidoMs / 60000);
+      const chofer = c.empleadoDni ? `DNI ${c.empleadoDni}` : "—";
+      const desc = `🚚 Camión ${camionId} detenido hace ${min} min. Chofer: ${chofer}. Último ping: ${new Date(nowMs).toLocaleString("es-AR")}`;
+
+      try {
+        await guardarAlertaFirestore("Camión detenido", desc);
+        marcarAlerta(camionId, nowMs);
+        console.log("✅ Alerta automática guardada:", desc);
+      } catch (e) {
+        console.warn("⚠️ No pude guardar alerta automática:", e);
+      }
+    }
+
 
     function escucharCamiones() {
       if (!productorId) return;
@@ -1707,6 +1939,8 @@
           camiones.push(c);
           if (c.camionId) idsActuales.add(c.camionId);
           upsertMarkerCamion(c);
+          // ✅ ALERTA automática por camión detenido
+          chequearCamionDetenido(c);
         });
 
         limpiarMarkersNoPresentes(idsActuales);
@@ -1728,6 +1962,21 @@
             marker.openPopup();
           });
         });
+
+        // ✅ poblar selector de patentes (si existe)
+        const sel = document.getElementById("filtroPatente");
+        if (sel) {
+          const actual = sel.value;
+          const patentes = snap.docs.map(d => d.id).sort();
+
+          sel.innerHTML = `<option value="">🚚 Todas las patentes</option>` + patentes
+            .map(p => `<option value="${p}">${p}</option>`)
+            .join("");
+
+          // mantener selección si estaba
+          if (patentes.includes(actual)) sel.value = actual;
+        }
+
 
       }, (err) => {
         console.error("Snapshot camiones:", err);
