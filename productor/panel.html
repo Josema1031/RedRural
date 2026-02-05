@@ -929,7 +929,7 @@
     // =========================
     // 🔴 Reemplazá por TU UID real (Firebase Auth UID)
     const ADMIN_UIDS = new Set([
-      "TU_UID_ADMIN_AQUI"
+      "mfCEucZxwne4vGJcMIvfm3hOe173"
     ]);
 
     function soyAdmin() {
@@ -1490,6 +1490,7 @@
       initClima();
       initHoy();
       actualizarHoy();
+      limpiarRutaGuardada();
 
 
       setTimeout(() => {
@@ -1749,7 +1750,8 @@
 
       limpiarRutaGuardada();
 
-      const ruta = Array.isArray(viaje.ruta) ? viaje.ruta : [];
+      const ruta = Array.isArray(viaje.rutaPts) ? viaje.rutaPts : (Array.isArray(viaje.ruta) ? viaje.ruta : []);
+
       if (ruta.length < 2) {
         alert("Este recorrido no tiene suficientes puntos para dibujar.");
         return;

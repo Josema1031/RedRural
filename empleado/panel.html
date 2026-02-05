@@ -132,7 +132,7 @@
         <div id="listaAlertas" class="muted">Cargando...</div>
       </div>
 
-      <!-- ✅ NUEVO: Monitoreo Camión -->
+
       <div class="card">
         <h2 style="margin:0 0 8px">🚚 Monitoreo del camión</h2>
         <div class="muted" style="margin-bottom:10px">
@@ -164,7 +164,7 @@
     import { onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import {
       collection, query, where, onSnapshot, orderBy,
-      doc, updateDoc, setDoc, serverTimestamp, addDoc
+      doc, updateDoc, setDoc, serverTimestamp, addDoc, getDoc
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
@@ -212,6 +212,10 @@
       onAuthStateChanged(auth, async (user) => {
         try {
           if (!user) await asegurarAuth();
+
+          // ✅ VINCULAR UID ANÓNIMO AL DNI (clave para permisos de camiones/viajes)
+          await vincularAuthUidEmpleado(empleadoDni);
+
           iniciarListeners();
         } catch (e) {
           console.error("Auth empleado:", e);
@@ -219,6 +223,34 @@
           listaAlertas.textContent = "No se pudo iniciar sesión (auth).";
         }
       });
+
+
+
+      // ✅ Vincular el UID del Auth al DNI del empleado (solo si está vacío)
+      async function vincularAuthUidEmpleado(dni) {
+        const ref = doc(db, "employees", String(dni));
+        const snap = await getDoc(ref);
+
+        if (!snap.exists()) {
+          console.warn("No existe employees/" + dni + " (primero debe crearlo el productor)");
+          return;
+        }
+
+        const data = snap.data();
+        const uidActual = auth.currentUser?.uid;
+
+        // si authUid está vacío, lo seteamos
+        if (!data.authUid) {
+          await updateDoc(ref, {
+            authUid: uidActual,
+            lastLogin: Date.now()
+          });
+          console.log("✅ authUid vinculado al empleado", dni, uidActual);
+        } else {
+          console.log("ℹ️ authUid ya estaba vinculado:", data.authUid);
+        }
+      }
+
 
       function iniciarListeners() {
         // ✅ TAREAS: filtramos por productorId + empleadoId (dni) y orden por timestamp
@@ -560,15 +592,13 @@
                   inicioMs,
                   finMs,
                   distanciaM: Math.round(distanciaM),
-                  ruta: rutaPts,
-                  createdAt: serverTimestamp()
+                  rutaPts: rutaPts
                 });
+
               }
             } catch (e) {
               console.warn("No pude guardar el viaje:", e);
             }
-            console.log("STOP => camionId:", camionId);
-console.log("STOP => puntos:", rutaPts.length, "distanciaM:", distanciaM, "inicioMs:", inicioMs);
 
 
           }
