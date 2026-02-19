@@ -1,0 +1,44 @@
+
+ * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f4f6;
+    }
+
+    header {
+      background: #14532d;
+      color: white;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 1000px;
+      margin: auto;
+      width: 100%;
+    }
+
+    h2 {
+      margin-top: 25px;
+      color: #14532d;
+      font-weight: 800;
+      position: relative;
+      padding-bottom: 6px;
+      display: inline-block;
+    }
+
+    h2::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 35%;
+      height: 3px;
+      background: #14532d;
+      border-radius: 3px;
+    }

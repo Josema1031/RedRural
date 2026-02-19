@@ -1,0 +1,391 @@
+@charset "UTF-8";
+.btn-primario {
+  background: #14532d;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-pro {
+  background-color: #14532d;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-secundario {
+  background: #e5e7eb;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-mini {
+  margin-top: 10px;
+  background: #7f1d1d;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f3f4f6;
+}
+
+header {
+  background: #14532d;
+  color: white;
+  padding: 16px;
+  text-align: center;
+}
+
+.container {
+  padding: 20px;
+  max-width: 1000px;
+  margin: auto;
+  width: 100%;
+}
+
+h2 {
+  margin-top: 25px;
+  color: #14532d;
+  font-weight: 800;
+  position: relative;
+  padding-bottom: 6px;
+  display: inline-block;
+}
+
+h2::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 35%;
+  height: 3px;
+  background: #14532d;
+  border-radius: 3px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.fila {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+input,
+select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  flex: 1;
+  min-width: 220px;
+}
+
+.lista-simple {
+  margin-top: 15px;
+}
+
+/* Tarjetas elevadas estilo app */
+.item-simple {
+  background: white;
+  padding: 14px;
+  border-radius: 14px;
+  margin-bottom: 14px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.item-simple:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.item-simple .item-info {
+  min-width: 0;
+}
+
+.nav-panel {
+  display: flex;
+  overflow-x: auto;
+  padding: 8px;
+  gap: 10px;
+  background: #eaf2ec;
+  border-bottom: 1px solid #d1d5db;
+}
+
+.nav-btn {
+  flex: 1;
+  min-width: 120px;
+  background: #14532d;
+  color: white;
+  border: none;
+  padding: 12px 0;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.25s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+.nav-btn .icono {
+  font-size: 20px;
+  transition: transform 0.2s ease;
+}
+
+.nav-btn .texto {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.nav-btn .indicador {
+  position: absolute;
+  bottom: -5px;
+  width: 0px;
+  height: 4px;
+  background: #1e7a42;
+  border-radius: 4px;
+  transition: width 0.25s ease;
+}
+
+.nav-btn.activo {
+  background: #1e7a42;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.nav-btn.activo .icono {
+  transform: scale(1.25);
+}
+
+.nav-btn.activo .indicador {
+  width: 40%;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  header {
+    padding: 12px;
+  }
+  .container {
+    padding: 14px;
+  }
+  .nav-btn {
+    min-width: 105px;
+    padding: 10px 0;
+  }
+  .nav-btn .texto {
+    font-size: 13px;
+  }
+}
+/* Móvil */
+@media (max-width: 600px) {
+  header h1 {
+    font-size: 18px;
+  }
+  .container {
+    padding: 12px;
+  }
+  .fila {
+    flex-direction: column;
+    gap: 8px;
+  }
+  input,
+  select {
+    width: 100%;
+    min-width: 0;
+  }
+  .btn-primario,
+  .btn-secundario,
+  .btn-mini {
+    width: 100%;
+  }
+  .item-simple {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .item-simple a.btn-primario,
+  .item-simple button.btn-secundario {
+    width: 100%;
+    text-align: center;
+  }
+  #mapCaminos,
+  #mapMarcaciones {
+    height: 240px !important;
+  }
+}
+@media (max-width: 380px) {
+  .nav-btn {
+    min-width: 95px;
+  }
+  .nav-btn .icono {
+    font-size: 18px;
+  }
+  .nav-btn .texto {
+    font-size: 12px;
+  }
+}
+/* ============================
+HOY – Botones en fila (mobile)
+============================ */
+@media (max-width: 600px) {
+  /* Forzamos fila horizontal SOLO en este bloque */
+  .filaHoy {
+    display: flex !important;
+    flex-direction: row !important;
+    /* 🔥 clave */
+    flex-wrap: wrap !important;
+    gap: 10px;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  .filaHoy .btn-primario,
+  .filaHoy .btn-secundario {
+    width: auto !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    font-size: 13px;
+    border-radius: 10px;
+    white-space: nowrap;
+    margin: 0 !important;
+    /* por si hay márgenes viejos */
+  }
+}
+.filtro-chip {
+  background: #e5e7eb;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  border: 1px solid #d1d5db;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.filtro-chip:hover {
+  background: #d1d5db;
+}
+
+.filtro-chip.activo {
+  background: #14532d;
+  color: white;
+  border-color: #14532d;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.chip-categoria {
+  background: #d1fae5;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.chip-prioridad-alta {
+  background: #fecaca;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.chip-prioridad-media {
+  background: #fef08a;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.chip-prioridad-baja {
+  background: #bbf7d0;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.status-msg {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+section {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tooltip-camino {
+  background: white;
+  border: 1px solid #d1d5db;
+  padding: 4px 8px;
+  border-radius: 8px;
+  color: #111827;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+#mapCaminos,
+#mapMarcaciones {
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
+  border: 1px solid #d1d5db;
+}
+
+.leaflet-popup-content {
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+}
+
+.leaflet-popup-tip {
+  background: white;
+  border: 1px solid #d1d5db;
+}
+
+/*# sourceMappingURL=main.css.map */

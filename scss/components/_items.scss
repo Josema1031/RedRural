@@ -1,0 +1,27 @@
+.lista-simple {
+      margin-top: 15px;
+    }
+
+    /* Tarjetas elevadas estilo app */
+    .item-simple {
+      background: white;
+      padding: 14px;
+      border-radius: 14px;
+      margin-bottom: 14px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      transition: transform .12s ease, box-shadow .12s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .item-simple:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .item-simple .item-info {
+      min-width: 0;
+    }

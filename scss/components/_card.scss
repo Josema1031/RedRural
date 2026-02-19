@@ -1,0 +1,25 @@
+
+ .card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 16px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, .10);
+    }
+
+
+   .fila {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    input,
+    select {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      flex: 1;
+      min-width: 220px;
+    }

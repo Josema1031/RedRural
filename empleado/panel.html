@@ -128,6 +128,33 @@
       </div>
 
       <div class="card">
+        <h2 style="margin:0 0 8px">⛽ Cargar combustible</h2>
+        <div class="muted">Registrá una carga para el productor.</div>
+
+        <label style="display:block;font-size:.85rem;margin-top:8px;margin-bottom:4px;color:#374151">
+          Vehículo (patente/ID)
+        </label>
+        <input id="eVehiculo" placeholder="Ej: ABC123 o Tractor-1"
+          style="width:100%;padding:10px;border-radius:10px;border:1px solid #e5e7eb" />
+
+        <div class="actions" style="margin-top:10px">
+          <input id="eLitros" type="number" step="0.01" placeholder="Litros"
+            style="flex:1;min-width:140px;padding:10px;border-radius:10px;border:1px solid #e5e7eb" />
+          <input id="eCosto" type="number" step="1" placeholder="$ Total"
+            style="flex:1;min-width:140px;padding:10px;border-radius:10px;border:1px solid #e5e7eb" />
+        </div>
+
+        <div class="actions">
+          <input id="eOdom" type="number" step="1" placeholder="Odómetro (opcional)"
+            style="flex:1;min-width:180px;padding:10px;border-radius:10px;border:1px solid #e5e7eb" />
+          <button class="btn-ok" id="btnEmpleadoComb">➕ Registrar</button>
+        </div>
+
+        <div id="msgEmpleadoComb" class="muted" style="margin-top:10px"></div>
+      </div>
+
+
+      <div class="card">
         <h2 style="margin:0 0 8px">📣 Alertas del Productor</h2>
         <div id="listaAlertas" class="muted">Cargando...</div>
       </div>
@@ -250,6 +277,53 @@
           console.log("ℹ️ authUid ya estaba vinculado:", data.authUid);
         }
       }
+
+      // ⛽ Carga de combustible por empleado
+      const eVehiculo = document.getElementById("eVehiculo");
+      const eLitros = document.getElementById("eLitros");
+      const eCosto = document.getElementById("eCosto");
+      const eOdom = document.getElementById("eOdom");
+      const btnEmpleadoComb = document.getElementById("btnEmpleadoComb");
+      const msgEmpleadoComb = document.getElementById("msgEmpleadoComb");
+
+      function setMsgComb(txt, ok = true) {
+        msgEmpleadoComb.textContent = txt;
+        msgEmpleadoComb.style.color = ok ? "#14532d" : "#b91c1c";
+        setTimeout(() => (msgEmpleadoComb.textContent = ""), 3000);
+      }
+
+      btnEmpleadoComb?.addEventListener("click", async () => {
+        try {
+          const veh = (eVehiculo?.value || "").trim();
+          const litros = Number(eLitros?.value || 0);
+          const costo = Number(eCosto?.value || 0);
+          const odom = eOdom?.value ? Number(eOdom.value) : null;
+
+          if (!veh) return setMsgComb("⚠️ Ingresá vehículo.", false);
+          if (litros <= 0) return setMsgComb("⚠️ Litros inválidos.", false);
+
+          await addDoc(collection(db, "combustible"), {
+            productorId,
+            vehiculo: veh,
+            litros,
+            costo,
+            odometro: odom,
+            fechaMs: Date.now(),
+            createdAt: serverTimestamp(),
+            cargadoPor: empleadoDni
+          });
+
+          eVehiculo.value = "";
+          eLitros.value = "";
+          eCosto.value = "";
+          eOdom.value = "";
+          setMsgComb("✅ Registrado.");
+        } catch (e) {
+          console.error(e);
+          setMsgComb("❌ No se pudo registrar (permisos/reglas).", false);
+        }
+      });
+
 
 
       function iniciarListeners() {

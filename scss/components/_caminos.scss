@@ -1,0 +1,44 @@
+section {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .25s ease, transform .25s ease;
+    }
+
+    section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .tooltip-camino {
+      background: white;
+      border: 1px solid #d1d5db;
+      padding: 4px 8px;
+      border-radius: 8px;
+      color: #111827;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    #mapCaminos,
+    #mapMarcaciones {
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
+      border: 1px solid #d1d5db;
+    }
+
+    .leaflet-popup-content {
+      font-size: 14px;
+      line-height: 18px;
+    }
+
+    .leaflet-popup-content-wrapper {
+      border-radius: 12px;
+      padding: 8px 12px;
+      border: 1px solid #d1d5db;
+    }
+
+    .leaflet-popup-tip {
+      background: white;
+      border: 1px solid #d1d5db;
+    }

@@ -7,12 +7,13 @@
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="../css/main.css">
 
   <title>Panel del Productor — RuralControl</title>
 
   <style>
     /* ✅ Responsive base */
-    * {
+    /* * {
       box-sizing: border-box;
     }
 
@@ -54,9 +55,9 @@
       height: 3px;
       background: #14532d;
       border-radius: 3px;
-    }
+    }*/
 
-    .card {
+    /*.card {
       background: #fff;
       border-radius: 14px;
       padding: 16px;
@@ -65,7 +66,7 @@
     }
 
 
-    .fila {
+   .fila {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
@@ -79,9 +80,9 @@
       border: 1px solid #ccc;
       flex: 1;
       min-width: 220px;
-    }
+    }*/
 
-    .btn-primario {
+    /*.btn-primario {
       background: #14532d;
       color: white;
       border: none;
@@ -117,13 +118,13 @@
       padding: 8px 12px;
       border-radius: 8px;
       cursor: pointer;
-    }
+    }*/
 
-    .lista-simple {
+    /*.lista-simple {
       margin-top: 15px;
     }
 
-    /* Tarjetas elevadas estilo app */
+    
     .item-simple {
       background: white;
       padding: 14px;
@@ -145,12 +146,12 @@
 
     .item-simple .item-info {
       min-width: 0;
-    }
+    }*/
 
     /* ========================================================= */
     /* CHIPS MODERNOS PARA FILTROS */
     /* ========================================================= */
-    .filtro-chip {
+    /*.filtro-chip {
       background: #e5e7eb;
       padding: 6px 14px;
       border-radius: 20px;
@@ -203,13 +204,13 @@
     .status-msg {
       margin-top: 10px;
       font-size: 14px;
-    }
+    }*/
 
     /* ==================================== */
     /* NAV AVANZADO ESTILO APP */
     /* ==================================== */
 
-    .nav-panel {
+    /*.nav-panel {
       display: flex;
       overflow-x: auto;
       padding: 8px;
@@ -272,9 +273,9 @@
 
     .hidden {
       display: none;
-    }
+    }*/
 
-    section {
+    /*section {
       opacity: 0;
       transform: translateY(10px);
       transition: opacity .25s ease, transform .25s ease;
@@ -320,7 +321,7 @@
     }
 
     /* NAV: botones un poco más chicos en pantallas medianas */
-    @media (max-width: 900px) {
+   /* @media (max-width: 900px) {
       header {
         padding: 12px;
       }
@@ -339,7 +340,7 @@
       }
     }
 
-    /* Móvil */
+   
     @media (max-width: 600px) {
       header h1 {
         font-size: 18px;
@@ -397,16 +398,14 @@
       }
     }
 
-    /* ============================
-   HOY – Botones en fila (mobile)
-   ============================ */
+  
     @media (max-width: 600px) {
 
-      /* Forzamos fila horizontal SOLO en este bloque */
+      
       .filaHoy {
         display: flex !important;
         flex-direction: row !important;
-        /* 🔥 clave */
+       
         flex-wrap: wrap !important;
         gap: 10px;
         justify-content: flex-start;
@@ -424,9 +423,9 @@
         border-radius: 10px;
         white-space: nowrap;
         margin: 0 !important;
-        /* por si hay márgenes viejos */
+       
       }
-    }
+    }*/
   </style>
 </head>
 
@@ -469,6 +468,13 @@
       <span class="texto">HOY</span>
       <div class="indicador"></div>
     </button>
+
+    <button data-target="sec-gestion" class="nav-btn">
+      <span class="icono">📊</span>
+      <span class="texto">Gestión</span>
+      <div class="indicador"></div>
+    </button>
+
 
     <button data-target="sec-empleados" class="nav-btn">
       <span class="icono">👷</span>
@@ -524,6 +530,61 @@
   </nav>
 
   <div class="container">
+
+    <!-- ============================= -->
+    <!-- SECCIÓN: GESTION -->
+    <!-- ============================= -->
+
+    <section id="sec-gestion" class="hidden">
+      <h2>Gestión del campo</h2>
+      <small>Datos clave + combustible (cargan productor o empleados).</small>
+
+      <div class="card" style="margin-top:14px;">
+        <h3 style="margin:0 0 8px; color:#14532d;">📌 Ficha del campo</h3>
+        <div class="fila">
+          <input id="gHectareas" type="number" step="0.01" placeholder="Hectáreas (ej: 120.5)">
+          <input id="gCabezas" type="number" step="1" placeholder="Cabezas de ganado (ej: 230)">
+          <button class="btn-primario" id="btnGuardarFicha">💾 Guardar</button>
+          <button class="btn-secundario" id="btnRefrescarFicha" type="button">🔄 Refrescar</button>
+        </div>
+        <p class="status-msg" id="msgFicha"></p>
+      </div>
+
+      <div class="card" style="margin-top:14px;">
+        <h3 style="margin:0 0 8px; color:#14532d;">🚜 Vehículos</h3>
+        <div class="fila">
+          <input id="vPatente" placeholder="Patente/ID (ej: ABC123 o Tractor-1)">
+          <select id="vTipo">
+            <option value="camioneta">Camioneta</option>
+            <option value="camion">Camión</option>
+            <option value="tractor">Tractor</option>
+            <option value="maquina">Máquina</option>
+          </select>
+          <button class="btn-primario" id="btnAgregarVehiculo">➕ Agregar</button>
+        </div>
+        <p class="status-msg" id="msgVehiculos"></p>
+        <div id="listaVehiculos" class="lista-simple"></div>
+      </div>
+
+      <div class="card" style="margin-top:14px;">
+        <h3 style="margin:0 0 8px; color:#14532d;">⛽ Combustible</h3>
+        <small class="muted">Entradas registradas por productor o empleados.</small>
+
+        <div class="fila" style="margin-top:10px;">
+          <select id="cVehiculo">
+            <option value="">Elegir vehículo…</option>
+          </select>
+          <input id="cLitros" type="number" step="0.01" placeholder="Litros (ej: 45)">
+          <input id="cCosto" type="number" step="1" placeholder="$ Total (ej: 35000)">
+          <input id="cOdom" type="number" step="1" placeholder="Odómetro (opcional)">
+          <button class="btn-primario" id="btnCargarCombustible">➕ Cargar</button>
+        </div>
+
+        <p class="status-msg" id="msgCombustible"></p>
+        <div id="listaCombustible" class="lista-simple"></div>
+      </div>
+    </section>
+
 
     <!-- ============================= -->
     <!-- SECCIÓN: EMPLEADOS -->
@@ -1641,6 +1702,8 @@
       initHoy();
       actualizarHoy();
       limpiarRutaGuardada();
+      initGestion(); // ✅ nuevo
+
 
 
       setTimeout(() => {
@@ -1821,7 +1884,7 @@
     // ============================================================
     // 🚨 ALERTA AUTOMÁTICA: CAMIÓN DETENIDO
     // ============================================================
-    const STOP_MIN_MS = 20 * 60 * 1000;     // 20 minutos detenido (ajustable)
+    const STOP_MIN_MS = 15 * 60 * 1000;     // 15 minutos detenido (ajustable)
     const STOP_COOLDOWN_MS = 30 * 60 * 1000; // 30 minutos de cooldown por camión
     const SPEED_MOVING_MS = 1.0;            // >1 m/s (~3.6 km/h) lo considero "moviendo"
     const MIN_MOVE_METERS = 35;             // si se mueve >35m, lo considero "moviendo"
@@ -3095,6 +3158,214 @@
       }
     });
 
+    function initGestion() {
+      // --- refs UI
+      const gHectareas = document.getElementById("gHectareas");
+      const gCabezas = document.getElementById("gCabezas");
+      const msgFicha = document.getElementById("msgFicha");
+      const btnGuardarFicha = document.getElementById("btnGuardarFicha");
+      const btnRefrescarFicha = document.getElementById("btnRefrescarFicha");
+
+      const vPatente = document.getElementById("vPatente");
+      const vTipo = document.getElementById("vTipo");
+      const btnAgregarVehiculo = document.getElementById("btnAgregarVehiculo");
+      const msgVehiculos = document.getElementById("msgVehiculos");
+      const listaVehiculos = document.getElementById("listaVehiculos");
+
+      const cVehiculo = document.getElementById("cVehiculo");
+      const cLitros = document.getElementById("cLitros");
+      const cCosto = document.getElementById("cCosto");
+      const cOdom = document.getElementById("cOdom");
+      const btnCargarCombustible = document.getElementById("btnCargarCombustible");
+      const msgCombustible = document.getElementById("msgCombustible");
+      const listaCombustible = document.getElementById("listaCombustible");
+
+      if (!productorId) return;
+
+      const setMsg = (el, txt, ok = true) => {
+        if (!el) return;
+        el.textContent = txt;
+        el.style.color = ok ? "#166534" : "#b91c1c";
+        setTimeout(() => (el.textContent = ""), 3000);
+      };
+
+      // =========================
+      // 1) Ficha del campo (doc fijo)
+      // =========================
+      const refFicha = doc(db, "gestion_campos", productorId);
+
+      async function refrescarFicha() {
+        try {
+          const snap = await getDoc(refFicha);
+          if (!snap.exists()) return;
+          const d = snap.data();
+          if (gHectareas) gHectareas.value = d.hectareas ?? "";
+          if (gCabezas) gCabezas.value = d.cabezas ?? "";
+        } catch (e) {
+          console.error(e);
+          setMsg(msgFicha, "❌ No se pudo leer la ficha.", false);
+        }
+      }
+
+      btnGuardarFicha?.addEventListener("click", async () => {
+        try {
+          const hect = Number(gHectareas?.value || 0);
+          const cab = Number(gCabezas?.value || 0);
+
+          await setDoc(refFicha, {
+            productorId,
+            hectareas: hect,
+            cabezas: cab,
+            updatedAt: serverTimestamp(),
+            updatedBy: "productor"
+          }, { merge: true });
+
+          setMsg(msgFicha, "✅ Ficha guardada.");
+        } catch (e) {
+          console.error(e);
+          setMsg(msgFicha, "❌ No se pudo guardar (permisos/reglas).", false);
+        }
+      });
+
+      btnRefrescarFicha?.addEventListener("click", refrescarFicha);
+
+      // auto carga
+      refrescarFicha();
+
+      // =========================
+      // 2) Vehículos
+      // =========================
+      const qVeh = query(
+        collection(db, "vehiculos"),
+        where("productorId", "==", productorId),
+        orderBy("createdAt", "desc")
+      );
+
+      btnAgregarVehiculo?.addEventListener("click", async () => {
+        try {
+          const pat = (vPatente?.value || "").trim();
+          const tipo = (vTipo?.value || "camioneta").trim();
+          if (!pat) return setMsg(msgVehiculos, "⚠️ Ingresá patente/ID.", false);
+
+          await addDoc(collection(db, "vehiculos"), {
+            productorId,
+            patente: pat,
+            tipo,
+            activo: true,
+            createdAt: serverTimestamp()
+          });
+
+          vPatente.value = "";
+          setMsg(msgVehiculos, "✅ Vehículo agregado.");
+        } catch (e) {
+          console.error(e);
+          setMsg(msgVehiculos, "❌ No se pudo agregar (permisos/índices).", false);
+        }
+      });
+
+      onSnapshot(qVeh, (snap) => {
+        // lista + combo
+        if (listaVehiculos) listaVehiculos.innerHTML = "";
+        if (cVehiculo) cVehiculo.innerHTML = `<option value="">Elegir vehículo…</option>`;
+
+        snap.forEach((d) => {
+          const v = d.data();
+          const pat = v.patente || "(sin patente)";
+          const tipo = v.tipo || "";
+          const activo = v.activo !== false;
+
+          // combo
+          if (cVehiculo) {
+            const op = document.createElement("option");
+            op.value = pat;
+            op.textContent = `${pat} (${tipo})`;
+            cVehiculo.appendChild(op);
+          }
+
+          // lista
+          if (listaVehiculos) {
+            const div = document.createElement("div");
+            div.className = "item-simple";
+            div.innerHTML = `
+          <div class="item-info">
+            <strong>🚜 ${pat}</strong><br>
+            <small>${tipo} • ${activo ? "activo" : "inactivo"}</small>
+          </div>
+        `;
+            listaVehiculos.appendChild(div);
+          }
+        });
+      });
+
+      // =========================
+      // 3) Combustible (listado + carga)
+      // =========================
+      const qComb = query(
+        collection(db, "combustible"),
+        where("productorId", "==", productorId),
+        orderBy("fechaMs", "desc")
+      );
+
+      btnCargarCombustible?.addEventListener("click", async () => {
+        try {
+          const veh = (cVehiculo?.value || "").trim();
+          const litros = Number(cLitros?.value || 0);
+          const costo = Number(cCosto?.value || 0);
+          const odom = cOdom?.value ? Number(cOdom.value) : null;
+
+          if (!veh) return setMsg(msgCombustible, "⚠️ Elegí un vehículo.", false);
+          if (litros <= 0) return setMsg(msgCombustible, "⚠️ Litros inválidos.", false);
+
+          await addDoc(collection(db, "combustible"), {
+            productorId,
+            empleadoDni: "productor",          // ✅ agregar (string)
+            vehiculo: veh,
+            litros,
+            costo,
+            odometro: odom,
+            fechaMs: Date.now(),
+            createdAt: serverTimestamp(),
+            cargadoPor: "productor"
+          });
+
+
+          cLitros.value = "";
+          cCosto.value = "";
+          cOdom.value = "";
+          setMsg(msgCombustible, "✅ Carga registrada.");
+        } catch (e) {
+          console.error(e);
+          setMsg(msgCombustible, "❌ No se pudo registrar (permisos/índices).", false);
+        }
+      });
+
+      onSnapshot(qComb, (snap) => {
+        if (!listaCombustible) return;
+        listaCombustible.innerHTML = "";
+
+        if (snap.empty) {
+          listaCombustible.innerHTML = `<small class="muted">Todavía no hay cargas.</small>`;
+          return;
+        }
+
+        snap.forEach((d) => {
+          const c = d.data();
+          const f = c.fechaMs ? new Date(c.fechaMs).toLocaleString("es-AR") : "";
+          const div = document.createElement("div");
+          div.className = "item-simple";
+          div.innerHTML = `
+        <div class="item-info">
+          <strong>⛽ ${c.vehiculo || ""} • ${Number(c.litros || 0)} L</strong><br>
+          <small>$${Number(c.costo || 0)} ${c.odometro ? "• Odo: " + c.odometro : ""} • ${f} • Por: ${c.cargadoPor || "-"}</small>
+        </div>
+        <span class="chip-categoria">OK</span>
+      `;
+          listaCombustible.appendChild(div);
+        });
+      });
+    }
+
+
     function initCalculadora() {
       const ha = document.getElementById("calcHa");
       const kgHa = document.getElementById("calcKgHa");
@@ -3423,7 +3694,7 @@
 
       // ======================
       // SECCIONES (seguridad extra)
-      // ======================
+      // ======================<nav class="nav-panel"
       const secCamiones = document.getElementById("sec-camiones");
       const secAlertas = document.getElementById("sec-alertas");
 

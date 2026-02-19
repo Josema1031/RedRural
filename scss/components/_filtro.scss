@@ -1,0 +1,55 @@
+
+    .filtro-chip {
+      background: #e5e7eb;
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      border: 1px solid #d1d5db;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .filtro-chip:hover {
+      background: #d1d5db;
+    }
+
+    .filtro-chip.activo {
+      background: #14532d;
+      color: white;
+      border-color: #14532d;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .chip-categoria {
+      background: #d1fae5;
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 12px;
+    }
+
+    .chip-prioridad-alta {
+      background: #fecaca;
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 12px;
+    }
+
+    .chip-prioridad-media {
+      background: #fef08a;
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 12px;
+    }
+
+    .chip-prioridad-baja {
+      background: #bbf7d0;
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 12px;
+    }
+
+    .status-msg {
+      margin-top: 10px;
+      font-size: 14px;
+    }
