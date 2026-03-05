@@ -345,7 +345,9 @@ select {
   font-size: 14px;
   border: 1px solid #d1d5db;
   transition: all 0.2s ease;
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
 }
 
 .filtro-chip:hover {
@@ -435,6 +437,4 @@ section.visible {
 .leaflet-popup-tip {
   background: white;
   border: 1px solid #d1d5db;
-}
-
-/*# sourceMappingURL=main.css.map */
+}/*# sourceMappingURL=main.css.map */

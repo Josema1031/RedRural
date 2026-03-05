@@ -1,107 +1,143 @@
 @media (max-width: 900px) {
-      header {
-        padding: 12px;
-      }
+  header {
+    padding: 12px;
+  }
 
-      .container {
-        padding: 14px;
-      }
+  .container {
+    padding: 14px;
+  }
 
-      .nav-btn {
-        min-width: 105px;
-        padding: 10px 0;
-      }
+  .nav-btn {
+    min-width: 105px;
+    padding: 10px 0;
+  }
 
-      .nav-btn .texto {
-        font-size: 13px;
-      }
-    }
+  .nav-btn .texto {
+    font-size: 13px;
+  }
+}
 
-    /* Móvil */
-    @media (max-width: 600px) {
-      header h1 {
-        font-size: 18px;
-      }
+/* Móvil */
+@media (max-width: 600px) {
+  header h1 {
+    font-size: 18px;
+  }
 
-      .container {
-        padding: 12px;
-      }
+  .container {
+    padding: 12px;
+  }
 
-      .fila {
-        flex-direction: column;
-        gap: 8px;
-      }
+  /* ✅ CLAVE: en móvil la fila NO va en columna, va en row + wrap */
+  .fila {
+    display: flex;
+    flex-direction: row; /* ✅ para que queden al lado */
+    flex-wrap: wrap;     /* ✅ si no entran, bajan */
+    gap: 8px;
+    align-items: center;
+  }
 
-      input,
-      select {
-        width: 100%;
-        min-width: 0;
-      }
+  /* ✅ Inputs y selects: 100% de ancho */
+  .fila input,
+  .fila select {
+    width: 100%;
+    flex: 1 1 100%;
+    min-width: 0;
+  }
 
-      .btn-primario,
-      .btn-secundario,
-      .btn-mini {
-        width: 100%;
-      }
+  /* ✅ Botones: NO 100% (tamaño natural) y quedan en fila */
+  .fila .btn-primario,
+  .fila .btn-secundario,
+  .fila .btn-mini,
+  .fila .btn-pro,
+  .fila button {
+    width: auto;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
 
-      .item-simple {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+  /* ✅ Si querés un look más “pro” en móvil (podés ajustar) */
+  .fila .btn-primario,
+  .fila .btn-secundario,
+  .fila .btn-mini,
+  .fila .btn-pro {
+    padding: 10px 12px;
+    border-radius: 10px;
+  }
 
-      .item-simple a.btn-primario,
-      .item-simple button.btn-secundario {
-        width: 100%;
-        text-align: center;
-      }
+  .item-simple {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-      #mapCaminos,
-      #mapMarcaciones {
-        height: 240px !important;
-      }
-    }
+  /* ✅ Esto queda igual: acá sí querías botones full width */
+  .item-simple a.btn-primario,
+  .item-simple button.btn-secundario {
+    width: 100%;
+    text-align: center;
+  }
 
-    @media (max-width: 380px) {
-      .nav-btn {
-        min-width: 95px;
-      }
+  #mapCaminos,
+  #mapMarcaciones {
+    height: 240px !important;
+  }
+}
 
-      .nav-btn .icono {
-        font-size: 18px;
-      }
+@media (max-width: 380px) {
+  .nav-btn {
+    min-width: 95px;
+  }
 
-      .nav-btn .texto {
-        font-size: 12px;
-      }
-    }
+  .nav-btn .icono {
+    font-size: 18px;
+  }
 
-    /* ============================
+  .nav-btn .texto {
+    font-size: 12px;
+  }
+}
+
+/* ============================
    HOY – Botones en fila (mobile)
    ============================ */
-    @media (max-width: 600px) {
+@media (max-width: 600px) {
+  /* Forzamos fila horizontal SOLO en este bloque */
+  .filaHoy {
+    display: flex !important;
+    flex-direction: row !important; /* 🔥 clave */
+    flex-wrap: wrap !important;
+    gap: 10px;
+    justify-content: flex-start;
+    align-items: center;
+  }
 
-      /* Forzamos fila horizontal SOLO en este bloque */
-      .filaHoy {
-        display: flex !important;
-        flex-direction: row !important;
-        /* 🔥 clave */
-        flex-wrap: wrap !important;
-        gap: 10px;
-        justify-content: flex-start;
-        align-items: center;
-      }
+  .filaHoy .btn-primario,
+  .filaHoy .btn-secundario {
+    width: auto !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    font-size: 13px;
+    border-radius: 10px;
+    white-space: nowrap;
+    margin: 0 !important; /* por si hay márgenes viejos */
+  }
+}
 
-      .filaHoy .btn-primario,
-      .filaHoy .btn-secundario {
-        width: auto !important;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 8px 12px;
-        font-size: 13px;
-        border-radius: 10px;
-        white-space: nowrap;
-        margin: 0 !important;
-        /* por si hay márgenes viejos */
-      }
-    }
+@media (max-width: 600px) {
+  /* números: que entren 2 por fila si hay lugar */
+  .fila input[type="number"],
+  .fila input[type="date"],
+  .fila select {
+    flex: 1 1 140px;   /* 👈 permite 2 columnas */
+    max-width: none;
+  }
+
+  /* texto: que siga ocupando más */
+  .fila input[type="text"],
+  .fila input:not([type]) {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+}
+
