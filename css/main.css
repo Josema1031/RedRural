@@ -275,7 +275,7 @@ HOY – Botones en fila (mobile)
     align-items: center;
   }
   .filaHoy .btn-primario,
-  .filaHoy .btn-secundario {
+  .filaHoy .btn-secundario .btn-mini {
     width: auto !important;
     display: inline-flex;
     align-items: center;

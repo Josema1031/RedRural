@@ -8,425 +8,7 @@
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="../css/main.css">
-
   <title>Panel del Productor — RuralControl</title>
-
-  <style>
-    /* ✅ Responsive base */
-    /* * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f3f4f6;
-    }
-
-    header {
-      background: #14532d;
-      color: white;
-      padding: 16px;
-      text-align: center;
-    }
-
-    .container {
-      padding: 20px;
-      max-width: 1000px;
-      margin: auto;
-      width: 100%;
-    }
-
-    h2 {
-      margin-top: 25px;
-      color: #14532d;
-      font-weight: 800;
-      position: relative;
-      padding-bottom: 6px;
-      display: inline-block;
-    }
-
-    h2::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 35%;
-      height: 3px;
-      background: #14532d;
-      border-radius: 3px;
-    }*/
-
-    /*.card {
-      background: #fff;
-      border-radius: 14px;
-      padding: 16px;
-      border: 1px solid #e5e7eb;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, .10);
-    }
-
-
-   .fila {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 10px;
-    }
-
-    input,
-    select {
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      flex: 1;
-      min-width: 220px;
-    }*/
-
-    /*.btn-primario {
-      background: #14532d;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .btn-pro {
-      background-color: #14532d;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .btn-secundario {
-      background: #e5e7eb;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .btn-mini {
-      margin-top: 10px;
-      background: #7f1d1d;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-    }*/
-
-    /*.lista-simple {
-      margin-top: 15px;
-    }
-
-    
-    .item-simple {
-      background: white;
-      padding: 14px;
-      border-radius: 14px;
-      margin-bottom: 14px;
-      border: 1px solid #e5e7eb;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-      transition: transform .12s ease, box-shadow .12s ease;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .item-simple:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-    }
-
-    .item-simple .item-info {
-      min-width: 0;
-    }*/
-
-    /* ========================================================= */
-    /* CHIPS MODERNOS PARA FILTROS */
-    /* ========================================================= */
-    /*.filtro-chip {
-      background: #e5e7eb;
-      padding: 6px 14px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 14px;
-      border: 1px solid #d1d5db;
-      transition: all 0.2s ease;
-      user-select: none;
-    }
-
-    .filtro-chip:hover {
-      background: #d1d5db;
-    }
-
-    .filtro-chip.activo {
-      background: #14532d;
-      color: white;
-      border-color: #14532d;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-    }
-
-    .chip-categoria {
-      background: #d1fae5;
-      padding: 4px 8px;
-      border-radius: 8px;
-      font-size: 12px;
-    }
-
-    .chip-prioridad-alta {
-      background: #fecaca;
-      padding: 4px 8px;
-      border-radius: 8px;
-      font-size: 12px;
-    }
-
-    .chip-prioridad-media {
-      background: #fef08a;
-      padding: 4px 8px;
-      border-radius: 8px;
-      font-size: 12px;
-    }
-
-    .chip-prioridad-baja {
-      background: #bbf7d0;
-      padding: 4px 8px;
-      border-radius: 8px;
-      font-size: 12px;
-    }
-
-    .status-msg {
-      margin-top: 10px;
-      font-size: 14px;
-    }*/
-
-    /* ==================================== */
-    /* NAV AVANZADO ESTILO APP */
-    /* ==================================== */
-
-    /*.nav-panel {
-      display: flex;
-      overflow-x: auto;
-      padding: 8px;
-      gap: 10px;
-      background: #eaf2ec;
-      border-bottom: 1px solid #d1d5db;
-    }
-
-    .nav-btn {
-      flex: 1;
-      min-width: 120px;
-      background: #14532d;
-      color: white;
-      border: none;
-      padding: 12px 0;
-      border-radius: 14px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      cursor: pointer;
-      position: relative;
-      transition: all 0.25s ease;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-    }
-
-    .nav-btn .icono {
-      font-size: 20px;
-      transition: transform 0.2s ease;
-    }
-
-    .nav-btn .texto {
-      font-size: 14px;
-      font-weight: bold;
-    }
-
-    .nav-btn .indicador {
-      position: absolute;
-      bottom: -5px;
-      width: 0px;
-      height: 4px;
-      background: #1e7a42;
-      border-radius: 4px;
-      transition: width 0.25s ease;
-    }
-
-    .nav-btn.activo {
-      background: #1e7a42;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .nav-btn.activo .icono {
-      transform: scale(1.25);
-    }
-
-    .nav-btn.activo .indicador {
-      width: 40%;
-    }
-
-    .hidden {
-      display: none;
-    }*/
-
-    /*section {
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity .25s ease, transform .25s ease;
-    }
-
-    section.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .tooltip-camino {
-      background: white;
-      border: 1px solid #d1d5db;
-      padding: 4px 8px;
-      border-radius: 8px;
-      color: #111827;
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    #mapCaminos,
-    #mapMarcaciones {
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
-      border: 1px solid #d1d5db;
-    }
-
-    .leaflet-popup-content {
-      font-size: 14px;
-      line-height: 18px;
-    }
-
-    .leaflet-popup-content-wrapper {
-      border-radius: 12px;
-      padding: 8px 12px;
-      border: 1px solid #d1d5db;
-    }
-
-    .leaflet-popup-tip {
-      background: white;
-      border: 1px solid #d1d5db;
-    }
-
-    /* NAV: botones un poco más chicos en pantallas medianas */
-   /* @media (max-width: 900px) {
-      header {
-        padding: 12px;
-      }
-
-      .container {
-        padding: 14px;
-      }
-
-      .nav-btn {
-        min-width: 105px;
-        padding: 10px 0;
-      }
-
-      .nav-btn .texto {
-        font-size: 13px;
-      }
-    }
-
-   
-    @media (max-width: 600px) {
-      header h1 {
-        font-size: 18px;
-      }
-
-      .container {
-        padding: 12px;
-      }
-
-      .fila {
-        flex-direction: column;
-        gap: 8px;
-      }
-
-      input,
-      select {
-        width: 100%;
-        min-width: 0;
-      }
-
-      .btn-primario,
-      .btn-secundario,
-      .btn-mini {
-        width: 100%;
-      }
-
-      .item-simple {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .item-simple a.btn-primario,
-      .item-simple button.btn-secundario {
-        width: 100%;
-        text-align: center;
-      }
-
-      #mapCaminos,
-      #mapMarcaciones {
-        height: 240px !important;
-      }
-    }
-
-    @media (max-width: 380px) {
-      .nav-btn {
-        min-width: 95px;
-      }
-
-      .nav-btn .icono {
-        font-size: 18px;
-      }
-
-      .nav-btn .texto {
-        font-size: 12px;
-      }
-    }
-
-  
-    @media (max-width: 600px) {
-
-      
-      .filaHoy {
-        display: flex !important;
-        flex-direction: row !important;
-       
-        flex-wrap: wrap !important;
-        gap: 10px;
-        justify-content: flex-start;
-        align-items: center;
-      }
-
-      .filaHoy .btn-primario,
-      .filaHoy .btn-secundario {
-        width: auto !important;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 8px 12px;
-        font-size: 13px;
-        border-radius: 10px;
-        white-space: nowrap;
-        margin: 0 !important;
-       
-      }
-    }*/
-  </style>
 </head>
 
 <body>
@@ -456,9 +38,6 @@
       (Visible solo para admin)
     </small>
   </div>
-
-
-
 
   <!-- NAV -->
   <nav class="nav-panel">
@@ -526,7 +105,6 @@
       <div class="indicador"></div>
     </button>
 
-
   </nav>
 
   <div class="container">
@@ -537,7 +115,7 @@
 
     <section id="sec-gestion" class="hidden">
       <h2>Gestión del campo</h2>
-      <small>Datos clave + combustible (cargan productor o empleados).</small>
+      <small>(cargan productor o empleados).</small>
 
       <div class="card" style="margin-top:14px;">
         <h3 style="margin:0 0 8px; color:#14532d;">📌 Ficha del campo</h3>
@@ -559,6 +137,7 @@
             <option value="camion">Camión</option>
             <option value="tractor">Tractor</option>
             <option value="maquina">Máquina</option>
+            <option value="Auto">Auto</option>
           </select>
           <button class="btn-primario" id="btnAgregarVehiculo">➕ Agregar</button>
         </div>
@@ -582,6 +161,55 @@
 
         <p class="status-msg" id="msgCombustible"></p>
         <div id="listaCombustible" class="lista-simple"></div>
+      </div>
+
+
+      <div class="card" style="margin-top:14px;">
+        <strong>🐄 Control de Ganado</strong>
+        <small class="muted">Registrá nacimientos, muertes, ventas y movimientos.</small>
+
+        <div class="fila" style="margin-top:10px; gap:8px; flex-wrap:wrap;">
+          <select id="gTipo">
+            <option value="nacimiento">🐣 Nacimiento</option>
+            <option value="muerte">✖️ Muerte</option>
+            <option value="venta">💰 Venta</option>
+            <option value="movimiento">🔁 Movimiento</option>
+          </select>
+
+          <select id="gCategoria">
+            <option value="terneros">Terneros</option>
+            <option value="vacas">Vacas</option>
+            <option value="novillos">Novillos</option>
+            <option value="toros">Toros</option>
+            <option value="vaquillonas">Vaquillonas</option>
+          </select>
+
+          <input id="gCantidad" type="number" min="1" step="1" placeholder="Cantidad" style="max-width:140px;">
+        </div>
+
+        <div class="fila" style="margin-top:10px; gap:8px; flex-wrap:wrap;">
+          <input id="gOrigen" type="text" placeholder="Origen (lote/potrero)" style="flex:1; min-width:200px;">
+          <input id="gDestino" type="text" placeholder="Destino (solo movimiento)" style="flex:1; min-width:200px;">
+        </div>
+
+        <input id="gNota" type="text" placeholder="Nota (opcional)" style="width:100%; margin-top:10px;">
+
+        <div class="fila" style="margin-top:10px; gap:8px; flex-wrap:wrap;">
+          <button class="btn-primario" id="btnGuardarGanado">✅ Registrar evento</button>
+          <button class="btn-secundario" id="btnRefrescarStock">🔄 Ver stock</button>
+        </div>
+
+        <p class="status-msg" id="gMsg"></p>
+
+        <div class="card" style="margin-top:10px;">
+          <strong>📊 Stock actual</strong>
+          <div id="gStock" class="muted" style="margin-top:8px;">—</div>
+        </div>
+
+        <div class="card" style="margin-top:10px;">
+          <strong>🧾 Últimos eventos</strong>
+          <div id="gEventos" class="muted" style="margin-top:8px;">—</div>
+        </div>
       </div>
     </section>
 
@@ -667,6 +295,40 @@
           </div>
         </div>
 
+        <div class="card" style="margin-top:14px;">
+          <strong>🗓️ Parte diario (30 segundos)</strong>
+          <small class="muted">Completalo una vez por día. Queda guardado como historial del campo.</small>
+
+          <div class="fila" style="margin-top:10px; flex-wrap:wrap; gap:8px;">
+            <input id="pdLluvia" type="number" step="0.1" placeholder="🌧️ Lluvia (mm) ej: 12.5"
+              style="min-width:180px;">
+            <select id="pdEstado">
+              <option value="normal">✅ Normal</option>
+              <option value="atencion">🟡 Atención</option>
+              <option value="urgente">🔴 Urgente</option>
+            </select>
+            <input id="pdNota" type="text" placeholder="📝 Novedad breve (ej: faltó personal / se rompió bomba)"
+              style="flex:1; min-width:240px;">
+            <button class="btn-primario" id="btnGuardarParte">💾 Guardar parte de hoy</button>
+          </div>
+
+          <div class="fila" style="margin-top:10px; gap:8px; flex-wrap:wrap;">
+            <div class="card" style="flex:1; min-width:220px;">
+              <strong>🔥 Racha</strong>
+              <div id="pdRacha" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
+              <div class="muted" style="margin-top:6px;">Días seguidos completando</div>
+            </div>
+
+            <div class="card" style="flex:1; min-width:220px;">
+              <strong>📚 Último parte</strong>
+              <div id="pdUltimo" class="muted" style="margin-top:8px;">—</div>
+            </div>
+          </div>
+
+          <p class="status-msg" id="pdMsg"></p>
+        </div>
+
+
         <p id="hoyMsg" class="status-msg"></p>
       </div>
     </section>
@@ -712,7 +374,6 @@
         <button class="btn-secundario" id="btnLimpiarRuta">🧹 Limpiar ruta del mapa</button>
 
       </div>
-
 
     </section>
 
@@ -871,10 +532,7 @@
       <p class="status-msg" id="msgTareas"></p>
       <div id="listaTareas" class="lista-simple"></div>
 
-
     </section>
-
-
     <!-- ============================= -->
     <!-- SECCIÓN: CLIMA -->
     <!-- ============================= -->
@@ -908,7 +566,6 @@
         </div>
       </div>
     </section>
-
 
     <!-- ============================= -->
     <!-- SECCIÓN: CALCULADORA -->
@@ -975,7 +632,6 @@
 
     </section>
 
-
   </div>
 
   <!-- Leaflet JS -->
@@ -989,10 +645,11 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { onAuthStateChanged, getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import {
-      collection, query, where, onSnapshot, orderBy,
+      collection, query, where, onSnapshot, orderBy,limit,
       doc, setDoc, updateDoc, deleteDoc, writeBatch, serverTimestamp,
       getDocs, getDoc, addDoc
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const secondaryApp = initializeApp(firebaseConfig, "secondary");
     const secondaryAuth = getAuth(secondaryApp);
@@ -1031,6 +688,9 @@
       await asegurarPlanProductor();
       renderAdminBox();
       iniciarPanel();
+      initGanado();
+      refrescarStockGanado();
+      cargarUltimosEventosGanado();
     });
 
     async function asegurarPlanProductor() {
@@ -1209,13 +869,10 @@
       }
     });
 
-
-
-
     /* ============================================================
    📌 HOY — DASHBOARD (engagement diario)
    Lee Firestore y arma resumen para entrar todos los días
-============================================================ */
+   ========================================================== */
 
     function inicioDelDiaMs() {
       const d = new Date();
@@ -1397,9 +1054,108 @@
     }
 
 
+    // ===============================
+    // ✅ PARTE DIARIO + RACHA (streak)
+    // Colección: partesDiarios
+    // DocID: `${productorId}_${YYYYMMDD}`
+    // ===============================
+    function ymdKeyHoy() {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}${m}${day}`; // "20260304"
+    }
+
+    function setPdMsg(txt, ok = true) {
+      const el = document.getElementById("pdMsg");
+      if (!el) return;
+      el.textContent = txt;
+      el.style.color = ok ? "#166534" : "#b91c1c";
+      setTimeout(() => (el.textContent = ""), 3500);
+    }
+
+    async function cargarParteHoyYActualizarRacha() {
+      if (!productorId) return;
+
+      const parteId = `${productorId}_${ymdKeyHoy()}`;
+      const refHoy = doc(db, "partesDiarios", parteId);
+      const snapHoy = await getDoc(refHoy);
+
+      // Mostrar si ya existe parte hoy
+      if (snapHoy.exists()) {
+        const data = snapHoy.data();
+        const ultimo = document.getElementById("pdUltimo");
+        if (ultimo) {
+          ultimo.textContent =
+            `Hoy ✅ — ${data.estado || "normal"} — Lluvia: ${data.lluviaMm ?? 0} mm — ${data.nota || ""}`;
+        }
+      } else {
+        const ultimo = document.getElementById("pdUltimo");
+        if (ultimo) ultimo.textContent = "Hoy: pendiente ⏳ (completalo)";
+      }
+
+      // Calcular racha simple: buscamos hacia atrás hasta cortar
+      let streak = 0;
+      for (let i = 0; i < 365; i++) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        const key = `${y}${m}${day}`;
+
+        const ref = doc(db, "partesDiarios", `${productorId}_${key}`);
+        const s = await getDoc(ref);
+
+        if (s.exists()) streak++;
+        else break;
+      }
+
+      const elRacha = document.getElementById("pdRacha");
+      if (elRacha) elRacha.textContent = `${streak} día(s)`;
+    }
+
+    async function guardarParteHoy() {
+      try {
+        if (!productorId) return;
+
+        const lluviaMm = Number(document.getElementById("pdLluvia")?.value || 0);
+        const estado = document.getElementById("pdEstado")?.value || "normal";
+        const nota = (document.getElementById("pdNota")?.value || "").trim();
+
+        const parteId = `${productorId}_${ymdKeyHoy()}`;
+
+        await setDoc(doc(db, "partesDiarios", parteId), {
+          productorId,
+          fechaKey: ymdKeyHoy(),
+          fechaMs: Date.now(),
+          lluviaMm: isFinite(lluviaMm) ? lluviaMm : 0,
+          estado,
+          nota,
+          createdAt: serverTimestamp(),
+        }, { merge: true });
+
+        setPdMsg("✅ Parte diario guardado.");
+        await cargarParteHoyYActualizarRacha();
+      } catch (e) {
+        console.error(e);
+        setPdMsg("❌ No se pudo guardar el parte (reglas/permisos).", false);
+      }
+    }
+
+    function initParteDiario() {
+      document.getElementById("btnGuardarParte")?.addEventListener("click", guardarParteHoy);
+    }
+
     function initHoy() {
       const btn = document.getElementById("btnHoyRefrescar");
       btn?.addEventListener("click", actualizarHoy);
+
+      // ✅ NUEVO
+      initParteDiario();
+      cargarParteHoyYActualizarRacha();
 
       // accesos rápidos (usa el nav existente)
       document.getElementById("btnHoyIrTareas")?.addEventListener("click", () => {
@@ -1415,8 +1171,6 @@
         document.querySelector('[data-target="sec-camiones"]')?.click();
       });
     }
-
-
     // =========================
     // 2) NAVEGACIÓN ENTRE SECCIONES
     // =========================
@@ -1465,11 +1219,11 @@
           }
 
           if (target === "sec-hoy") {
-            setTimeout(() => actualizarHoy(), 150);
+            setTimeout(() => {
+              actualizarHoy();
+              cargarParteHoyYActualizarRacha();
+            }, 150);
           }
-
-
-
         });
       });
 
@@ -1479,9 +1233,7 @@
       primera.classList.remove("hidden");
       primera.classList.add("visible");
     }
-
     navegar();
-
 
     let viajesCache = []; // [{id, ...data}]
 
@@ -1680,9 +1432,6 @@
         msgViajes.textContent = "Error cargando recorridos (reglas/índices).";
       });
     }
-
-
-
     // =========================
     // 3) INICIO DEL PANEL
     // =========================
@@ -1703,9 +1452,6 @@
       actualizarHoy();
       limpiarRutaGuardada();
       initGestion(); // ✅ nuevo
-
-
-
       setTimeout(() => {
         initMapaMarcaciones();
         initMapaCaminos();
@@ -1718,12 +1464,9 @@
       });
       document.getElementById("caminoEstado").dispatchEvent(new Event("change"));
     }
-
-
-
     /* ============================================================
    🚚 CAMIONES (TRACKING REALTIME)
-============================================================ */
+   ============================================================ */
     let mapaCamiones = null;
     // ✅ Capa para “ruta guardada” (recorrido histórico seleccionado)
     let capaRutaGuardada = null;
@@ -1758,10 +1501,7 @@
       capaCamiones = L.layerGroup().addTo(mapaCamiones);
       // ✅ capa para ruta guardada (arriba del tile, debajo de markers)
       if (!capaRutaGuardada) capaRutaGuardada = L.layerGroup().addTo(mapaCamiones);
-
     }
-
-
     function renderCamionItem(c) {
       const upd = c.lastSeen ? new Date(c.lastSeen).toLocaleString("es-AR") : "—";
       const onlineTxt = c.online ? "🟢 Online" : "🔴 Offline";
@@ -1833,7 +1573,6 @@
       rutasCamiones.delete(camionId);
     }
 
-
     function upsertMarkerCamion(c) {
       if (!mapaCamiones || !capaCamiones) return;
 
@@ -1879,8 +1618,6 @@
       const km = (m || 0) / 1000;
       return km.toFixed(2).replace(".", ",");
     }
-
-
     // ============================================================
     // 🚨 ALERTA AUTOMÁTICA: CAMIÓN DETENIDO
     // ============================================================
@@ -1962,8 +1699,6 @@
         console.warn("⚠️ No pude guardar alerta automática:", e);
       }
     }
-
-
     function escucharCamiones() {
       if (!productorId) return;
 
@@ -2104,8 +1839,6 @@
       // opcional: abrir popup inicio
       markerInicio.openPopup();
     }
-
-
     /* ============================================================
        EMPLEADOS (FIREBASE)
     ============================================================ */
@@ -2191,8 +1924,6 @@
         msgEmpleado.textContent = "❌ Error al registrar empleado.";
       }
     });
-
-
     /* ============================================================
        TAREAS
     ============================================================ */
@@ -2393,7 +2124,6 @@
       }
     }
 
-
     function initMapaCaminos() {
       if (mapaCaminos) return;
       if (!productorId) return;
@@ -2416,12 +2146,8 @@
       // ⚠️ si querés auto-centrar, lo hacemos SOLO cuando el mapa ya existe:
       // setTimeout(() => centrarEnMiUbicacion(), 600);
     }
-
-
     // ✅ intentar centrar automáticamente al iniciar el mapa (si el usuario permite)
     // setTimeout(() => centrarEnMiUbicacion(), 600);
-
-
     const btnModoPunto = document.getElementById("btnModoPunto");
     const btnModoTramo = document.getElementById("btnModoTramo");
     const btnGuardarTramo = document.getElementById("btnGuardarTramo");
@@ -2767,7 +2493,6 @@
       if (est === "complicado") { prev.textContent = "🟡 Complicado"; prev.style.background = "#fef9c3"; }
       if (est === "intransitable") { prev.textContent = "🔴 Intransitable"; prev.style.background = "#fee2e2"; }
     });
-
     /* ============================================================
        VECINOS (FIRESTORE) ✅
        Colección: "vecinos"
@@ -3042,8 +2767,6 @@
         if (listaVecinosAlertas) listaVecinosAlertas.innerHTML = "<small>❌ Sin permisos para leer vecinos.</small>";
       });
     }
-
-
     /* ============================================================
        ALERTAS (FIRESTORE + ENVÍO POR WHATSAPP) ✅
        Guarda en colección "alertas" y prepara envío a vecinos
@@ -3362,6 +3085,161 @@
       `;
           listaCombustible.appendChild(div);
         });
+      });
+
+
+    }
+
+    function setGMsg(txt, ok = true) {
+      const el = document.getElementById("gMsg");
+      if (!el) return;
+      el.textContent = txt;
+      el.style.color = ok ? "#166534" : "#b91c1c";
+      setTimeout(() => (el.textContent = ""), 3500);
+    }
+
+    function stockHTML(stock = {}) {
+      const s = {
+        terneros: stock.terneros || 0,
+        vacas: stock.vacas || 0,
+        novillos: stock.novillos || 0,
+        toros: stock.toros || 0,
+        vaquillonas: stock.vaquillonas || 0,
+      };
+      return `
+    Terneros: <b>${s.terneros}</b> • Vacas: <b>${s.vacas}</b> • Novillos: <b>${s.novillos}</b><br>
+    Toros: <b>${s.toros}</b> • Vaquillonas: <b>${s.vaquillonas}</b>
+  `;
+    }
+
+    async function refrescarStockGanado() {
+      const pid = auth.currentUser?.uid;
+      if (!pid) return;
+
+      const ref = doc(db, "ganado_stock", pid);
+      const snap = await getDoc(ref);
+      const box = document.getElementById("gStock");
+
+      if (!snap.exists()) {
+        box.innerHTML = "Aún no hay stock. Registrá tu primer evento.";
+        return;
+      }
+      box.innerHTML = stockHTML(snap.data().stock || {});
+    }
+
+    async function cargarUltimosEventosGanado() {
+      const pid = auth.currentUser?.uid;
+      if (!pid) return;
+
+      const qE = query(
+        collection(db, "ganado_eventos"),
+        where("productorId", "==", pid),
+        orderBy("fechaMs", "desc"),
+        limit(7)
+      );
+
+      const snap = await getDocs(qE);
+      const box = document.getElementById("gEventos");
+
+      if (snap.empty) {
+        box.textContent = "Sin eventos registrados.";
+        return;
+      }
+
+      let html = "";
+      snap.forEach(d => {
+        const e = d.data();
+        const fecha = new Date(e.fechaMs).toLocaleString();
+        const mov = e.tipo === "movimiento" ? ` • ${e.origen || "?"} → ${e.destino || "?"}` : "";
+        html += `• <b>${e.tipo}</b> ${e.cantidad} ${e.categoria}${mov}<br><span class="muted">${fecha} ${e.nota ? "• " + e.nota : ""}</span><br><br>`;
+      });
+      box.innerHTML = html;
+    }
+
+    async function guardarEventoGanado() {
+      try {
+        const pid = auth.currentUser?.uid;
+        if (!pid) return setGMsg("❌ No hay sesión.", false);
+
+        const tipo = document.getElementById("gTipo").value;
+        const categoria = document.getElementById("gCategoria").value;
+        const cantidad = Number(document.getElementById("gCantidad").value || 0);
+        const origen = (document.getElementById("gOrigen").value || "").trim();
+        const destino = (document.getElementById("gDestino").value || "").trim();
+        const nota = (document.getElementById("gNota").value || "").trim();
+
+        if (cantidad <= 0) return setGMsg("⚠️ Cantidad inválida.", false);
+        if (tipo === "movimiento" && (!origen || !destino)) return setGMsg("⚠️ En movimiento, completá origen y destino.", false);
+
+        const delta =
+          (tipo === "nacimiento") ? +cantidad :
+            (tipo === "muerte") ? -cantidad :
+              (tipo === "venta") ? -cantidad :
+                0; // movimiento no cambia stock
+
+        const stockRef = doc(db, "ganado_stock", pid);
+
+        await runTransaction(db, async (tx) => {
+          const stockSnap = await tx.get(stockRef);
+          const stock = stockSnap.exists() ? (stockSnap.data().stock || {}) : {};
+
+          const actual = Number(stock[categoria] || 0);
+          const nuevo = actual + delta;
+
+          if (nuevo < 0) {
+            throw new Error("STOCK_NEGATIVO");
+          }
+
+          // 1) Guardar evento
+          const evRef = doc(collection(db, "ganado_eventos"));
+          tx.set(evRef, {
+            productorId: pid,
+            tipo,
+            categoria,
+            cantidad,
+            origen: origen || null,
+            destino: destino || null,
+            nota: nota || "",
+            fechaMs: Date.now(),
+            createdAt: serverTimestamp(),
+          });
+
+          // 2) Actualizar stock (si corresponde)
+          if (tipo !== "movimiento") {
+            tx.set(stockRef, {
+              productorId: pid,
+              updatedAt: serverTimestamp(),
+              stock: {
+                ...stock,
+                [categoria]: nuevo
+              }
+            }, { merge: true });
+          }
+        });
+
+        setGMsg("✅ Evento registrado.");
+        document.getElementById("gCantidad").value = "";
+        document.getElementById("gDestino").value = "";
+        document.getElementById("gNota").value = "";
+
+        await refrescarStockGanado();
+        await cargarUltimosEventosGanado();
+
+      } catch (e) {
+        console.error(e);
+        if (String(e.message) === "STOCK_NEGATIVO") {
+          setGMsg("❌ No podés dejar stock negativo. Revisá cantidad/categoría.", false);
+        } else {
+          setGMsg("❌ No se pudo registrar (permisos o índice).", false);
+        }
+      }
+    }
+
+    function initGanado() {
+      document.getElementById("btnGuardarGanado")?.addEventListener("click", guardarEventoGanado);
+      document.getElementById("btnRefrescarStock")?.addEventListener("click", async () => {
+        await refrescarStockGanado();
+        await cargarUltimosEventosGanado();
       });
     }
 
