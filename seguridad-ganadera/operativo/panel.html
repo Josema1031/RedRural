@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SISG Rural | Panel</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+
+  <header class="sisg-header">
+    <div class="sisg-header-top">
+      <div>
+        <p class="sisg-kicker">Red Rural / Seguridad Rural</p>
+        <h1>SISG Rural</h1>
+        <p class="sisg-subtitle">Panel operativo de seguridad rural</p>
+      </div>
+
+      <div class="sisg-header-actions">
+        <a href="../index.html" class="btn-secundario">Volver al inicio</a>
+      </div>
+    </div>
+
+    <nav class="sisg-nav">
+      <a href="panel.html" class="active">Panel</a>
+      <a href="incidencias.html">Incidencias</a>
+      <a href="analisis.html">Análisis</a>
+      <a href="mapas-riesgo.html">Mapa de riesgo</a>
+      <a href="reportes.html">Reportes</a>
+    </nav>
+  </header>
+
+  <main class="sisg-container">
+
+    <section class="sisg-hero-card">
+      <div>
+        <p class="sisg-section-label">Centro de control</p>
+        <h2>Resumen operativo del establecimiento</h2>
+        <p>
+          Visualizá rápidamente el estado general del sistema, las incidencias registradas
+          y los accesos principales de trabajo.
+        </p>
+      </div>
+    </section>
+
+    <section class="sisg-kpi-grid">
+      <article class="sisg-kpi-card">
+        <p class="sisg-kpi-label">Incidencias totales</p>
+        <h3 id="kpiTotal">0</h3>
+        <span class="sisg-kpi-note">Registros cargados en el sistema</span>
+      </article>
+
+      <article class="sisg-kpi-card">
+        <p class="sisg-kpi-label">Último evento</p>
+        <h3 id="kpiUltimo">Sin datos</h3>
+        <span class="sisg-kpi-note">Última novedad registrada</span>
+      </article>
+
+      <article class="sisg-kpi-card">
+        <p class="sisg-kpi-label">Potrero más afectado</p>
+        <h3 id="kpiPotrero">Sin datos</h3>
+        <span class="sisg-kpi-note">Mayor recurrencia detectada</span>
+      </article>
+
+      <article class="sisg-kpi-card">
+        <p class="sisg-kpi-label">Nivel de riesgo</p>
+        <h3 id="kpiRiesgo">Bajo</h3>
+        <span class="sisg-kpi-note">Estado estimado según incidencias</span>
+      </article>
+    </section>
+
+    <section class="sisg-panel-section">
+      <div class="sisg-section-head">
+        <div>
+          <p class="sisg-section-label">Accesos rápidos</p>
+          <h2>Módulos operativos</h2>
+        </div>
+      </div>
+
+      <div class="sisg-grid-cards">
+        <article class="sisg-card">
+          <span class="sisg-card-icon">🚨</span>
+          <h3>Incidencias</h3>
+          <p>Registrar novedades, hechos, alertas y observaciones del establecimiento.</p>
+          <a href="incidencias.html" class="btn-principal">Abrir módulo</a>
+        </article>
+
+        <article class="sisg-card">
+          <span class="sisg-card-icon">📈</span>
+          <h3>Análisis</h3>
+          <p>Consultar tendencias, patrones y sectores con mayor recurrencia.</p>
+          <a href="analisis.html" class="btn-principal">Ver análisis</a>
+        </article>
+
+        <article class="sisg-card">
+          <span class="sisg-card-icon">🗺️</span>
+          <h3>Mapa de riesgo</h3>
+          <p>Visualizar incidencias, potreros y puntos críticos sobre el mapa.</p>
+          <a href="mapas-riesgo.html" class="btn-principal">Abrir mapa</a>
+        </article>
+
+        <article class="sisg-card">
+          <span class="sisg-card-icon">📑</span>
+          <h3>Reportes</h3>
+          <p>Consultar resúmenes operativos y preparar información para exportar.</p>
+          <a href="reportes.html" class="btn-principal">Ver reportes</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="sisg-panel-section">
+      <div class="sisg-section-head">
+        <div>
+          <p class="sisg-section-label">Actividad reciente</p>
+          <h2>Últimos registros</h2>
+        </div>
+      </div>
+
+      <div class="sisg-table-wrap">
+        <table class="sisg-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Potrero</th>
+              <th>Tipo</th>
+              <th>Guardia</th>
+              <th>Cantidad</th>
+            </tr>
+          </thead>
+          <tbody id="tablaPanelBody">
+            <tr>
+              <td colspan="5">Cargando datos...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script type="module" src="../js/panel.js"></script>
+</body>
+</html>

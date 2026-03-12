@@ -27,24 +27,36 @@
     padding: 12px;
   }
 
-  /* ✅ CLAVE: en móvil la fila NO va en columna, va en row + wrap */
+  /* ✅ fila flexible */
   .fila {
     display: flex;
-    flex-direction: row; /* ✅ para que queden al lado */
-    flex-wrap: wrap;     /* ✅ si no entran, bajan */
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 8px;
     align-items: center;
   }
 
-  /* ✅ Inputs y selects: 100% de ancho */
-  .fila input,
+  /* ✅ inputs/select por tipo (proporcional) */
+  .fila input[type="number"],
+  .fila input[type="date"],
   .fila select {
-    width: 100%;
-    flex: 1 1 100%;
+    width: auto;
+    /* 🔥 evita el 100% */
+    flex: 1 1 140px;
+    /* 🔥 permite 2 por fila */
+    max-width: none;
     min-width: 0;
   }
 
-  /* ✅ Botones: NO 100% (tamaño natural) y quedan en fila */
+  .fila input[type="text"],
+  .fila input:not([type]) {
+    width: 100%;
+    flex: 1 1 100%;
+    /* texto ocupa la fila */
+    min-width: 0;
+  }
+
+  /* ✅ botones al lado, tamaño natural */
   .fila .btn-primario,
   .fila .btn-secundario,
   .fila .btn-mini,
@@ -55,7 +67,6 @@
     white-space: nowrap;
   }
 
-  /* ✅ Si querés un look más “pro” en móvil (podés ajustar) */
   .fila .btn-primario,
   .fila .btn-secundario,
   .fila .btn-mini,
@@ -64,46 +75,21 @@
     border-radius: 10px;
   }
 
-  .item-simple {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 
-  /* ✅ Esto queda igual: acá sí querías botones full width */
-  .item-simple a.btn-primario,
-  .item-simple button.btn-secundario {
-    width: 100%;
-    text-align: center;
-  }
 
   #mapCaminos,
   #mapMarcaciones {
     height: 240px !important;
   }
-}
 
-@media (max-width: 380px) {
-  .nav-btn {
-    min-width: 95px;
-  }
 
-  .nav-btn .icono {
-    font-size: 18px;
-  }
 
-  .nav-btn .texto {
-    font-size: 12px;
-  }
-}
-
-/* ============================
-   HOY – Botones en fila (mobile)
-   ============================ */
-@media (max-width: 600px) {
-  /* Forzamos fila horizontal SOLO en este bloque */
+  /* ============================
+     HOY – Botones en fila (mobile)
+     ============================ */
   .filaHoy {
     display: flex !important;
-    flex-direction: row !important; /* 🔥 clave */
+    flex-direction: row !important;
     flex-wrap: wrap !important;
     gap: 10px;
     justify-content: flex-start;
@@ -120,24 +106,51 @@
     font-size: 13px;
     border-radius: 10px;
     white-space: nowrap;
-    margin: 0 !important; /* por si hay márgenes viejos */
+    margin: 0 !important;
   }
+
+
 }
 
-@media (max-width: 600px) {
-  /* números: que entren 2 por fila si hay lugar */
-  .fila input[type="number"],
-  .fila input[type="date"],
-  .fila select {
-    flex: 1 1 140px;   /* 👈 permite 2 columnas */
-    max-width: none;
-  }
-
-  /* texto: que siga ocupando más */
-  .fila input[type="text"],
-  .fila input:not([type]) {
-    flex: 1 1 100%;
-    min-width: 0;
-  }
+/* ✅ SOLO VIAJES: layout como la imagen */
+.item-simple.viaje-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  /* misma altura arriba */
+  gap: 16px;
 }
 
+.item-simple.viaje-item .viaje-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-simple.viaje-item .viaje-acciones {
+  display: flex;
+  flex-direction: column;
+  /* uno arriba del otro */
+  gap: 10px;
+  align-items: flex-end;
+  /* pegado a la derecha */
+}
+
+.item-simple.viaje-item .viaje-acciones button {
+  width: auto !important;
+  min-width: 140px;
+  white-space: nowrap;
+}
+
+@media (max-width: 380px) {
+  .nav-btn {
+    min-width: 95px;
+  }
+
+  .nav-btn .icono {
+    font-size: 18px;
+  }
+
+  .nav-btn .texto {
+    font-size: 12px;
+  }
+}

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Arquitectura del Sistema | SISG Rural</title>
+
+    <link rel="stylesheet" href="../css/styles.css">
+
+</head>
+
+<body>
+
+    <header class="header">
+
+        <div class="logo-box">
+            <h1>SISG Rural</h1>
+            <p>Arquitectura del sistema</p>
+        </div>
+
+        <nav class="nav">
+            <a href="../index.html">Inicio</a>
+            <a href="../info/servicio.html">Servicio</a>
+            <a href="../info/contacto.html">Contacto</a>
+            <a href="../info/planes.html">Planes</a>
+            <a href="../operativo/mapas-riesgo.html">Mapa de Riesgo</a>
+            <a href="../operativo/reportes.html">Reportes</a>
+            <a href="../info/red-rural.html">Red Rural</a>
+            <a href="../admin/panel-saas.html">Panel SaaS</a>
+            <a href="roadmap.html">Roadmap</a>
+            <a href="resumen-ejecutivo.html">Resumen Ejecutivo</a>
+            <a href="faq.html">FAQ</a>
+            <a href="casos-de-uso.html">Casos de Uso</a>
+            <a href="beneficios.html">Beneficios</a>
+            <a href="arquitectura.html">Arquitectura</a>
+            <a href="metodo-investigacion.html">Método</a>
+            <a href="servicios-profesionales.html">Servicios</a>
+            <a href="politica-uso.html">Política de Uso</a>
+            <a href="identidad.html">Identidad</a>
+            <a href="manual.html">Manual</a>
+            <a href="protocolo.html">Protocolo</a>
+            <a href="../operativo/incidencias.html">Incidencias</a>
+            <a href="../operativo/analisis.html">Análisis</a>
+            <a href="../admin/integracion-google.html">Google Forms</a>
+        </nav>
+
+    </header>
+
+
+    <main class="container">
+
+
+        <section class="card hero">
+
+            <span class="badge">Estructura técnica</span>
+
+            <h2 style="margin-top:12px;">
+                Arquitectura del Sistema SISG Rural
+            </h2>
+
+            <p>
+
+                SISG Rural está diseñado como un sistema modular basado en tecnologías web
+                simples, escalables y compatibles con futuras integraciones dentro de la
+                plataforma Red Rural.
+
+            </p>
+
+        </section>
+
+
+        <section class="grid-resumen">
+
+            <article class="card">
+                <h3>Frontend</h3>
+                <p>
+                    La interfaz del sistema está desarrollada con HTML, CSS y JavaScript,
+                    permitiendo una estructura clara, rápida y adaptable.
+                </p>
+            </article>
+
+
+            <article class="card">
+                <h3>Diseño modular</h3>
+                <p>
+                    El sistema se organiza en páginas independientes que representan
+                    cada módulo del proyecto: incidencias, análisis, reportes, mapas y gestión.
+                </p>
+            </article>
+
+
+            <article class="card">
+                <h3>Escalabilidad</h3>
+                <p>
+                    La arquitectura permite evolucionar hacia un sistema conectado
+                    a Firebase o bases de datos externas.
+                </p>
+            </article>
+
+
+            <article class="card">
+                <h3>Integración futura</h3>
+                <p>
+                    El sistema está preparado para integrarse como módulo dentro de
+                    Red Rural.
+                </p>
+            </article>
+
+        </section>
+
+
+        <section class="card">
+
+            <h2>Estructura del proyecto</h2>
+
+            <pre class="bloque-codigo">
+
+seguridad-ganadera/
+
+│
+├── index.html
+│
+├── css/
+│   └── styles.css
+│
+├── js/
+│   └── scripts.js
+│
+└── pages/
+    ├── servicio.html
+    ├── contacto.html
+    ├── planes.html
+    ├── operativo/mapa-riesgo.html
+    ├── operativo/incidencias.html
+    ├── operativo/analisis.html
+    ├── operativo/reportes.html
+    ├── panel-saas.html
+    ├── roadmap.html
+    ├── resumen-ejecutivo.html
+    ├── faq.html
+    ├── casos-de-uso.html
+    ├── beneficios.html
+    └── arquitectura.html
+
+</pre>
+
+        </section>
+
+
+        <section class="grid-doble">
+
+            <section class="card bloque-destacado">
+
+                <h2>Ventajas de esta arquitectura</h2>
+
+                <ul>
+
+                    <li>Fácil mantenimiento</li>
+                    <li>Estructura clara</li>
+                    <li>Escalable</li>
+                    <li>Compatible con plataformas futuras</li>
+                    <li>Integrable con Red Rural</li>
+
+                </ul>
+
+            </section>
+
+
+            <section class="card estado-card">
+
+                <h2>Tecnologías utilizadas</h2>
+
+                <ul>
+
+                    <li><strong>HTML</strong> — estructura</li>
+                    <li><strong>CSS</strong> — diseño visual</li>
+                    <li><strong>JavaScript</strong> — interacción</li>
+                    <li><strong>Google Forms</strong> — captura de datos</li>
+                    <li><strong>Google Sheets</strong> — almacenamiento intermedio</li>
+
+                </ul>
+
+            </section>
+
+        </section>
+
+
+        <section class="card">
+
+            <h2>Evolución futura</h2>
+
+            <p>
+
+                La arquitectura actual permite evolucionar hacia un sistema más
+                avanzado con autenticación de usuarios, base de datos en la nube,
+                panel administrativo y generación automática de reportes.
+
+            </p>
+
+        </section>
+
+
+    </main>
+
+</body>
+
+</html>

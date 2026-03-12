@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Google Forms | SISG Rural</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+
+<body>
+  <header class="header">
+    <div class="logo-box">
+      <h1>SISG Rural</h1>
+      <p>Integración con Google Forms y Google Sheets</p>
+    </div>
+
+    <nav class="nav">
+      <a href="../index.html">Inicio</a>
+      <a href="servicio.html">Servicio</a>
+      <a href="contacto.html">Contacto</a>
+      <a href="planes.html">Planes</a>
+      <a href="operativo/mapa-riesgo.html">Mapa de Riesgo</a>
+      <a href="operativo/reportes.html">Reportes</a>
+      <a href="red-rural.html">Red Rural</a>
+      <a href="panel-saas.html">Panel SaaS</a>
+      <a href="roadmap.html">Roadmap</a>
+      <a href="resumen-ejecutivo.html">Resumen Ejecutivo</a>
+      <a href="faq.html">FAQ</a>
+      <a href="casos-de-uso.html">Casos de Uso</a>
+      <a href="beneficios.html">Beneficios</a>
+      <a href="arquitectura.html">Arquitectura</a>
+      <a href="metodo-investigacion.html">Método</a>
+      <a href="servicios-profesionales.html">Servicios</a>
+      <a href="politica-uso.html">Política de Uso</a>
+      <a href="identidad.html">Identidad</a>
+      <a href="manual.html">Manual</a>
+      <a href="protocolo.html">Protocolo</a>
+      <a href="operativo/incidencias.html">Incidencias</a>
+      <a href="operativo/analisis.html">Análisis</a>
+      <a href="integracion-google.html">Google Forms</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Google Forms + Google Sheets</h2>
+      <p>
+        Esta integración permite que cada respuesta quede registrada automáticamente
+        en una planilla de Google Sheets para detectar patrones, ver de qué potrero
+        desaparecen animales y analizar qué empleado estaba de guardia.
+      </p>
+    </section>
+
+    <section class="card">
+      <h3>Objetivo de esta integración</h3>
+      <ul>
+        <li>Centralizar los informes del capataz o encargado</li>
+        <li>Guardar automáticamente cada respuesta en Google Sheets</li>
+        <li>Detectar patrones por fecha, potrero y guardia</li>
+        <li>Tener respaldo digital de cada informe</li>
+        <li>Usarlo luego como base de análisis en Red Rural</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h3>Título sugerido del formulario</h3>
+      <p><strong>Informe de Seguridad Ganadera – SISG Rural</strong></p>
+
+      <h3 style="margin-top: 16px;">Descripción sugerida</h3>
+      <p>
+        Formulario destinado a registrar incidencias del establecimiento para análisis
+        de riesgo, control de potreros y detección de patrones vinculados a faltantes
+        de ganado.
+      </p>
+    </section>
+
+    <section class="card">
+      <h3>Preguntas recomendadas para Google Forms</h3>
+      <ol>
+        <li>Fecha del informe</li>
+        <li>Nombre del capataz o encargado</li>
+        <li>Cantidad de animales observados</li>
+        <li>Potrero recorrido</li>
+        <li>¿Se detectó faltante de ganado?</li>
+        <li>Cantidad de animales faltantes</li>
+        <li>Tipo de incidencia</li>
+        <li>Empleado de guardia</li>
+        <li>Evidencias detectadas</li>
+        <li>Observaciones</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h3>Configuración sugerida de cada pregunta</h3>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Pregunta</th>
+              <th>Tipo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Fecha del informe</td>
+              <td>Fecha</td>
+            </tr>
+            <tr>
+              <td>Nombre del capataz o encargado</td>
+              <td>Respuesta corta</td>
+            </tr>
+            <tr>
+              <td>Cantidad de animales observados</td>
+              <td>Número / respuesta corta</td>
+            </tr>
+            <tr>
+              <td>Potrero recorrido</td>
+              <td>Opción múltiple</td>
+            </tr>
+            <tr>
+              <td>¿Se detectó faltante de ganado?</td>
+              <td>Opción múltiple</td>
+            </tr>
+            <tr>
+              <td>Cantidad de animales faltantes</td>
+              <td>Número / respuesta corta</td>
+            </tr>
+            <tr>
+              <td>Tipo de incidencia</td>
+              <td>Opción múltiple</td>
+            </tr>
+            <tr>
+              <td>Empleado de guardia</td>
+              <td>Respuesta corta</td>
+            </tr>
+            <tr>
+              <td>Evidencias detectadas</td>
+              <td>Casillas</td>
+            </tr>
+            <tr>
+              <td>Observaciones</td>
+              <td>Párrafo</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>Opciones sugeridas para el formulario</h3>
+
+      <h4 style="margin-top: 10px;">Potrero recorrido</h4>
+      <ul>
+        <li>Potrero 1</li>
+        <li>Potrero 2</li>
+        <li>Potrero 3</li>
+      </ul>
+
+      <h4 style="margin-top: 14px;">¿Se detectó faltante de ganado?</h4>
+      <ul>
+        <li>Sí</li>
+        <li>No</li>
+      </ul>
+
+      <h4 style="margin-top: 14px;">Tipo de incidencia</h4>
+      <ul>
+        <li>Faltante de ganado</li>
+        <li>Huellas de vehículo</li>
+        <li>Alambrado manipulado</li>
+        <li>Tranquera abierta</li>
+        <li>Movimiento nocturno</li>
+        <li>Rastros de arreo</li>
+      </ul>
+
+      <h4 style="margin-top: 14px;">Evidencias detectadas</h4>
+      <ul>
+        <li>Huellas</li>
+        <li>Rastros de arreo</li>
+        <li>Alambrado dañado</li>
+        <li>Ninguna</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h3>Cómo conectar el formulario con Google Sheets</h3>
+      <ol>
+        <li>Abrir Google Forms</li>
+        <li>Crear un formulario en blanco</li>
+        <li>Cargar el título y las preguntas recomendadas</li>
+        <li>Ir a la pestaña <strong>Respuestas</strong></li>
+        <li>Hacer clic en el ícono verde de Google Sheets</li>
+        <li>Crear una planilla nueva</li>
+        <li>Usar esa planilla para filtros y análisis</li>
+      </ol>
+    </section>
+
+    <section class="card">
+      <h3>Qué te permitirá analizar la planilla</h3>
+      <ul>
+        <li>Detectar patrones</li>
+        <li>Ver de qué potrero desaparecen animales</li>
+        <li>Analizar qué empleado estaba de guardia</li>
+        <li>Comparar semanas y fechas</li>
+        <li>Identificar incidencias repetidas</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h3>Uso futuro dentro de Red Rural</h3>
+      <p>
+        Más adelante, este formulario podrá reemplazarse por un formulario propio dentro
+        de Red Rural, guardando los datos directamente en Firebase y generando reportes
+        automáticos por establecimiento.
+      </p>
+    </section>
+  </main>
+</body>
+
+</html>

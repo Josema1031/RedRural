@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SISG Rural | Plataforma integral de seguridad ganadera</title>
+  <meta name="description" content="Plataforma interactiva de seguridad ganadera para registrar incidencias, analizar riesgos, generar reportes y profesionalizar el control del establecimiento." />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="landing-body">
+  <header class="header landing-header">
+    <div class="logo-box landing-brand">
+      <span class="landing-kicker">Red Rural / Seguridad Ganadera</span>
+      <h1>SISG Rural</h1>
+      <p>Plataforma digital para prevenir, registrar, analizar y gestionar la seguridad del establecimiento.</p>
+      <div class="volver-redrural">
+        <a href="../productor/panel.html">← Volver a Red Rural</a>
+      </div>
+    </div>
+
+    <nav class="nav landing-nav">
+      <a href="#inicio">Inicio</a>
+      <a href="#modulos">Módulos</a>
+      <a href="#beneficios">Beneficios</a>
+      <a href="#planes">Planes</a>
+      <a href="operativo/panel.html">Panel operativo</a>
+      <a href="operativo/incidencias.html">Incidencias</a>
+      <a href="operativo/analisis.html">Análisis</a>
+      <a href="operativo/mapas-riesgo.html">Mapa</a>
+      <a href="operativo/reportes.html">Reportes</a>
+      <a href="info/contacto.html">Contacto</a>
+    </nav>
+  </header>
+
+  <main class="container landing-main" id="inicio">
+    <section class="card hero hero-principal landing-hero-card">
+      <div class="landing-hero-grid">
+        <div>
+          <span class="badge">Lista para presentar y promocionar</span>
+          <h2>Una web profesional con módulos conectados para gestionar la seguridad ganadera de punta a punta</h2>
+          <p>
+            SISG Rural unifica prevención, carga de incidencias, análisis, mapas de riesgo, reportes y documentación estratégica
+            dentro de una sola experiencia. Está pensada para productores, administradores rurales y empresas agropecuarias
+            que necesitan más control, más orden y mejor capacidad de respuesta.
+          </p>
+          <div class="hero-botones">
+            <a href="operativo/panel.html" class="btn-link">Entrar al panel</a>
+            <a href="#modulos" class="btn-link btn-secundario-link">Explorar módulos</a>
+            <a href="info/contacto.html" class="btn-link btn-terciario-link">Solicitar implementación</a>
+          </div>
+        </div>
+        <aside class="landing-side-card">
+          <p class="landing-side-label">Estado del proyecto</p>
+          <h3>Base comercial + módulo operativo funcional</h3>
+          <ul class="landing-checklist">
+            <li>Identidad profesional del servicio</li>
+            <li>Navegación centralizada entre módulos</li>
+            <li>Accesos directos a panel, análisis y mapa</li>
+            <li>Páginas de soporte comercial y documental</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="landing-stats" aria-label="Indicadores principales">
+      <article class="card kpi-card stat-card">
+        <p class="kpi-label">Módulos principales</p>
+        <h3 class="kpi-value counter" data-target="4">0</h3>
+        <span class="badge">Operativos</span>
+      </article>
+      <article class="card kpi-card stat-card">
+        <p class="kpi-label">Áreas cubiertas</p>
+        <h3 class="kpi-value counter" data-target="3">0</h3>
+        <span class="badge">Operación + comercial + documentación</span>
+      </article>
+      <article class="card kpi-card stat-card">
+        <p class="kpi-label">Objetivo</p>
+        <h3 class="kpi-value">Control total</h3>
+        <span class="badge">Prevención y trazabilidad</span>
+      </article>
+      <article class="card kpi-card stat-card">
+        <p class="kpi-label">Proyección</p>
+        <h3 class="kpi-value">SaaS rural</h3>
+        <span class="badge">Escalable</span>
+      </article>
+    </section>
+
+    <section class="card landing-section" id="modulos">
+      <div class="landing-section-head">
+        <div>
+          <span class="badge">Experiencia interactiva</span>
+          <h2>Recorré la plataforma por módulos</h2>
+          <p class="subtexto">Filtrá por tipo de módulo y descubrí rápidamente qué puede hacer hoy SISG Rural.</p>
+        </div>
+        <div class="module-filters" role="tablist" aria-label="Filtrar módulos">
+          <button class="module-filter is-active" data-filter="todos" type="button">Todos</button>
+          <button class="module-filter" data-filter="operativo" type="button">Operativos</button>
+          <button class="module-filter" data-filter="comercial" type="button">Comerciales</button>
+          <button class="module-filter" data-filter="documentacion" type="button">Documentación</button>
+        </div>
+      </div>
+
+      <div class="module-grid">
+        <article class="module-card" data-category="operativo">
+          <span class="module-icon">📊</span>
+          <div>
+            <p class="module-type">Operativo</p>
+            <h3>Panel general</h3>
+            <p>Vista central del sistema con indicadores, actividad reciente y accesos directos.</p>
+          </div>
+          <a href="operativo/panel.html" class="btn-link">Abrir panel</a>
+        </article>
+
+        <article class="module-card" data-category="operativo">
+          <span class="module-icon">🚨</span>
+          <div>
+            <p class="module-type">Operativo</p>
+            <h3>Incidencias</h3>
+            <p>Carga estructurada de hechos, alertas, evidencias, guardias y observaciones del establecimiento.</p>
+          </div>
+          <a href="operativo/incidencias.html" class="btn-link">Cargar incidencia</a>
+        </article>
+
+        <article class="module-card" data-category="operativo">
+          <span class="module-icon">📈</span>
+          <div>
+            <p class="module-type">Operativo</p>
+            <h3>Análisis</h3>
+            <p>Consulta de patrones, potreros críticos y comportamiento de los registros cargados.</p>
+          </div>
+          <a href="operativo/analisis.html" class="btn-link">Ver análisis</a>
+        </article>
+
+        <article class="module-card" data-category="operativo">
+          <span class="module-icon">🗺️</span>
+          <div>
+            <p class="module-type">Operativo</p>
+            <h3>Mapa de riesgo</h3>
+            <p>Visualización territorial de sectores sensibles, puntos críticos y criterios de prevención.</p>
+          </div>
+          <a href="operativo/mapas-riesgo.html" class="btn-link">Ver mapa</a>
+        </article>
+
+        <article class="module-card" data-category="comercial">
+          <span class="module-icon">💼</span>
+          <div>
+            <p class="module-type">Comercial</p>
+            <h3>Servicio</h3>
+            <p>Presentación profesional del sistema, propuesta de valor y alcance para el productor.</p>
+          </div>
+          <a href="info/servicio.html" class="btn-link">Ver servicio</a>
+        </article>
+
+        <article class="module-card" data-category="comercial">
+          <span class="module-icon">💰</span>
+          <div>
+            <p class="module-type">Comercial</p>
+            <h3>Planes</h3>
+            <p>Estructura base de monetización para lanzar la solución con distintos niveles de implementación.</p>
+          </div>
+          <a href="info/planes.html" class="btn-link">Ver planes</a>
+        </article>
+
+        <article class="module-card" data-category="documentacion">
+          <span class="module-icon">📘</span>
+          <div>
+            <p class="module-type">Documentación</p>
+            <h3>Manual y protocolo</h3>
+            <p>Base metodológica para trabajar con procesos claros ante faltantes e incidencias.</p>
+          </div>
+          <a href="docs/manual.html" class="btn-link">Abrir manual</a>
+        </article>
+
+        <article class="module-card" data-category="documentacion">
+          <span class="module-icon">🧭</span>
+          <div>
+            <p class="module-type">Documentación</p>
+            <h3>Roadmap y visión</h3>
+            <p>Hoja de ruta para pasar de solución funcional a servicio escalable dentro de Red Rural.</p>
+          </div>
+          <a href="docs/roadmap.html" class="btn-link">Ver roadmap</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="grid-doble landing-grid" id="beneficios">
+      <section class="card bloque-destacado">
+        <span class="badge">Ventaja competitiva</span>
+        <h2>Qué hace más fuerte a SISG Rural</h2>
+        <div class="benefit-list">
+          <article>
+            <h3>Centraliza la información</h3>
+            <p>Todo queda conectado: incidencias, análisis, mapa, reportes y documentación de respaldo.</p>
+          </article>
+          <article>
+            <h3>Profesionaliza la gestión</h3>
+            <p>Transforma la seguridad del campo en un proceso más ordenado, medible y demostrable.</p>
+          </article>
+          <article>
+            <h3>Prepara el lanzamiento</h3>
+            <p>La web ya presenta una estructura clara para mostrar el servicio a potenciales clientes.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="card launch-card">
+        <span class="badge">Checklist de lanzamiento</span>
+        <h2>Qué ya tenés resuelto</h2>
+        <ul class="launch-list">
+          <li>Navegación visible entre módulos clave</li>
+          <li>Panel operativo listo como núcleo del sistema</li>
+          <li>Páginas de servicio, planes y contacto</li>
+          <li>Documentación útil para respaldo comercial</li>
+          <li>Base lista para seguir integrando Red Rural</li>
+        </ul>
+      </section>
+    </section>
+
+    <section class="card landing-section timeline-section">
+      <div class="landing-section-head">
+        <div>
+          <span class="badge">Recorrido sugerido</span>
+          <h2>Cómo presentar la plataforma a un productor</h2>
+        </div>
+      </div>
+      <div class="timeline-grid">
+        <article class="timeline-step">
+          <span>1</span>
+          <h3>Mostrar el problema</h3>
+          <p>Explicá que el sistema ordena la seguridad rural y baja la improvisación.</p>
+        </article>
+        <article class="timeline-step">
+          <span>2</span>
+          <h3>Demostrar el flujo</h3>
+          <p>Entrá a incidencias, luego a análisis y finalmente al mapa de riesgo.</p>
+        </article>
+        <article class="timeline-step">
+          <span>3</span>
+          <h3>Cerrar con valor</h3>
+          <p>Presentá planes, acompañamiento profesional y escalabilidad dentro de Red Rural.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="planes-grid" id="planes">
+      <article class="card plan-card">
+        <span class="badge">Plan inicial</span>
+        <h3>Diagnóstico</h3>
+        <p class="plan-precio">Entrada al servicio</p>
+        <ul>
+          <li>Revisión del establecimiento</li>
+          <li>Mapa inicial de riesgo</li>
+          <li>Recomendaciones de implementación</li>
+        </ul>
+        <a href="info/contacto.html" class="btn-link">Consultar</a>
+      </article>
+
+      <article class="card plan-card plan-destacado">
+        <span class="badge">Más recomendable</span>
+        <h3>Implementación operativa</h3>
+        <p class="plan-precio">Servicio + puesta en marcha</p>
+        <ul>
+          <li>Configuración de módulos</li>
+          <li>Capacitación básica</li>
+          <li>Protocolo y registro digital</li>
+        </ul>
+        <a href="info/planes.html" class="btn-link">Ver detalle</a>
+      </article>
+
+      <article class="card plan-card">
+        <span class="badge">Escalamiento</span>
+        <h3>Integración premium</h3>
+        <p class="plan-precio">SISG + Red Rural</p>
+        <ul>
+          <li>Mayor seguimiento</li>
+          <li>Panel evolutivo</li>
+          <li>Visión SaaS multi-establecimiento</li>
+        </ul>
+        <a href="admin/panel-saas.html" class="btn-link">Ver proyección</a>
+      </article>
+    </section>
+
+    <section class="card cta-banner">
+      <div>
+        <span class="badge">Próximo paso</span>
+        <h2>Tu proyecto ya tiene presencia, navegación y estructura para salir a mostrarse</h2>
+        <p>
+          Podés usar esta web como presentación comercial, demo funcional y base para seguir completando los módulos que faltan
+          sin perder coherencia visual ni navegación entre secciones.
+        </p>
+      </div>
+      <div class="hero-botones">
+        <a href="info/contacto.html" class="btn-link">Ir a contacto</a>
+        <a href="docs/resumen-ejecutivo.html" class="btn-link btn-secundario-link">Ver resumen ejecutivo</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

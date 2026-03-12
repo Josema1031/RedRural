@@ -48,6 +48,15 @@
       <div class="indicador"></div>
     </button>
 
+    <a href="../seguridad-ganadera/index.html" class="nav-btn">
+  <span class="icono">🛡️</span>
+  <span class="texto">SEGURIDA</span>
+  <div class="indicador"></div>
+</a>
+
+
+
+
     <button data-target="sec-gestion" class="nav-btn">
       <span class="icono">📊</span>
       <span class="texto">Gestión</span>
@@ -645,7 +654,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { onAuthStateChanged, getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import {
-      collection, query, where, onSnapshot, orderBy,limit,
+      collection, query, where, onSnapshot, orderBy, limit,
       doc, setDoc, updateDoc, deleteDoc, writeBatch, serverTimestamp,
       getDocs, getDoc, addDoc
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -1281,20 +1290,21 @@
         const durMin = (v.inicioMs && v.finMs && v.finMs > v.inicioMs) ? (v.finMs - v.inicioMs) / 60000 : null;
 
         listaViajesEl.innerHTML += `
-      <div class="item-simple">
-        <div class="item-info">
-          <strong>🚚 ${v.camionId || "—"}</strong><br>
-          <small>Chofer DNI: ${v.empleadoDni || "—"}</small><br>
-          <small>Inicio: ${iniTxt}</small><br>
-          <small>Fin: ${finTxt}</small><br>
-          <small><b>Distancia:</b> ${fmtKm(v.distanciaM)} km</small><br>
-          <small><b>Tiempo:</b> ${durMin != null ? fmtMinutos(durMin) : "—"}</small>
-        </div>
+      <div class="item-simple viaje-item">
+  <div class="item-info viaje-info">
+    <strong>🚚 ${v.camionId || "—"}</strong><br>
+    <small>Chofer DNI: ${v.empleadoDni || "—"}</small><br>
+    <small>Inicio: ${iniTxt}</small><br>
+    <small>Fin: ${finTxt}</small><br>
+    <small><b>Distancia:</b> ${fmtKm(v.distanciaM)} km</small><br>
+    <small><b>Tiempo:</b> ${durMin != null ? fmtMinutos(durMin) : "—"}</small>
+  </div>
 
-        <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
-          <button class="btn-secundario" data-verviaje="${v.id}">Ver ruta</button>
-          <button class="btn-mini" data-pdfviaje="${v.id}">📄 Exportar PDF</button>
-        </div>
+  <div class="item-acciones viaje-acciones">
+    <button class="btn-secundario" data-verviaje="${v.id}">Ver ruta</button>
+    <button class="btn-mini" data-pdfviaje="${v.id}">📄 Exportar PDF</button>
+  </div>
+
       </div>
     `;
       });
@@ -1988,7 +1998,7 @@
 
           const btn = document.createElement("button");
           btn.className = "btn-secundario";
-          btn.textContent = t.completada ? "Marcar pendiente" : "Marcar hecha";
+          btn.textContent = t.completada ? "Realizada" : "Pendiente";
           btn.addEventListener("click", async () => {
             await updateDoc(doc(db, "tareas", docSnap.id), {
               completada: !t.completada
