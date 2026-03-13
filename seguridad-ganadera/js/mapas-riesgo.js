@@ -1,9 +1,16 @@
+
+
 import {
     auth,
     onAuthStateChanged,
     db,
     collection,
-    getDocs
+    getDocs,
+    query,
+    where,
+    addDoc,
+    deleteDoc,
+    doc
 } from "./firebase-sisg.js";
 
 const incidenciasRef = collection(db, "seguridad_ganadera_incidencias");
@@ -37,6 +44,12 @@ const objetivoActualPatrullaje = document.getElementById("objetivoActualPatrulla
 const totalObjetivosPatrullaje = document.getElementById("totalObjetivosPatrullaje");
 const ultimaActualizacionPatrullaje = document.getElementById("ultimaActualizacionPatrullaje");
 const listaObjetivosPatrullaje = document.getElementById("listaObjetivosPatrullaje");
+const mapaShell = document.getElementById("mapaShell");
+const btnPantallaCompletaMapa = document.getElementById("btnPantallaCompletaMapa");
+const btnModoPotreros = document.getElementById("btnModoPotreros");
+const btnGuardarPotreros = document.getElementById("btnGuardarPotreros");
+const btnEditarPotreros = document.getElementById("btnEditarPotreros");
+const btnEliminarPotrero = document.getElementById("btnEliminarPotrero");
 
 const map = L.map("map").setView([-33.14, -59.31], 13);
 
@@ -428,22 +441,22 @@ function renderHistorialTemporal(incidencias) {
 
 
 function seleccionarPotreroDesdeParametro(nombrePotrero) {
-  if (!nombrePotrero) return;
+    if (!nombrePotrero) return;
 
-  const tarjetasPotrero = document.querySelectorAll("[data-potrero]");
-  let encontrado = false;
+    const tarjetasPotrero = document.querySelectorAll("[data-potrero]");
+    let encontrado = false;
 
-  tarjetasPotrero.forEach((card) => {
-    const nombre = card.getAttribute("data-potrero");
-    if (nombre === nombrePotrero) {
-      card.click();
-      encontrado = true;
+    tarjetasPotrero.forEach((card) => {
+        const nombre = card.getAttribute("data-potrero");
+        if (nombre === nombrePotrero) {
+            card.click();
+            encontrado = true;
+        }
+    });
+
+    if (!encontrado) {
+        console.warn("No se encontró el potrero recibido por URL:", nombrePotrero);
     }
-  });
-
-  if (!encontrado) {
-    console.warn("No se encontró el potrero recibido por URL:", nombrePotrero);
-  }
 }
 
 function marcarIncidenciaActivaEnDetalle(incidenciaId) {
@@ -1143,8 +1156,8 @@ function obtenerPotreroMasAfectado(incidencias) {
 }
 
 function obtenerPotreroDesdeURL() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get("potrero");
+    const params = new URLSearchParams(window.location.search);
+    return params.get("potrero");
 }
 
 function centrarEnPotreroMasAfectado(incidencias) {
@@ -1231,95 +1244,284 @@ function agregarLeyenda() {
     legend.addTo(map);
 }
 
-const potrerosConfig = [
-    {
-        nombre: "Potrero 1",
-        descripcion: "Zona de control",
-        riesgo: "bajo",
-        color: "#16a34a",
-        coordenadas: [
-            [-33.1405, -59.3180],
-            [-33.1405, -59.3120],
-            [-33.1450, -59.3120],
-            [-33.1450, -59.3180]
-        ]
-    },
-    {
-        nombre: "Potrero 2",
-        descripcion: "Zona de riesgo medio",
-        riesgo: "medio",
-        color: "#f59e0b",
-        coordenadas: [
-            [-33.1455, -59.3180],
-            [-33.1455, -59.3120],
-            [-33.1500, -59.3120],
-            [-33.1500, -59.3180]
-        ]
-    },
-    {
-        nombre: "Potrero 3",
-        descripcion: "Zona de riesgo alto",
-        riesgo: "alto",
-        color: "#dc2626",
-        coordenadas: [
-            [-33.1505, -59.3180],
-            [-33.1505, -59.3120],
-            [-33.1550, -59.3120],
-            [-33.1550, -59.3180]
-        ]
-    }
-];
+let potrerosConfig = [];
+let capaEditablePotreros = null;
+let controlDibujoPotreros = null;
+let modoEdicionPotrerosActivo = false;
+let usuarioActualMapa = null;
+let controlEdicionPotreros = null;
+let modoEliminarPotreroActivo = false;
 
-function dibujarPotreros() {
+function redibujarPotrerosDesdeConfig() {
     poligonosPotreros = [];
 
-    potrerosConfig.forEach((potrero) => {
-        const poligono = L.polygon(potrero.coordenadas, {
-            color: potrero.color,
-            weight: 2,
-            fillColor: potrero.color,
-            fillOpacity: 0.15
-        }).addTo(map);
+    if (!capaEditablePotreros) return;
 
-        poligono.bindPopup(`
-          <div style="min-width: 180px; line-height: 1.5;">
-            <strong>${potrero.nombre}</strong><br>
-            <b>Descripción:</b> ${potrero.descripcion}<br>
-            <b>Nivel de riesgo:</b> ${potrero.riesgo}
-          </div>
-        `);
+    capaEditablePotreros.clearLayers();
+
+    potrerosConfig.forEach((potrero) => {
+        if (!potrero.coordenadas || !Array.isArray(potrero.coordenadas) || potrero.coordenadas.length < 3) {
+            return;
+        }
+
+        const coords = potrero.coordenadas.map((p) => [p.lat, p.lng]);
+
+        const poligono = L.polygon(coords, {
+            color: potrero.color || "#16a34a",
+            weight: 2,
+            fillColor: potrero.color || "#16a34a",
+            fillOpacity: 0.15
+        });
+
+        poligono._potreroId = potrero.id || null;
+        poligono._potreroNombre = potrero.nombre;
 
         poligono.on("click", () => {
+            if (modoEliminarPotreroActivo) {
+                eliminarPotreroSeleccionado(potrero.nombre);
+                return;
+            }
+
             seleccionarPotreroDesdeMapa(potrero.nombre);
         });
 
-        poligono.on("mouseover", () => {
-            if (potreroSeleccionado !== potrero.nombre) {
-                poligono.setStyle({
-                    weight: 3,
-                    fillOpacity: 0.22
-                });
-            }
+        poligono.bindTooltip(potrero.nombre || "Potrero sin nombre", {
+            permanent: false,
+            direction: "center"
         });
 
-        poligono.on("mouseout", () => {
-            if (potreroSeleccionado !== potrero.nombre) {
-                poligono.setStyle({
-                    color: potrero.color,
-                    fillColor: potrero.color,
-                    weight: 2,
-                    fillOpacity: 0.15
-                });
-            }
-        });
+        poligono.addTo(capaEditablePotreros);
 
         poligonosPotreros.push({
+            id: potrero.id || null,
             nombre: potrero.nombre,
+            descripcion: potrero.descripcion || "",
+            riesgo: potrero.riesgo || "bajo",
+            colorOriginal: potrero.color || "#16a34a",
             layer: poligono,
-            colorOriginal: potrero.color,
             bounds: poligono.getBounds()
         });
     });
+}
+
+function inicializarEditorPotreros() {
+    capaEditablePotreros = new L.FeatureGroup();
+    map.addLayer(capaEditablePotreros);
+
+    controlDibujoPotreros = new L.Control.Draw({
+        draw: false,
+        edit: false
+    });
+
+    map.on(L.Draw.Event.CREATED, (event) => {
+        if (!modoEdicionPotrerosActivo) return;
+
+        const layer = event.layer;
+        const latlngs = layer.getLatLngs()[0];
+
+        if (!latlngs || !latlngs[0] || latlngs[0].length < 3) {
+            alert("El potrero debe tener al menos 3 puntos.");
+            return;
+        }
+
+        const nombre = prompt("Ingresá el nombre del potrero:");
+        if (!nombre || nombre.trim() === "") {
+            alert("Debés ingresar un nombre.");
+            return;
+        }
+
+        const color = prompt("Ingresá un color hexadecimal para el potrero (ejemplo: #16a34a):", "#16a34a") || "#16a34a";
+
+        const coordenadas = latlngs.map((p) => ({
+            lat: p.lat,
+            lng: p.lng
+        }));
+
+        potrerosConfig.push({
+            nombre: nombre.trim(),
+            descripcion: "Potrero creado por el usuario",
+            riesgo: "bajo",
+            color: color.trim(),
+            coordenadas
+        });
+
+        modoEdicionPotrerosActivo = false;
+        redibujarPotrerosDesdeConfig();
+        renderizarMarcadores();
+        seleccionarPotreroDesdeMapa(nombre.trim());
+
+        if (btnGuardarPotreros) {
+            btnGuardarPotreros.style.display = "inline-flex";
+        }
+    });
+}
+
+function activarModoDibujoPotreros() {
+    if (!map) return;
+
+    modoEdicionPotrerosActivo = true;
+
+    const drawer = new L.Draw.Polygon(map, {
+        allowIntersection: false,
+        showArea: true,
+        shapeOptions: {
+            color: "#166534",
+            weight: 3
+        }
+    });
+
+    drawer.enable();
+}
+
+function activarModoEdicionPotreros() {
+    if (!map || !capaEditablePotreros) return;
+
+    modoEliminarPotreroActivo = false;
+
+    if (controlEdicionPotreros) {
+        controlEdicionPotreros.disable();
+    }
+
+    controlEdicionPotreros = new L.EditToolbar.Edit(map, {
+        featureGroup: capaEditablePotreros,
+        selectedPathOptions: {
+            maintainColor: true,
+            opacity: 0.9,
+            fillOpacity: 0.25
+        }
+    });
+
+    controlEdicionPotreros.enable();
+
+    if (btnGuardarPotreros) {
+        btnGuardarPotreros.style.display = "inline-flex";
+    }
+}
+
+function activarModoEliminarPotrero() {
+    modoEliminarPotreroActivo = true;
+    alert("Modo eliminar activado. Hacé clic sobre el potrero que querés borrar.");
+}
+
+function eliminarPotreroSeleccionado(nombrePotrero) {
+    if (!nombrePotrero) return;
+
+    const confirmar = confirm(`¿Querés eliminar el potrero "${nombrePotrero}"?`);
+    if (!confirmar) {
+        modoEliminarPotreroActivo = false;
+        return;
+    }
+
+    potrerosConfig = potrerosConfig.filter((p) => p.nombre !== nombrePotrero);
+
+    if (potreroSeleccionado === nombrePotrero) {
+        potreroSeleccionado = null;
+        filtroPotreroActivo = null;
+        incidenciaSeleccionadaId = null;
+        limpiarDetallePotrero();
+        limpiarHistorialTemporal();
+    }
+
+    modoEliminarPotreroActivo = false;
+
+    redibujarPotrerosDesdeConfig();
+    renderizarMarcadores();
+
+    if (btnGuardarPotreros) {
+        btnGuardarPotreros.style.display = "inline-flex";
+    }
+}
+
+function sincronizarPotrerosEditadosDesdeMapa() {
+    if (!capaEditablePotreros) return;
+
+    const nuevosPotreros = [];
+
+    capaEditablePotreros.eachLayer((layer) => {
+        if (!(layer instanceof L.Polygon)) return;
+
+        const nombre = layer._potreroNombre;
+        if (!nombre) return;
+
+        const original = potrerosConfig.find((p) => p.nombre === nombre);
+        if (!original) return;
+
+        const latlngs = layer.getLatLngs()[0] || [];
+        const coordenadas = latlngs.map((p) => ({
+            lat: p.lat,
+            lng: p.lng
+        }));
+
+        nuevosPotreros.push({
+            ...original,
+            coordenadas
+        });
+    });
+
+    potrerosConfig = nuevosPotreros;
+    redibujarPotrerosDesdeConfig();
+    renderizarMarcadores();
+
+    if (btnGuardarPotreros) {
+        btnGuardarPotreros.style.display = "inline-flex";
+    }
+}
+
+async function cargarPotrerosDesdeFirestore(uid) {
+    try {
+        const q = query(collection(db, "potreros"), where("productorId", "==", uid));
+        const snapshot = await getDocs(q);
+
+        potrerosConfig = snapshot.docs.map((docSnap) => {
+            const data = docSnap.data();
+            return {
+                id: docSnap.id,
+                nombre: data.nombre || "Sin nombre",
+                descripcion: data.descripcion || "",
+                riesgo: data.riesgo || "bajo",
+                color: data.color || "#16a34a",
+                coordenadas: data.coordenadas || []
+            };
+        });
+
+        redibujarPotrerosDesdeConfig();
+    } catch (error) {
+        console.error("Error cargando potreros:", error);
+    }
+}
+
+async function guardarPotrerosFirestore() {
+    if (!usuarioActualMapa) {
+        alert("No hay usuario autenticado.");
+        return;
+    }
+
+    try {
+        const q = query(collection(db, "potreros"), where("productorId", "==", usuarioActualMapa.uid));
+        const snapshot = await getDocs(q);
+
+        for (const item of snapshot.docs) {
+            await deleteDoc(doc(db, "potreros", item.id));
+        }
+
+        for (const potrero of potrerosConfig) {
+            await addDoc(collection(db, "potreros"), {
+                productorId: usuarioActualMapa.uid,
+                nombre: potrero.nombre,
+                descripcion: potrero.descripcion || "",
+                riesgo: potrero.riesgo || "bajo",
+                color: potrero.color || "#16a34a",
+                coordenadas: potrero.coordenadas || [],
+                creadoEn: Date.now()
+            });
+        }
+
+        alert("Potreros guardados correctamente.");
+        btnGuardarPotreros.style.display = "none";
+    } catch (error) {
+        console.error("Error guardando potreros:", error);
+        alert("No se pudieron guardar los potreros.");
+    }
 }
 
 function crearContenidoPopup(data) {
@@ -1394,6 +1596,7 @@ function renderResumenGeneral(incidencias) {
     }
 }
 
+
 function renderizarMarcadores() {
     limpiarMarcadores();
     limpiarHeatmap();
@@ -1467,7 +1670,40 @@ function renderizarMarcadores() {
         limpiarDetallePotrero();
         limpiarHistorialTemporal();
         limpiarPatrullajeOperativo();
+        actualizarBadgesMapaUI();
     }
+}
+
+function puntoDentroDePoligono(lat, lng, coordenadas) {
+    let dentro = false;
+
+    for (let i = 0, j = coordenadas.length - 1; i < coordenadas.length; j = i++) {
+        const xi = coordenadas[i].lng;
+        const yi = coordenadas[i].lat;
+        const xj = coordenadas[j].lng;
+        const yj = coordenadas[j].lat;
+
+        const intersecta =
+            ((yi > lat) !== (yj > lat)) &&
+            (lng < ((xj - xi) * (lat - yi)) / ((yj - yi) || 0.0000001) + xi);
+
+        if (intersecta) dentro = !dentro;
+    }
+
+    return dentro;
+}
+
+function obtenerPotreroAutomaticoDeIncidencia(incidencia) {
+    if (!incidencia || incidencia.lat == null || incidencia.lng == null) return null;
+
+    const encontrado = potrerosConfig.find((potrero) => {
+        const coords = potrero.coordenadas || [];
+        if (!Array.isArray(coords) || coords.length < 3) return false;
+
+        return puntoDentroDePoligono(incidencia.lat, incidencia.lng, coords);
+    });
+
+    return encontrado ? encontrado.nombre : null;
 }
 
 async function cargarIncidencias(user) {
@@ -1479,10 +1715,12 @@ async function cargarIncidencias(user) {
             const data = doc.data();
 
             if (data.productorId !== user.uid) return;
-
+            const potreroDetectado = obtenerPotreroAutomaticoDeIncidencia(data);
+          
             todasLasIncidencias.push({
                 id: doc.id,
-                ...data
+                ...data,
+                potrero: potreroDetectado || data.potrero || "Sin dato"
             });
         });
 
@@ -1509,7 +1747,10 @@ if (modoVisualizacion) {
 }
 
 agregarLeyenda();
-dibujarPotreros();
+inicializarEditorPotreros();
+redibujarPotrerosDesdeConfig();
+
+
 
 onAuthStateChanged(auth, async (user) => {
     if (!user) {
@@ -1517,6 +1758,9 @@ onAuthStateChanged(auth, async (user) => {
         return;
     }
 
+    usuarioActualMapa = user;
+
+    await cargarPotrerosDesdeFirestore(user.uid);
     await cargarIncidencias(user);
 });
 
@@ -1556,3 +1800,84 @@ if (btnRestablecerVista) {
     });
 
 }
+if (btnEliminarPotrero) {
+    btnEliminarPotrero.addEventListener("click", activarModoEliminarPotrero);
+}
+
+async function entrarPantallaCompleta(elemento) {
+    if (elemento.requestFullscreen) {
+        return elemento.requestFullscreen();
+    }
+    if (elemento.webkitRequestFullscreen) {
+        return elemento.webkitRequestFullscreen();
+    }
+}
+
+async function salirPantallaCompleta() {
+    if (document.exitFullscreen) {
+        return document.exitFullscreen();
+    }
+    if (document.webkitExitFullscreen) {
+        return document.webkitExitFullscreen();
+    }
+}
+
+function obtenerElementoFullscreen() {
+    return document.fullscreenElement || document.webkitFullscreenElement || null;
+}
+
+async function alternarPantallaCompletaMapa() {
+    if (!mapaShell) return;
+
+    try {
+        if (!obtenerElementoFullscreen()) {
+            await entrarPantallaCompleta(mapaShell);
+        } else {
+            await salirPantallaCompleta();
+        }
+    } catch (error) {
+        console.error("No se pudo cambiar a pantalla completa:", error);
+    }
+}
+
+if (btnPantallaCompletaMapa && mapaShell) {
+    btnPantallaCompletaMapa.addEventListener("click", alternarPantallaCompletaMapa);
+}
+
+if (btnModoPotreros) {
+    btnModoPotreros.addEventListener("click", activarModoDibujoPotreros);
+}
+
+if (btnGuardarPotreros) {
+    btnGuardarPotreros.addEventListener("click", async () => {
+        sincronizarPotrerosEditadosDesdeMapa();
+        await guardarPotrerosFirestore();
+
+        if (controlEdicionPotreros) {
+            controlEdicionPotreros.disable();
+        }
+    });
+}
+
+if (btnEditarPotreros) {
+    btnEditarPotreros.addEventListener("click", activarModoEdicionPotreros);
+}
+function actualizarEstadoPantallaCompleta() {
+    const estaEnPantallaCompleta = obtenerElementoFullscreen() === mapaShell;
+
+    if (btnPantallaCompletaMapa) {
+        btnPantallaCompletaMapa.textContent = estaEnPantallaCompleta
+            ? "Salir pantalla completa"
+            : "Pantalla completa";
+    }
+
+    setTimeout(() => {
+        if (typeof map !== "undefined" && map) {
+            map.invalidateSize();
+        }
+    }, 250);
+}
+
+document.addEventListener("fullscreenchange", actualizarEstadoPantallaCompleta);
+document.addEventListener("webkitfullscreenchange", actualizarEstadoPantallaCompleta);
+

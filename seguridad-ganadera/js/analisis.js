@@ -10,6 +10,52 @@ import {
 } from "./firebase-sisg.js";
 
 const incidenciasRef = collection(db, "seguridad_ganadera_incidencias");
+const potrerosRef = collection(db, "potreros");
+
+function puntoDentroDePoligono(lat, lng, coordenadas) {
+  let dentro = false;
+
+  for (let i = 0, j = coordenadas.length - 1; i < coordenadas.length; j = i++) {
+    const xi = coordenadas[i].lng;
+    const yi = coordenadas[i].lat;
+    const xj = coordenadas[j].lng;
+    const yj = coordenadas[j].lat;
+
+    const intersecta =
+      ((yi > lat) !== (yj > lat)) &&
+      (lng < ((xj - xi) * (lat - yi)) / ((yj - yi) || 0.0000001) + xi);
+
+    if (intersecta) dentro = !dentro;
+  }
+
+  return dentro;
+}
+
+function detectarPotreroDesdeLista(lat, lng, potreros) {
+  if (lat == null || lng == null) return null;
+
+  const encontrado = potreros.find((potrero) => {
+    const coords = potrero.coordenadas || [];
+    if (!Array.isArray(coords) || coords.length < 3) return false;
+    return puntoDentroDePoligono(lat, lng, coords);
+  });
+
+  return encontrado ? encontrado.nombre : "Fuera de potrero";
+}
+
+async function cargarPotrerosDelUsuario(uid) {
+  const q = query(potrerosRef, where("productorId", "==", uid));
+  const snapshot = await getDocs(q);
+
+  return snapshot.docs.map((docSnap) => {
+    const data = docSnap.data();
+    return {
+      id: docSnap.id,
+      nombre: data.nombre || "Sin nombre",
+      coordenadas: data.coordenadas || []
+    };
+  });
+}
 
 function contarPorCampo(array, campo) {
   const conteo = {};
@@ -135,12 +181,22 @@ async function iniciarAnalisis(user) {
   try {
     const q = query(incidenciasRef, where("productorId", "==", user.uid), orderBy("creadoEn", "desc"));
     const snapshot = await getDocs(q);
+    const potreros = await cargarPotrerosDelUsuario(user.uid);
 
-    const datos = [];
-    snapshot.forEach((doc) => {
-      const item = doc.data();
-      datos.push(item);
-    });
+   const datos = [];
+snapshot.forEach((doc) => {
+  const item = doc.data();
+
+  const potreroDetectado =
+    item.lat != null && item.lng != null
+      ? detectarPotreroDesdeLista(item.lat, item.lng, potreros)
+      : null;
+
+  datos.push({
+    ...item,
+    potrero: potreroDetectado || item.potrero || "Fuera de potrero"
+  });
+});
 
 
     const totalIncidencias = datos.length;

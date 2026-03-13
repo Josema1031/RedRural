@@ -212,6 +212,7 @@ onAuthStateChanged(auth, async (user) => {
 
   if (user) {
     await obtenerCampoProductor(user.uid);
+    await cargarPotrerosEnSelect(user.uid);
     await renderTabla();
   } else if (tablaIncidenciasBody) {
     tablaIncidenciasBody.innerHTML = `
@@ -231,6 +232,88 @@ if (fotoEvidenciaInput) {
       limpiarPreview();
     }
   });
+}
+
+function puntoDentroDePoligono(lat, lng, coordenadas) {
+  let dentro = false;
+
+  for (let i = 0, j = coordenadas.length - 1; i < coordenadas.length; j = i++) {
+    const xi = coordenadas[i].lng;
+    const yi = coordenadas[i].lat;
+    const xj = coordenadas[j].lng;
+    const yj = coordenadas[j].lat;
+
+    const intersecta =
+      ((yi > lat) !== (yj > lat)) &&
+      (lng < ((xj - xi) * (lat - yi)) / ((yj - yi) || 0.0000001) + xi);
+
+    if (intersecta) dentro = !dentro;
+  }
+
+  return dentro;
+}
+
+async function detectarPotreroAutomaticamente(uid, lat, lng) {
+  if (!uid || lat == null || lng == null) return "";
+
+  try {
+    const potrerosRef = collection(db, "potreros");
+    const q = query(potrerosRef, where("productorId", "==", uid));
+    const snapshot = await getDocs(q);
+
+    let potreroDetectado = "";
+
+    snapshot.forEach((docItem) => {
+      if (potreroDetectado) return;
+
+      const potrero = docItem.data();
+      const coords = potrero.coordenadas || [];
+
+      if (!Array.isArray(coords) || coords.length < 3) return;
+
+      const dentro = puntoDentroDePoligono(lat, lng, coords);
+      if (dentro) {
+        potreroDetectado = potrero.nombre || "";
+      }
+    });
+
+    return potreroDetectado || "Fuera de potrero";
+  } catch (error) {
+    console.error("Error detectando potrero automáticamente:", error);
+    return "";
+  }
+}
+
+async function cargarPotrerosEnSelect(uid) {
+  const selectPotrero = document.getElementById("potrero");
+  if (!selectPotrero || !uid) return;
+
+  try {
+    const potrerosRef = collection(db, "potreros");
+    const q = query(potrerosRef, where("productorId", "==", uid));
+    const snapshot = await getDocs(q);
+
+    selectPotrero.innerHTML = `
+      <option value="">Seleccionar</option>
+      <option value="Fuera de potrero">Fuera de potrero</option>
+    `;
+
+    snapshot.forEach((docItem) => {
+      const potrero = docItem.data();
+      const nombre = potrero.nombre || "Sin nombre";
+
+      const option = document.createElement("option");
+      option.value = nombre;
+      option.textContent = nombre;
+      selectPotrero.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Error cargando potreros en el select:", error);
+    selectPotrero.innerHTML = `
+      <option value="">Seleccionar</option>
+      <option value="Fuera de potrero">Fuera de potrero</option>
+    `;
+  }
 }
 
 if (form) {
@@ -253,11 +336,26 @@ if (form) {
         evidenciaUrl = await subirFotoEvidencia(archivoFoto, usuarioActual.uid);
       }
 
+      const latValor = document.getElementById("lat")?.value !== ""
+        ? Number(document.getElementById("lat").value)
+        : null;
+
+      const lngValor = document.getElementById("lng")?.value !== ""
+        ? Number(document.getElementById("lng").value)
+        : null;
+
+      const potreroManual = document.getElementById("potrero")?.value || "";
+      const tieneCoordenadas = latValor != null && lngValor != null;
+
+      const potreroDetectado = tieneCoordenadas
+        ? await detectarPotreroAutomaticamente(usuarioActual.uid, latValor, lngValor)
+        : "";
+
       const nuevaIncidencia = {
         productorId: usuarioActual.uid,
         establecimiento: document.getElementById("establecimiento")?.value.trim() || "",
         fecha: document.getElementById("fecha")?.value || "",
-        potrero: document.getElementById("potrero")?.value || "",
+
         tipo: document.getElementById("tipo")?.value || "",
         guardia: document.getElementById("guardia")?.value.trim() || "",
         cantidad: document.getElementById("cantidad")?.value
@@ -265,12 +363,12 @@ if (form) {
           : null,
         gravedad: document.getElementById("gravedad")?.value || "",
         estado: document.getElementById("estado")?.value || "",
-        lat: document.getElementById("lat")?.value !== ""
-          ? Number(document.getElementById("lat").value)
-          : null,
-        lng: document.getElementById("lng")?.value !== ""
-          ? Number(document.getElementById("lng").value)
-          : null,
+        potrero: tieneCoordenadas
+          ? potreroDetectado
+          : (potreroManual || "Fuera de potrero"),
+        lat: latValor,
+        lng: lngValor,
+
         evidencia: document.getElementById("evidencia")?.value.trim() || "",
         evidenciaUrl,
         respuestaAplicada: document.getElementById("respuestaAplicada")?.value || "",

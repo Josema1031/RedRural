@@ -9,15 +9,15 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
     <style>
         :root {
             --brand-bg: linear-gradient(135deg, rgba(15, 23, 42, 0.97), rgba(20, 83, 45, 0.96));
             --brand-dark: #0f172a;
             --brand-accent: #166534;
             --brand-accent-hover: #14532d;
-            --brand-soft: rgba(255,255,255,0.10);
-            --brand-soft-border: rgba(255,255,255,0.15);
+            --brand-soft: rgba(255, 255, 255, 0.10);
+            --brand-soft-border: rgba(255, 255, 255, 0.15);
             --brand-radius: 14px;
             --brand-shadow: 0 14px 34px rgba(15, 23, 42, 0.16);
         }
@@ -68,7 +68,7 @@
         }
 
         .sisg-nav a:hover {
-            background: rgba(255,255,255,0.18);
+            background: rgba(255, 255, 255, 0.18);
             transform: translateY(-1px);
         }
 
@@ -671,7 +671,9 @@
             font-weight: 700;
             color: #7c2d12;
         }
+
         @media (max-width: 700px) {
+
             .sisg-nav a,
             .btn-exportar-pdf,
             .btn-potrero,
@@ -683,6 +685,474 @@
 
             header h2 {
                 font-size: 24px;
+            }
+        }
+
+        /* =========================
+   MEJORA VISUAL PROFESIONAL
+   ========================= */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at top left, rgba(22, 101, 52, 0.06), transparent 28%),
+                linear-gradient(180deg, #eef2f7 0%, #f8fafc 100%);
+            color: #1f2937;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1200;
+            backdrop-filter: blur(10px);
+        }
+
+        header h2 {
+            letter-spacing: 0.3px;
+        }
+
+        .sisg-nav a {
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+
+        .barra-filtros-pro {
+            max-width: 1500px;
+            margin: 18px auto 0;
+            padding: 16px 18px;
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: none;
+            justify-content: space-between;
+        }
+
+        .filtro-grupo {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 220px;
+        }
+
+        .filtro-grupo label {
+            font-size: 13px;
+            color: #334155;
+            font-weight: 700;
+        }
+
+        .filtro-grupo select {
+            min-height: 46px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            font-size: 14px;
+            font-weight: 600;
+            color: #0f172a;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .filtro-grupo select:focus {
+            border-color: #166534;
+            box-shadow: 0 0 0 4px rgba(22, 101, 52, 0.10);
+            background: #ffffff;
+        }
+
+        .filtro-grupo-btn {
+            min-width: 190px;
+        }
+
+        .filtro-grupo-btn .btn-exportar-pdf {
+            min-height: 46px;
+            width: 100%;
+        }
+
+        .layout-mapa-profesional {
+            max-width: 1500px;
+            margin: 18px auto 28px;
+            padding: 0 18px 20px;
+            display: grid;
+            grid-template-columns: minmax(0, 1.55fr) minmax(340px, 460px);
+            gap: 18px;
+            align-items: start;
+        }
+
+        .columna-principal,
+        .columna-lateral {
+            min-width: 0;
+        }
+
+        .columna-principal {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .columna-lateral {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .resumen-general-mapa,
+        .resumen-potreros,
+        .detalle-potrero-panel,
+        .historial-temporal-panel,
+        .monitoreo-operativo-panel,
+        .mapa-shell {
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+            overflow: hidden;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .resumen-general-mapa,
+        .resumen-potreros,
+        .detalle-potrero-panel,
+        .historial-temporal-panel,
+        .monitoreo-operativo-panel {
+            padding: 18px;
+        }
+
+        .bloque-titulo {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .bloque-titulo h3 {
+            margin: 0;
+            font-size: 17px;
+            color: #0f172a;
+        }
+
+        .bloque-titulo p {
+            margin: 4px 0 0;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .resumen-general-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .resumen-general-card,
+        .detalle-potrero-card,
+        .historial-temporal-card,
+        .monitoreo-card {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 14px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .resumen-general-card span {
+            font-size: 24px;
+            color: #14532d;
+        }
+
+        .detalle-potrero-card span,
+        .historial-temporal-card span,
+        .monitoreo-card span {
+            font-size: 18px;
+        }
+
+        .mapa-shell {
+            position: sticky;
+            top: 128px;
+        }
+
+        .mapa-shell-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 18px;
+            border-bottom: 1px solid #e5e7eb;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+        }
+
+        .mapa-header-texto h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #0f172a;
+        }
+
+        .mapa-header-texto p {
+            margin: 4px 0 0;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        #map {
+            width: 100%;
+            height: calc(100vh - 220px);
+            min-height: 650px;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .resumen-grid,
+        .detalle-lista-incidencias,
+        .historial-lista-fechas,
+        .monitoreo-lista {
+            max-height: 300px;
+            overflow: auto;
+            padding-right: 4px;
+        }
+
+        .resumen-grid::-webkit-scrollbar,
+        .detalle-lista-incidencias::-webkit-scrollbar,
+        .historial-lista-fechas::-webkit-scrollbar,
+        .monitoreo-lista::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .resumen-grid::-webkit-scrollbar-thumb,
+        .detalle-lista-incidencias::-webkit-scrollbar-thumb,
+        .historial-lista-fechas::-webkit-scrollbar-thumb,
+        .monitoreo-lista::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 999px;
+        }
+
+        .potrero-card,
+        .detalle-item-incidencia,
+        .historial-fecha-item,
+        .monitoreo-item {
+            border-radius: 14px;
+        }
+
+        .potrero-card {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            padding: 12px 14px;
+        }
+
+        .potrero-card:hover,
+        .detalle-item-incidencia:hover,
+        .monitoreo-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .detalle-potrero-vacio {
+            border-radius: 14px;
+            background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+            color: #475569;
+        }
+
+        .detalle-ultimas-incidencias,
+        .historial-listado,
+        .monitoreo-listado {
+            border-radius: 16px;
+            background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+        }
+
+        .acciones-potrero,
+        .monitoreo-acciones {
+            gap: 10px;
+        }
+
+        .btn-potrero,
+        .btn-potrero-sec,
+        .btn-operativo,
+        .btn-operativo-sec,
+        .btn-exportar-pdf {
+            min-height: 44px;
+            border-radius: 12px;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+
+        .btn-potrero:hover,
+        .btn-potrero-sec:hover,
+        .btn-operativo:hover,
+        .btn-operativo-sec:hover,
+        .btn-exportar-pdf:hover {
+            transform: translateY(-1px);
+        }
+
+        .info.legend {
+            border-radius: 14px !important;
+            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.14) !important;
+            border: 1px solid #e5e7eb;
+        }
+
+        .leaflet-control-layers {
+            border-radius: 14px !important;
+            overflow: hidden;
+            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.14) !important;
+            border: 1px solid #e5e7eb !important;
+        }
+
+        .leaflet-popup-content-wrapper {
+            border-radius: 14px;
+        }
+
+        @media (max-width: 1200px) {
+            .layout-mapa-profesional {
+                grid-template-columns: 1fr;
+            }
+
+            .mapa-shell {
+                position: relative;
+                top: 0;
+            }
+
+            #map {
+                height: 62vh;
+                min-height: 500px;
+            }
+
+            .resumen-general-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 760px) {
+            .barra-filtros-pro {
+                margin: 14px 12px 0;
+                padding: 14px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .layout-mapa-profesional {
+                margin-top: 14px;
+                padding: 0 12px 16px;
+            }
+
+            .filtro-grupo,
+            .filtro-grupo-btn {
+                min-width: 100%;
+            }
+
+            .resumen-general-grid,
+            .detalle-potrero-grid,
+            .historial-temporal-grid,
+            .monitoreo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #map {
+                height: 56vh;
+                min-height: 380px;
+            }
+
+            .mapa-shell-header,
+            .resumen-general-mapa,
+            .resumen-potreros,
+            .detalle-potrero-panel,
+            .historial-temporal-panel,
+            .monitoreo-operativo-panel {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+        }
+
+        /* ===== BOTON MAPA ===== */
+        .mapa-header-acciones {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-mapa-ui {
+            min-height: 40px;
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            color: #0f172a;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-mapa-ui:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.10);
+            background: #f8fafc;
+        }
+
+        .mapa-wrap {
+            position: relative;
+        }
+
+        /* ===== PANTALLA COMPLETA REAL ===== */
+        .mapa-shell:fullscreen {
+            background: #ffffff;
+            padding: 0;
+            margin: 0;
+            border-radius: 0;
+            width: 100%;
+            height: 100%;
+            max-width: none;
+        }
+
+        .mapa-shell:fullscreen .mapa-shell-header {
+            padding: 14px 18px;
+            border-radius: 0;
+        }
+
+        .mapa-shell:fullscreen .mapa-wrap {
+            height: calc(100vh - 76px);
+        }
+
+        .mapa-shell:fullscreen #map {
+            width: 100%;
+            height: calc(100vh - 76px) !important;
+            min-height: auto !important;
+            border-radius: 0;
+        }
+
+        /* Compatibilidad WebKit */
+        .mapa-shell:-webkit-full-screen {
+            background: #ffffff;
+            padding: 0;
+            margin: 0;
+            border-radius: 0;
+            width: 100%;
+            height: 100%;
+            max-width: none;
+        }
+
+        .mapa-shell:-webkit-full-screen .mapa-shell-header {
+            padding: 14px 18px;
+            border-radius: 0;
+        }
+
+        .mapa-shell:-webkit-full-screen .mapa-wrap {
+            height: calc(100vh - 76px);
+        }
+
+        .mapa-shell:-webkit-full-screen #map {
+            width: 100%;
+            height: calc(100vh - 76px) !important;
+            min-height: auto !important;
+            border-radius: 0;
+        }
+
+        @media (max-width: 760px) {
+            .mapa-shell-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+
+            .mapa-header-acciones {
+                width: 100%;
+            }
+
+            .btn-mapa-ui {
+                width: 100%;
             }
         }
     </style>
@@ -701,179 +1171,241 @@
         </nav>
     </header>
 
-    <div class="barra-filtros">
-        <label for="filtroTipo">Filtrar por tipo:</label>
-        <select id="filtroTipo">
-            <option value="todos">Todos</option>
-            <option value="Faltante de ganado">Faltante de ganado</option>
-            <option value="Huellas de vehículo">Huellas de vehículo</option>
-            <option value="Alambrado manipulado">Alambrado manipulado</option>
-            <option value="Tranquera abierta">Tranquera abierta</option>
-            <option value="Movimiento nocturno">Movimiento nocturno</option>
-            <option value="Rastros de arreo">Rastros de arreo</option>
-        </select>
+    <div class="barra-filtros barra-filtros-pro">
+        <div class="filtro-grupo">
+            <label for="filtroTipo">Filtrar por tipo</label>
+            <select id="filtroTipo">
+                <option value="todos">Todos</option>
+                <option value="Faltante de ganado">Faltante de ganado</option>
+                <option value="Huellas de vehículo">Huellas de vehículo</option>
+                <option value="Alambrado manipulado">Alambrado manipulado</option>
+                <option value="Tranquera abierta">Tranquera abierta</option>
+                <option value="Movimiento nocturno">Movimiento nocturno</option>
+                <option value="Rastros de arreo">Rastros de arreo</option>
+            </select>
+        </div>
 
-        <label for="modoVisualizacion">Visualización:</label>
-        <select id="modoVisualizacion">
-            <option value="marcadores">Marcadores</option>
-            <option value="heatmap">Mapa de calor</option>
-            <option value="mixto">Mixto</option>
-        </select>
+        <div class="filtro-grupo">
+            <label for="modoVisualizacion">Visualización</label>
+            <select id="modoVisualizacion">
+                <option value="marcadores">Marcadores</option>
+                <option value="heatmap">Mapa de calor</option>
+                <option value="mixto">Mixto</option>
+            </select>
+        </div>
 
-        <button id="btnExportarPDF" class="btn-exportar-pdf">Exportar PDF</button>
+        <div class="filtro-grupo filtro-grupo-btn">
+            <label>&nbsp;</label>
+            <button id="btnExportarPDF" class="btn-exportar-pdf">Exportar PDF</button>
+        </div>
     </div>
 
-    <section class="resumen-general-mapa">
-        <div class="resumen-general-grid">
-            <div class="resumen-general-card">
-                <strong>Total de incidencias</strong>
-                <span id="totalIncidenciasMapa">0</span>
-            </div>
+    <main class="layout-mapa-profesional">
 
-            <div class="resumen-general-card">
-                <strong>Potreros con incidencias</strong>
-                <span id="totalPotrerosMapa">0</span>
-            </div>
+        <section class="columna-principal">
 
-            <div class="resumen-general-card">
-                <strong>Potrero más afectado</strong>
-                <span id="potreroMasAfectadoMapa">-</span>
-            </div>
-
-            <div class="resumen-general-card">
-                <strong>Riesgo general</strong>
-                <span id="riesgoGeneralMapa">Sin datos</span>
-            </div>
-        </div>
-    </section>
-
-    <section class="resumen-potreros">
-        <h3>Concentración de incidencias por potrero</h3>
-        <div id="resumenPotreros" class="resumen-grid"></div>
-    </section>
-
-    <section class="detalle-potrero-panel">
-        <h3>Detalle del potrero seleccionado</h3>
-
-        <div id="detallePotreroVacio" class="detalle-potrero-vacio">
-            Seleccioná un potrero del ranking para ver el detalle.
-        </div>
-
-        <div id="detallePotreroContenido" class="detalle-potrero-contenido" style="display:none;">
-            <div class="detalle-potrero-grid">
-                <div class="detalle-potrero-card">
-                    <strong>Potrero</strong>
-                    <span id="detalleNombrePotrero">-</span>
+            <section class="resumen-general-mapa resumen-general-pro">
+                <div class="bloque-titulo">
+                    <div>
+                        <h3>Resumen general</h3>
+                        <p>Vista rápida del estado operativo</p>
+                    </div>
                 </div>
 
-                <div class="detalle-potrero-card">
-                    <strong>Total de incidencias</strong>
-                    <span id="detalleTotalIncidencias">0</span>
+                <div class="resumen-general-grid">
+                    <div class="resumen-general-card">
+                        <strong>Total de incidencias</strong>
+                        <span id="totalIncidenciasMapa">0</span>
+                    </div>
+
+                    <div class="resumen-general-card">
+                        <strong>Potreros con incidencias</strong>
+                        <span id="totalPotrerosMapa">0</span>
+                    </div>
+
+                    <div class="resumen-general-card">
+                        <strong>Potrero más afectado</strong>
+                        <span id="potreroMasAfectadoMapa">-</span>
+                    </div>
+
+                    <div class="resumen-general-card">
+                        <strong>Riesgo general</strong>
+                        <span id="riesgoGeneralMapa">-</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mapa-shell" id="mapaShell">
+                <div class="mapa-shell-header">
+                    <div class="mapa-header-texto">
+                        <h3>Mapa interactivo</h3>
+                        <p>Centro visual principal para análisis y navegación</p>
+                    </div>
+
+                    <div class="mapa-header-acciones">
+                        <button id="btnModoPotreros" class="btn-mapa-ui" type="button">Gestionar potreros</button>
+                        <button id="btnGuardarPotreros" class="btn-mapa-ui" type="button" style="display:none;">Guardar cambios</button>
+                        <button id="btnEditarPotreros" class="btn-mapa-ui" type="button">Editar potreros</button>
+                        <button id="btnEliminarPotrero" class="btn-mapa-ui" type="button">Eliminar potrero</button>
+                        <button id="btnPantallaCompletaMapa" class="btn-mapa-ui" type="button">Pantalla
+                            completa</button>
+                    </div>
                 </div>
 
-                <div class="detalle-potrero-card">
-                    <strong>Nivel de riesgo</strong>
-                    <span id="detalleNivelRiesgo">Sin datos</span>
+                <div class="mapa-wrap">
+                    <div id="map"></div>
+                </div>
+            </section>
+
+        </section>
+
+        <aside class="columna-lateral">
+
+            <section class="resumen-potreros">
+                <div class="bloque-titulo">
+                    <div>
+                        <h3>Ranking de potreros</h3>
+                        <p>Seleccioná uno para enfocarlo en el mapa</p>
+                    </div>
+                </div>
+                <div id="resumenPotreros" class="resumen-grid"></div>
+            </section>
+
+            <section class="detalle-potrero-panel">
+                <div class="bloque-titulo">
+                    <div>
+                        <h3>Detalle del potrero</h3>
+                        <p>Información del sector seleccionado</p>
+                    </div>
                 </div>
 
-                <div class="detalle-potrero-card">
-                    <strong>Tipo más repetido</strong>
-                    <span id="detalleTipoFrecuente">-</span>
+                <div id="detallePotreroVacio" class="detalle-potrero-vacio">
+                    Seleccioná un potrero para ver su información detallada.
                 </div>
 
-                <div class="detalle-potrero-card">
-                    <strong>Fecha más reciente</strong>
-                    <span id="detalleFechaReciente">-</span>
+                <div id="detallePotreroContenido" class="detalle-potrero-contenido" style="display:none;">
+                    <div class="detalle-potrero-grid">
+                        <div class="detalle-potrero-card">
+                            <strong>Potrero</strong>
+                            <span id="detalleNombrePotrero">-</span>
+                        </div>
+
+                        <div class="detalle-potrero-card">
+                            <strong>Total incidencias</strong>
+                            <span id="detalleTotalIncidencias">0</span>
+                        </div>
+
+                        <div class="detalle-potrero-card">
+                            <strong>Nivel de riesgo</strong>
+                            <span id="detalleNivelRiesgo">Sin datos</span>
+                        </div>
+
+                        <div class="detalle-potrero-card">
+                            <strong>Tipo más frecuente</strong>
+                            <span id="detalleTipoFrecuente">-</span>
+                        </div>
+
+                        <div class="detalle-potrero-card">
+                            <strong>Fecha más reciente</strong>
+                            <span id="detalleFechaReciente">-</span>
+                        </div>
+                    </div>
+
+                    <div class="acciones-potrero">
+                        <button id="btnFiltrarPotrero" class="btn-potrero">Ver solo este potrero</button>
+                        <button id="btnRestablecerVista" class="btn-potrero-sec">Restablecer vista</button>
+                    </div>
+
+                    <div class="detalle-ultimas-incidencias">
+                        <strong>Últimas incidencias</strong>
+                        <div id="detalleListaIncidencias" class="detalle-lista-incidencias"></div>
+                    </div>
                 </div>
-            </div>
+            </section>
 
-            <div class="acciones-potrero">
-                <button id="btnFiltrarPotrero" class="btn-potrero">
-                    Ver solo este potrero
-                </button>
+            <section class="historial-temporal-panel">
+                <div class="bloque-titulo">
+                    <div>
+                        <h3>Historial temporal</h3>
+                        <p>Comportamiento reciente de incidencias</p>
+                    </div>
+                </div>
 
-                <button id="btnRestablecerVista" class="btn-potrero-sec">
-                    Restablecer vista
-                </button>
-            </div>
+                <div class="historial-temporal-grid">
+                    <div class="historial-temporal-card">
+                        <strong>Fechas con actividad</strong>
+                        <span id="historialTotalFechas">0</span>
+                    </div>
 
-            <div class="detalle-ultimas-incidencias">
-                <strong>Últimas incidencias</strong>
-                <div id="detalleListaIncidencias" class="detalle-lista-incidencias"></div>
-            </div>
-        </div>
-    </section>
+                    <div class="historial-temporal-card">
+                        <strong>Fecha más reciente</strong>
+                        <span id="historialFechaReciente">-</span>
+                    </div>
 
-    <section class="historial-temporal-panel">
-        <h3>Historial temporal de incidencias</h3>
+                    <div class="historial-temporal-card">
+                        <strong>Fecha más crítica</strong>
+                        <span id="historialFechaCritica">-</span>
+                    </div>
+                </div>
 
-        <div class="historial-temporal-grid">
-            <div class="historial-temporal-card">
-                <strong>Fechas con actividad</strong>
-                <span id="historialTotalFechas">0</span>
-            </div>
+                <div class="historial-listado">
+                    <strong>Últimas fechas registradas</strong>
+                    <div id="historialListaFechas" class="historial-lista-fechas"></div>
+                </div>
+            </section>
 
-            <div class="historial-temporal-card">
-                <strong>Fecha más reciente</strong>
-                <span id="historialFechaReciente">-</span>
-            </div>
+            <section class="monitoreo-operativo-panel">
+                <div class="bloque-titulo">
+                    <div>
+                        <h3>Modo patrullaje</h3>
+                        <p>Seguimiento operativo y prioridades</p>
+                    </div>
+                </div>
 
-            <div class="historial-temporal-card">
-                <strong>Fecha más crítica</strong>
-                <span id="historialFechaCritica">-</span>
-            </div>
-        </div>
+                <div class="monitoreo-acciones">
+                    <button id="btnActivarPatrullaje" class="btn-operativo">Activar patrullaje</button>
+                    <button id="btnSiguienteObjetivo" class="btn-operativo-sec">Siguiente objetivo</button>
+                    <button id="btnSalirPatrullaje" class="btn-operativo-sec">Salir patrullaje</button>
+                </div>
 
-        <div class="historial-listado">
-            <strong>Últimas fechas registradas</strong>
-            <div id="historialListaFechas" class="historial-lista-fechas"></div>
-        </div>
-    </section>
+                <div class="monitoreo-grid">
+                    <div class="monitoreo-card">
+                        <strong>Estado</strong>
+                        <span id="estadoPatrullaje">Inactivo</span>
+                    </div>
 
-    <section class="monitoreo-operativo-panel">
-        <h3>Modo patrullaje / monitoreo operativo</h3>
+                    <div class="monitoreo-card">
+                        <strong>Objetivo actual</strong>
+                        <span id="objetivoActualPatrullaje">-</span>
+                    </div>
 
-        <div class="monitoreo-acciones">
-            <button id="btnActivarPatrullaje" class="btn-operativo">Activar patrullaje</button>
-            <button id="btnSiguienteObjetivo" class="btn-operativo-sec">Siguiente objetivo</button>
-            <button id="btnSalirPatrullaje" class="btn-operativo-sec">Salir patrullaje</button>
-        </div>
+                    <div class="monitoreo-card">
+                        <strong>Prioridades activas</strong>
+                        <span id="totalObjetivosPatrullaje">0</span>
+                    </div>
 
-        <div class="monitoreo-grid">
-            <div class="monitoreo-card">
-                <strong>Estado</strong>
-                <span id="estadoPatrullaje">Inactivo</span>
-            </div>
+                    <div class="monitoreo-card">
+                        <strong>Última actualización</strong>
+                        <span id="ultimaActualizacionPatrullaje">-</span>
+                    </div>
+                </div>
 
-            <div class="monitoreo-card">
-                <strong>Objetivo actual</strong>
-                <span id="objetivoActualPatrullaje">-</span>
-            </div>
+                <div class="monitoreo-listado">
+                    <strong>Cola operativa</strong>
+                    <div id="listaObjetivosPatrullaje" class="monitoreo-lista"></div>
+                </div>
+            </section>
 
-            <div class="monitoreo-card">
-                <strong>Prioridades activas</strong>
-                <span id="totalObjetivosPatrullaje">0</span>
-            </div>
-
-            <div class="monitoreo-card">
-                <strong>Última actualización</strong>
-                <span id="ultimaActualizacionPatrullaje">-</span>
-            </div>
-        </div>
-
-        <div class="monitoreo-listado">
-            <strong>Cola operativa</strong>
-            <div id="listaObjetivosPatrullaje" class="monitoreo-lista"></div>
-        </div>
-    </section>
-
-    <div id="map"></div>
+        </aside>
+    </main>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
     <script type="module" src="../js/mapas-riesgo.js"></script>
+
 
 </body>
 
