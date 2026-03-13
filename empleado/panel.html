@@ -120,6 +120,7 @@
     </div>
 
     <p class="muted" id="sub"></p>
+    <div id="estadoConexion" class="card" style="padding:10px 14px;margin-top:10px;font-size:14px"></div>
 
     <div class="grid">
       <div class="card">
@@ -201,8 +202,23 @@
     const sub = document.getElementById("sub");
     const listaTareas = document.getElementById("listaTareas");
     const listaAlertas = document.getElementById("listaAlertas");
+    const estadoConexion = document.getElementById("estadoConexion");
 
     sub.textContent = empleadoDni ? `Sesión: DNI ${empleadoDni}` : "Sin sesión activa.";
+
+    function actualizarEstadoConexion() {
+      const offline = !navigator.onLine;
+      const modoOffline = localStorage.getItem("modoOffline") === "1";
+      estadoConexion.style.background = offline ? "#fff7ed" : "#ecfdf5";
+      estadoConexion.style.border = offline ? "1px solid #fdba74" : "1px solid #86efac";
+      estadoConexion.textContent = offline
+        ? "🟠 Sin internet. Vas a ver datos guardados en caché y las acciones quedarán pendientes hasta reconectar."
+        : (modoOffline ? "🟢 Volvió la conexión. Las acciones pendientes se sincronizarán solas." : "🟢 En línea. Sincronización activa.");
+    }
+
+    actualizarEstadoConexion();
+    window.addEventListener("online", () => { localStorage.setItem("modoOffline", "0"); actualizarEstadoConexion(); });
+    window.addEventListener("offline", actualizarEstadoConexion);
 
     // Salida limpia
     document.getElementById("btnSalir").addEventListener("click", (e) => {
@@ -317,7 +333,7 @@
           eLitros.value = "";
           eCosto.value = "";
           eOdom.value = "";
-          setMsgComb("✅ Registrado.");
+          setMsgComb(navigator.onLine ? "✅ Registrado." : "🟠 Guardado offline. Se sincronizará al volver internet.");
         } catch (e) {
           console.error(e);
           setMsgComb("❌ No se pudo registrar (permisos/reglas).", false);
@@ -372,8 +388,13 @@
 
                   await updateDoc(doc(db, "tareas", d.id), {
                     completada: true,
-                    realizadaEn: serverTimestamp()
+                    realizadaEn: serverTimestamp(),
+                    syncPendiente: !navigator.onLine
                   });
+
+                  if (!navigator.onLine) {
+                    btn.textContent = "🟠 Pendiente de sincronizar";
+                  }
 
                 } catch (e) {
                   console.error("No se pudo completar:", e);

@@ -83,6 +83,7 @@
     <button id="btnLogin">Ingresar</button>
 
     <p id="msg"></p>
+    <p id="net" style="font-size:13px;color:#666"></p>
 
     <a href="../index.html">⬅ Volver</a>
   </div>
@@ -91,13 +92,32 @@
   <script type="module">
     import { auth } from "../firebase-init.js";
     import { signInWithEmailAndPassword }
-  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
+      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
     const btn = document.getElementById("btnLogin");
     const msg = document.getElementById("msg");
+    const net = document.getElementById("net");
+    const LOGIN_CACHE_KEY = "productorLoginCache";
 
     btn.addEventListener("click", loginProductor);
+
+    function setNetStatus() {
+      net.textContent = navigator.onLine
+        ? "🟢 Con conexión"
+        : "🟠 Sin conexión. Solo podés entrar con la última sesión guardada en este dispositivo.";
+    }
+
+    function guardarCacheLogin(data) {
+      localStorage.setItem(LOGIN_CACHE_KEY, JSON.stringify(data));
+    }
+
+    function leerCacheLogin() {
+      try {
+        return JSON.parse(localStorage.getItem(LOGIN_CACHE_KEY) || "null");
+      } catch {
+        return null;
+      }
+    }
 
     async function loginProductor() {
       const email = document.getElementById("user").value.trim();
@@ -109,36 +129,53 @@
       }
 
       try {
-        // Login con Firebase
+        if (!navigator.onLine) {
+          const cache = leerCacheLogin();
+          if (!cache || cache.email !== email || cache.pass !== pass) {
+            msg.textContent = "Sin internet solo podés entrar con la última sesión guardada en este dispositivo.";
+            return;
+          }
+          localStorage.setItem("productorId", cache.productorId);
+          localStorage.setItem("modoOffline", "1");
+          window.location.href = "panel.html";
+          return;
+        }
+
         const cred = await signInWithEmailAndPassword(auth, email, pass);
-
-        // Guardamos el ID del productor
         localStorage.setItem("productorId", cred.user.uid);
+        localStorage.setItem("modoOffline", "0");
 
-        // Redirigimos al panel del productor
+        guardarCacheLogin({
+          email,
+          pass,
+          productorId: cred.user.uid,
+          ts: Date.now()
+        });
+
         window.location.href = "panel.html";
-
       } catch (error) {
-  console.error(error);
-  msg.textContent = "Error: " + traducirAuthError(error.code);
-}
-
-function traducirAuthError(code) {
-  if (code === "auth/invalid-credential") return "Email o contraseña incorrectos (o usuario inexistente).";
-  if (code === "auth/user-disabled") return "Usuario deshabilitado.";
-  if (code === "auth/too-many-requests") return "Demasiados intentos. Probá más tarde.";
-  if (code === "auth/network-request-failed") return "Sin conexión o bloqueado por red.";
-  return code || "Error desconocido.";
-}
-
+        console.error(error);
+        msg.textContent = "Error: " + traducirAuthError(error.code);
+      }
     }
 
-    // Limpieza de errores de Firebase
-    function limpiarError(error) {
-      if (error.includes("auth/user-not-found")) return "Usuario no registrado.";
-      if (error.includes("auth/wrong-password")) return "Contraseña incorrecta.";
-      if (error.includes("auth/invalid-email")) return "Correo inválido.";
-      return error;
+    function traducirAuthError(code) {
+      if (code === "auth/invalid-credential") return "Email o contraseña incorrectos (o usuario inexistente).";
+      if (code === "auth/user-disabled") return "Usuario deshabilitado.";
+      if (code === "auth/too-many-requests") return "Demasiados intentos. Probá más tarde.";
+      if (code === "auth/network-request-failed") return "Sin conexión o bloqueado por red.";
+      return code || "Error desconocido.";
+    }
+
+    setNetStatus();
+    window.addEventListener("online", setNetStatus);
+    window.addEventListener("offline", setNetStatus);
+  </script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("../service-worker.js").catch(console.warn);
+      });
     }
   </script>
 
