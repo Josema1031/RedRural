@@ -16,13 +16,32 @@
                 <h1>SISG Rural</h1>
                 <p class="sisg-subtitle">Plataforma operativa de seguridad rural</p>
             </div>
-
-            <div class="sisg-header-actions">
-                <a href="../index.html" class="btn-secundario">Volver al inicio</a>
-            </div>
         </div>
 
+        <div class="topbar-mobile">
+            <button id="menuToggle" class="menu-toggle" aria-label="Abrir menú">☰</button>
+
+        </div>
+        <div id="menuOverlay" class="menu-overlay"></div>
+
+        <aside id="mobileMenu" class="mobile-menu">
+            <div class="mobile-menu-header">
+                <h3>Menú</h3>
+                <button id="menuClose" class="menu-close" aria-label="Cerrar menú">✕</button>
+            </div>
+
+            <nav class="mobile-menu-nav">
+                <a href="../index.html">Inicio</a>
+                <a href="panel.html">Panel</a>
+                <a href="incidencias.html">Incidencias</a>
+                <a href="analisis.html">Análisis</a>
+                <a href="mapas-riesgo.html">Mapa de riesgo</a>
+                <a href="reportes.html" class="active">Reportes</a>
+            </nav>
+        </aside>
+
         <nav class="sisg-nav">
+            <a href="../index.html">Inicio</a>
             <a href="panel.html">Panel</a>
             <a href="incidencias.html">Incidencias</a>
             <a href="analisis.html">Análisis</a>
@@ -152,6 +171,29 @@
             </p>
         </section>
     </main>
+
+    <script>
+        const menuToggle = document.getElementById("menuToggle");
+        const mobileMenu = document.getElementById("mobileMenu");
+        const menuClose = document.getElementById("menuClose");
+        const menuOverlay = document.getElementById("menuOverlay");
+
+        function abrirMenu() {
+            mobileMenu.classList.add("active");
+            menuOverlay.classList.add("active");
+            document.body.style.overflow = "hidden";
+        }
+
+        function cerrarMenu() {
+            mobileMenu.classList.remove("active");
+            menuOverlay.classList.remove("active");
+            document.body.style.overflow = "";
+        }
+
+        if (menuToggle) menuToggle.addEventListener("click", abrirMenu);
+        if (menuClose) menuClose.addEventListener("click", cerrarMenu);
+        if (menuOverlay) menuOverlay.addEventListener("click", cerrarMenu);
+    </script>
 </body>
 
 </html>

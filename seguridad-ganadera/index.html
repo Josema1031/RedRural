@@ -1,14 +1,22 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SISG Rural | Plataforma integral de seguridad ganadera</title>
-  <meta name="description" content="Plataforma interactiva de seguridad ganadera para registrar incidencias, analizar riesgos, generar reportes y profesionalizar el control del establecimiento." />
+  <meta name="description"
+    content="Plataforma interactiva de seguridad ganadera para registrar incidencias, analizar riesgos, generar reportes y profesionalizar el control del establecimiento." />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
+
 <body class="landing-body">
   <header class="header landing-header">
+    <div class="topbar-mobile topbar-mobile-landing">
+      <button id="menuToggle" class="menu-toggle" aria-label="Abrir menú">☰</button>
+      
+    </div>
+    
     <div class="logo-box landing-brand">
       <span class="landing-kicker">Red Rural / Seguridad Ganadera</span>
       <h1>SISG Rural</h1>
@@ -18,8 +26,30 @@
       </div>
     </div>
 
+        <div id="menuOverlay" class="menu-overlay"></div>
+
+    <aside id="mobileMenu" class="mobile-menu">
+      <div class="mobile-menu-header">
+        <h3>Menú</h3>
+        <button id="menuClose" class="menu-close" aria-label="Cerrar menú">✕</button>
+      </div>
+
+      <nav class="mobile-menu-nav">
+        <a href="#inicio" class="active">Inicio</a>
+        <a href="#modulos">Módulos</a>
+        <a href="#beneficios">Beneficios</a>
+        <a href="#planes">Planes</a>
+        <a href="operativo/panel.html">Panel operativo</a>
+        <a href="operativo/incidencias.html">Incidencias</a>
+        <a href="operativo/analisis.html">Análisis</a>
+        <a href="operativo/mapas-riesgo.html">Mapa</a>
+        <a href="operativo/reportes.html">Reportes</a>
+        <a href="info/contacto.html">Contacto</a>
+      </nav>
+    </aside>
+
     <nav class="nav landing-nav">
-      <a href="#inicio">Inicio</a>
+      <a href="#inicio" class="active">Inicio</a>
       <a href="#modulos">Módulos</a>
       <a href="#beneficios">Beneficios</a>
       <a href="#planes">Planes</a>
@@ -39,8 +69,10 @@
           <span class="badge">Lista para presentar y promocionar</span>
           <h2>Una web profesional con módulos conectados para gestionar la seguridad ganadera de punta a punta</h2>
           <p>
-            SISG Rural unifica prevención, carga de incidencias, análisis, mapas de riesgo, reportes y documentación estratégica
-            dentro de una sola experiencia. Está pensada para productores, administradores rurales y empresas agropecuarias
+            SISG Rural unifica prevención, carga de incidencias, análisis, mapas de riesgo, reportes y documentación
+            estratégica
+            dentro de una sola experiencia. Está pensada para productores, administradores rurales y empresas
+            agropecuarias
             que necesitan más control, más orden y mejor capacidad de respuesta.
           </p>
           <div class="hero-botones">
@@ -285,7 +317,8 @@
         <span class="badge">Próximo paso</span>
         <h2>Tu proyecto ya tiene presencia, navegación y estructura para salir a mostrarse</h2>
         <p>
-          Podés usar esta web como presentación comercial, demo funcional y base para seguir completando los módulos que faltan
+          Podés usar esta web como presentación comercial, demo funcional y base para seguir completando los módulos que
+          faltan
           sin perder coherencia visual ni navegación entre secciones.
         </p>
       </div>
@@ -297,5 +330,30 @@
   </main>
 
   <script src="js/app.js"></script>
+
+  <script>
+    const menuToggle = document.getElementById("menuToggle");
+    const mobileMenu = document.getElementById("mobileMenu");
+    const menuClose = document.getElementById("menuClose");
+    const menuOverlay = document.getElementById("menuOverlay");
+
+    function abrirMenu() {
+      mobileMenu.classList.add("active");
+      menuOverlay.classList.add("active");
+      document.body.style.overflow = "hidden";
+    }
+
+    function cerrarMenu() {
+      mobileMenu.classList.remove("active");
+      menuOverlay.classList.remove("active");
+      document.body.style.overflow = "";
+    }
+
+    if (menuToggle) menuToggle.addEventListener("click", abrirMenu);
+    if (menuClose) menuClose.addEventListener("click", cerrarMenu);
+    if (menuOverlay) menuOverlay.addEventListener("click", cerrarMenu);
+  </script>
+
 </body>
+
 </html>
