@@ -552,10 +552,13 @@
         }
 
         .monitoreo-acciones {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
             gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 12px;
+        }
+
+        .monitoreo-acciones button {
+            width: 100%;
         }
 
         .btn-operativo,
@@ -784,6 +787,7 @@
 
         .filtro-grupo-btn .btn-exportar-pdf {
             min-height: 46px;
+            font-size: 12px;
             width: 100%;
         }
 
@@ -1032,12 +1036,35 @@
         }
 
         @media (max-width: 760px) {
+
             .barra-filtros-pro {
                 margin: 14px 12px 0;
                 padding: 14px;
-                flex-direction: column;
-                align-items: stretch;
+
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                /* 3 columnas */
+                gap: 8px;
+                align-items: end;
             }
+
+            .filtro-grupo {
+                min-width: unset;
+            }
+
+            .filtro-grupo select {
+                width: 100%;
+                min-height: 40px;
+                font-size: 13px;
+            }
+
+            .btn-exportar-pdf {
+                width: 100%;
+                min-height: 40px;
+                font-size: 13px;
+            }
+
+
 
             .layout-mapa-profesional {
                 margin-top: 14px;
@@ -1055,6 +1082,45 @@
             .monitoreo-grid {
                 grid-template-columns: 1fr;
             }
+
+            @media (max-width:760px) {
+
+                .historial-temporal-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 10px;
+                }
+
+            }
+
+            @media (max-width:760px) {
+
+                .monitoreo-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 10px;
+                }
+
+            }
+
+            .detalle-potrero-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+            }
+
+            @media (max-width: 760px) {
+                .detalle-potrero-card {
+                    padding: 10px;
+                }
+
+                .detalle-potrero-card strong {
+                    font-size: 12px;
+                }
+
+                .detalle-potrero-card span {
+                    font-size: 14px;
+                    line-height: 1.2;
+                }
+            }
+
 
             #map {
                 height: 56vh;
@@ -1099,6 +1165,33 @@
 
         .mapa-wrap {
             position: relative;
+        }
+
+        @media (max-width:760px) {
+
+            .resumen-grid {
+                grid-template-columns: repeat(2, 1fr);
+                /* 👈 dos columnas */
+                gap: 10px;
+            }
+
+        }
+
+        @media (max-width:760px) {
+
+            .acciones-potrero {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                margin-top: 10px;
+            }
+
+            .detalle-potrero-acciones button {
+                width: 100%;
+                min-height: 44px;
+                font-size: 13px;
+            }
+
         }
 
         /* ===== PANTALLA COMPLETA REAL ===== */
@@ -1156,19 +1249,27 @@
         }
 
         @media (max-width: 760px) {
+
             .mapa-shell-header {
                 flex-direction: column;
                 align-items: stretch;
                 gap: 12px;
             }
 
+            /* 🔥 BOTONES DEL MAPA EN GRID */
             .mapa-header-acciones {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
                 width: 100%;
             }
 
             .btn-mapa-ui {
                 width: 100%;
+                font-size: 10px;
+                padding: 10px;
             }
+
         }
 
         @media (max-width: 700px) {
@@ -1312,6 +1413,230 @@
                 margin-top: 0;
             }
         }
+
+        /* =========================
+   PATRULLAJE PROFESIONAL
+========================= */
+.icono-patrullero-custom {
+    background: transparent;
+    border: none;
+}
+
+.patrullero-wrap {
+    position: relative;
+    width: 38px;
+    height: 38px;
+}
+
+.patrullero-pulso {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: rgba(37, 99, 235, 0.22);
+    animation: pulsoPatrullero 1.8s infinite;
+}
+
+.patrullero-icono {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    background: #ffffff;
+    border: 2px solid #2563eb;
+    border-radius: 50%;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.18);
+}
+
+@keyframes pulsoPatrullero {
+    0% {
+        transform: scale(0.88);
+        opacity: 0.9;
+    }
+    70% {
+        transform: scale(1.7);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1.7);
+        opacity: 0;
+    }
+}
+
+.objetivo-patrullaje-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-left: 5px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.objetivo-patrullaje-item.activo {
+    background: #eff6ff;
+    border-left-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.10);
+}
+
+.objetivo-patrullaje-item.completado {
+    background: #f0fdf4;
+    border-left-color: #16a34a;
+    opacity: 0.9;
+}
+
+.objetivo-patrullaje-item .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.objetivo-patrullaje-item .estado {
+    font-size: 12px;
+    font-weight: 700;
+    color: #475569;
+}
+
+.badge-riesgo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 72px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.badge-riesgo.alto {
+    background: #dc2626;
+}
+
+.badge-riesgo.medio {
+    background: #f59e0b;
+}
+
+.badge-riesgo.bajo {
+    background: #16a34a;
+}
+
+/* =========================
+   PATRULLAJE PROFESIONAL
+========================= */
+.icono-patrullero-custom {
+    background: transparent;
+    border: none;
+}
+
+.patrullero-wrap {
+    position: relative;
+    width: 38px;
+    height: 38px;
+}
+
+.patrullero-pulso {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: rgba(37, 99, 235, 0.22);
+    animation: pulsoPatrullero 1.8s infinite;
+}
+
+.patrullero-icono {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    background: #ffffff;
+    border: 2px solid #2563eb;
+    border-radius: 50%;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.18);
+}
+
+@keyframes pulsoPatrullero {
+    0% {
+        transform: scale(0.88);
+        opacity: 0.9;
+    }
+    70% {
+        transform: scale(1.7);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1.7);
+        opacity: 0;
+    }
+}
+
+.objetivo-patrullaje-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-left: 5px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.objetivo-patrullaje-item.activo {
+    background: #eff6ff;
+    border-left-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.10);
+}
+
+.objetivo-patrullaje-item.completado {
+    background: #f0fdf4;
+    border-left-color: #16a34a;
+    opacity: 0.9;
+}
+
+.objetivo-patrullaje-item .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.objetivo-patrullaje-item .estado {
+    font-size: 12px;
+    font-weight: 700;
+    color: #475569;
+}
+
+.badge-riesgo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 72px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.badge-riesgo.alto {
+    background: #dc2626;
+}
+
+.badge-riesgo.medio {
+    background: #f59e0b;
+}
+
+.badge-riesgo.bajo {
+    background: #16a34a;
+}
     </style>
 </head>
 
@@ -1353,7 +1678,7 @@
     <div class="barra-filtros barra-filtros-pro">
         <div class="filtro-grupo">
             <label for="filtroTipo">Filtrar por tipo</label>
-            <select id="filtroTipo">
+            <select id="filtroTipo" style="font-size: 12px;">
                 <option value="todos">Todos</option>
                 <option value="Faltante de ganado">Faltante de ganado</option>
                 <option value="Huellas de vehículo">Huellas de vehículo</option>
@@ -1366,7 +1691,7 @@
 
         <div class="filtro-grupo">
             <label for="modoVisualizacion">Visualización</label>
-            <select id="modoVisualizacion">
+            <select id="modoVisualizacion" style="font-size: 12px;">
                 <option value="marcadores">Marcadores</option>
                 <option value="heatmap">Mapa de calor</option>
                 <option value="mixto">Mixto</option>

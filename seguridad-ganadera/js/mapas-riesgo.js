@@ -101,6 +101,163 @@ let patrullajeActivo = false;
 let colaPatrullaje = [];
 let indiceObjetivoActual = -1;
 
+let patrulleroMarker = null;
+let rutaPatrullajePolyline = null;
+let rutaPatrullajeRecorrida = null;
+let animacionPatrullajeFrame = null;
+
+
+let temporizadorPatrullajeAuto = null;
+let patrullajeAutomaticoActivo = false;
+
+function crearIconoPatrullero() {
+    return L.divIcon({
+        className: "icono-patrullero-custom",
+        html: `
+            <div class="patrullero-wrap">
+                <div class="patrullero-pulso"></div>
+                <div class="patrullero-icono">🚓</div>
+            </div>
+        `,
+        iconSize: [38, 38],
+        iconAnchor: [19, 19]
+    });
+}
+
+function limpiarPatrulleroVisual() {
+    if (animacionPatrullajeFrame) {
+        cancelAnimationFrame(animacionPatrullajeFrame);
+        animacionPatrullajeFrame = null;
+    }
+
+    if (patrulleroMarker && map.hasLayer(patrulleroMarker)) {
+        map.removeLayer(patrulleroMarker);
+    }
+
+    if (rutaPatrullajePolyline && map.hasLayer(rutaPatrullajePolyline)) {
+        map.removeLayer(rutaPatrullajePolyline);
+    }
+
+    if (rutaPatrullajeRecorrida && map.hasLayer(rutaPatrullajeRecorrida)) {
+        map.removeLayer(rutaPatrullajeRecorrida);
+    }
+
+    patrulleroMarker = null;
+    rutaPatrullajePolyline = null;
+    rutaPatrullajeRecorrida = null;
+}
+
+function dibujarRutaPatrullajeVisual() {
+    if (!colaPatrullaje || colaPatrullaje.length === 0) return;
+
+    const puntos = colaPatrullaje
+        .filter(item => item.lat && item.lng)
+        .map(item => [item.lat, item.lng]);
+
+    if (puntos.length === 0) return;
+
+    if (rutaPatrullajePolyline && map.hasLayer(rutaPatrullajePolyline)) {
+        map.removeLayer(rutaPatrullajePolyline);
+    }
+
+    if (rutaPatrullajeRecorrida && map.hasLayer(rutaPatrullajeRecorrida)) {
+        map.removeLayer(rutaPatrullajeRecorrida);
+    }
+
+    rutaPatrullajePolyline = L.polyline(puntos, {
+        weight: 4,
+        opacity: 0.8,
+        dashArray: "8,8"
+    }).addTo(map);
+
+    rutaPatrullajeRecorrida = L.polyline([], {
+        weight: 5,
+        opacity: 0.95
+    }).addTo(map);
+}
+
+function actualizarPatrulleroVisualInstantaneo(objetivo) {
+    if (!objetivo || !objetivo.lat || !objetivo.lng) return;
+
+    const destino = [objetivo.lat, objetivo.lng];
+
+    if (!patrulleroMarker) {
+        patrulleroMarker = L.marker(destino, {
+            icon: crearIconoPatrullero()
+        }).addTo(map);
+    } else {
+        patrulleroMarker.setLatLng(destino);
+    }
+
+    const puntosRecorridos = colaPatrullaje
+        .slice(0, indiceObjetivoActual + 1)
+        .filter(item => item.lat && item.lng)
+        .map(item => [item.lat, item.lng]);
+
+    if (rutaPatrullajeRecorrida) {
+        rutaPatrullajeRecorrida.setLatLngs(puntosRecorridos);
+    }
+}
+
+function animarPatrulleroHaciaObjetivo(objetivo) {
+    if (!objetivo || !objetivo.lat || !objetivo.lng) return;
+
+    const destino = [objetivo.lat, objetivo.lng];
+
+    if (!patrulleroMarker) {
+        patrulleroMarker = L.marker(destino, {
+            icon: crearIconoPatrullero()
+        }).addTo(map);
+
+        patrulleroMarker.bindPopup(`
+    <strong>Patrullero operativo</strong><br>
+    Objetivo: ${objetivo.tipo || "Sin tipo"}<br>
+    Sector: ${objetivo.potrero || "Sin dato"}<br>
+    Estado: En patrullaje
+`);
+
+        if (rutaPatrullajeRecorrida) {
+            rutaPatrullajeRecorrida.setLatLngs([destino]);
+        }
+        return;
+    }
+
+    const origenLatLng = patrulleroMarker.getLatLng();
+    const origen = [origenLatLng.lat, origenLatLng.lng];
+    const duracion = 1800;
+    const inicio = performance.now();
+
+    function paso(tiempo) {
+        const progreso = Math.min((tiempo - inicio) / duracion, 1);
+
+        const lat = origen[0] + (destino[0] - origen[0]) * progreso;
+        const lng = origen[1] + (destino[1] - origen[1]) * progreso;
+
+        patrulleroMarker.setLatLng([lat, lng]);
+
+        const puntosBase = colaPatrullaje
+            .slice(0, indiceObjetivoActual)
+            .filter(item => item.lat && item.lng)
+            .map(item => [item.lat, item.lng]);
+
+        if (rutaPatrullajeRecorrida) {
+            rutaPatrullajeRecorrida.setLatLngs([...puntosBase, [lat, lng]]);
+        }
+
+        if (progreso < 1) {
+            animacionPatrullajeFrame = requestAnimationFrame(paso);
+        } else {
+            animacionPatrullajeFrame = null;
+        }
+    }
+
+    if (animacionPatrullajeFrame) {
+        cancelAnimationFrame(animacionPatrullajeFrame);
+    }
+
+    animacionPatrullajeFrame = requestAnimationFrame(paso);
+}
+
 map.addLayer(grupoMarcadores);
 
 function limpiarMarcadores() {
@@ -615,7 +772,11 @@ function construirColaPatrullaje(incidencias) {
 }
 
 function limpiarPatrullajeOperativo() {
+    detenerRecorridoAutomaticoPatrullaje();
+    limpiarPatrulleroVisual();
+
     patrullajeActivo = false;
+    patrullajeAutomaticoActivo = false;
     colaPatrullaje = [];
     indiceObjetivoActual = -1;
 
@@ -629,7 +790,18 @@ function limpiarPatrullajeOperativo() {
 function enfocarObjetivoPatrullaje(objetivo) {
     if (!objetivo) return;
 
-    potreroSeleccionado = objetivo.potrero && objetivo.potrero.trim() !== "" ? objetivo.potrero : "Sin dato";
+    animarPatrulleroHaciaObjetivo(objetivo);
+
+    if (objetivo.lat && objetivo.lng) {
+        map.flyTo([objetivo.lat, objetivo.lng], Math.max(map.getZoom(), 16), {
+            animate: true,
+            duration: 1.8
+        });
+    }
+
+    potreroSeleccionado = objetivo.potrero && objetivo.potrero.trim() !== ""
+        ? objetivo.potrero
+        : "Sin dato";
 
     if (objetivo.id) {
         incidenciaSeleccionadaId = objetivo.id;
@@ -638,7 +810,10 @@ function enfocarObjetivoPatrullaje(objetivo) {
     if (objetivo.id && objetivo.lat && objetivo.lng) {
         enfocarIncidenciaEnMapa(objetivo.id);
     } else {
-        const nombrePotrero = objetivo.potrero && objetivo.potrero.trim() !== "" ? objetivo.potrero : "Sin dato";
+        const nombrePotrero = objetivo.potrero && objetivo.potrero.trim() !== ""
+            ? objetivo.potrero
+            : "Sin dato";
+
         const incidenciasPotrero = obtenerIncidenciasDePotrero(nombrePotrero);
         enfocarPotreroSeleccionado(nombrePotrero, incidenciasPotrero.length);
     }
@@ -704,7 +879,59 @@ function activarPatrullajeOperativo() {
     }
 
     patrullajeActivo = true;
+    patrullajeAutomaticoActivo = true;
     indiceObjetivoActual = 0;
+
+    limpiarPatrulleroVisual();
+    dibujarRutaPatrullajeVisual();
+    renderPatrullajeOperativo();
+
+    const primerObjetivo = colaPatrullaje[indiceObjetivoActual];
+    if (primerObjetivo && primerObjetivo.lat && primerObjetivo.lng) {
+        map.flyTo([primerObjetivo.lat, primerObjetivo.lng], 16, {
+            animate: true,
+            duration: 1.5
+        });
+    }
+    abrirMapaEnPantallaCompleta();
+
+    enfocarObjetivoPatrullaje(primerObjetivo);
+    iniciarRecorridoAutomaticoPatrullaje();
+}
+
+function iniciarRecorridoAutomaticoPatrullaje() {
+    detenerRecorridoAutomaticoPatrullaje();
+
+    if (!patrullajeActivo || !patrullajeAutomaticoActivo || colaPatrullaje.length === 0) {
+        return;
+    }
+
+    temporizadorPatrullajeAuto = setInterval(() => {
+        if (!patrullajeActivo || !patrullajeAutomaticoActivo || colaPatrullaje.length === 0) {
+            detenerRecorridoAutomaticoPatrullaje();
+            return;
+        }
+            //velocidad de patrullero
+            // //
+        avanzarPatrullajeVirtual();
+    }, 6500);
+}
+
+function detenerRecorridoAutomaticoPatrullaje() {
+    if (temporizadorPatrullajeAuto) {
+        clearInterval(temporizadorPatrullajeAuto);
+        temporizadorPatrullajeAuto = null;
+    }
+}
+
+function avanzarPatrullajeVirtual() {
+    if (!patrullajeActivo || colaPatrullaje.length === 0) return;
+
+    if (indiceObjetivoActual < colaPatrullaje.length - 1) {
+        indiceObjetivoActual += 1;
+    } else {
+        indiceObjetivoActual = 0; // vuelve a empezar la ronda
+    }
 
     renderPatrullajeOperativo();
     enfocarObjetivoPatrullaje(colaPatrullaje[indiceObjetivoActual]);
@@ -721,6 +948,10 @@ function irAlSiguienteObjetivoPatrullaje() {
 
     renderPatrullajeOperativo();
     enfocarObjetivoPatrullaje(colaPatrullaje[indiceObjetivoActual]);
+
+    if (patrullajeAutomaticoActivo) {
+        iniciarRecorridoAutomaticoPatrullaje();
+    }
 }
 
 function obtenerResumenTemporalPDF(incidencias) {
@@ -1716,7 +1947,7 @@ async function cargarIncidencias(user) {
 
             if (data.productorId !== user.uid) return;
             const potreroDetectado = obtenerPotreroAutomaticoDeIncidencia(data);
-          
+
             todasLasIncidencias.push({
                 id: doc.id,
                 ...data,
@@ -1881,3 +2112,35 @@ function actualizarEstadoPantallaCompleta() {
 document.addEventListener("fullscreenchange", actualizarEstadoPantallaCompleta);
 document.addEventListener("webkitfullscreenchange", actualizarEstadoPantallaCompleta);
 
+btnSalirPatrullaje?.addEventListener("click", () => {
+    limpiarPatrullajeOperativo();
+
+    if (grupoMarcadores && grupoMarcadores.getBounds && grupoMarcadores.getLayers().length) {
+        map.fitBounds(grupoMarcadores.getBounds(), { padding: [30, 30] });
+    }
+});
+
+btnSalirPatrullaje?.addEventListener("click", () => {
+    limpiarPatrullajeOperativo();
+
+    if (grupoMarcadores && grupoMarcadores.getBounds && grupoMarcadores.getLayers().length) {
+        map.fitBounds(grupoMarcadores.getBounds(), { padding: [30, 30] });
+    }
+});
+
+function abrirMapaEnPantallaCompleta() {
+
+    const mapaShell = document.querySelector(".mapa-shell");
+
+    if (!mapaShell) return;
+
+    if (!document.fullscreenElement) {
+
+        mapaShell.requestFullscreen?.()
+            .catch(err => {
+                console.log("No se pudo abrir pantalla completa", err);
+            });
+
+    }
+
+}

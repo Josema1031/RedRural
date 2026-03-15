@@ -1549,11 +1549,12 @@ button:hover,
 .menu-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.62);
+  background: rgba(2, 6, 23, 0.72);
+  backdrop-filter: blur(3px);
   opacity: 0;
   visibility: hidden;
-  transition: 0.25s ease;
-  z-index: 999;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  z-index: 9998;
 }
 
 .mobile-menu {
@@ -1690,11 +1691,12 @@ button:hover,
 
 .mobile-menu {
   position: fixed;
-  top: 10px;
-  left: 10px;
+  top: 8px;
+  left: 8px;
   width: 220px;
-  max-width: calc(100vw - 20px);
-  height: calc(100vh - 20px);
+  max-width: calc(100vw - 16px);
+  height: calc(100dvh - 16px);
+  max-height: calc(100dvh - 16px);
   background: linear-gradient(180deg, #081225 0%, #0f172a 100%);
   color: #fff;
   border: 1px solid rgba(255,255,255,0.08);
@@ -1702,9 +1704,10 @@ button:hover,
   box-shadow: 0 20px 40px rgba(0,0,0,0.34);
   transform: translateX(-115%);
   transition: transform 0.24s ease;
-  z-index: 1000;
+  z-index: 9999;
   padding: 14px 12px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .mobile-menu.active {
