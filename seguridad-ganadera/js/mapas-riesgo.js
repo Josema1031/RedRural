@@ -105,6 +105,10 @@ let patrulleroMarker = null;
 let rutaPatrullajePolyline = null;
 let rutaPatrullajeRecorrida = null;
 let animacionPatrullajeFrame = null;
+const ZOOM_PATRULLAJE = 20; //zoom del mapa para ver patrullero//
+const DURACION_ANIMACION_PATRULLAJE = 2600;
+const INTERVALO_PATRULLAJE_AUTO = 5000; //velocidad del patrullero//
+const SEGUIR_PATRULLERO_EN_MOVIMIENTO = true;
 
 
 let temporizadorPatrullajeAuto = null;
@@ -224,7 +228,7 @@ function animarPatrulleroHaciaObjetivo(objetivo) {
 
     const origenLatLng = patrulleroMarker.getLatLng();
     const origen = [origenLatLng.lat, origenLatLng.lng];
-    const duracion = 1800;
+    const duracion = DURACION_ANIMACION_PATRULLAJE;
     const inicio = performance.now();
 
     function paso(tiempo) {
@@ -234,6 +238,12 @@ function animarPatrulleroHaciaObjetivo(objetivo) {
         const lng = origen[1] + (destino[1] - origen[1]) * progreso;
 
         patrulleroMarker.setLatLng([lat, lng]);
+
+        if (SEGUIR_PATRULLERO_EN_MOVIMIENTO) {
+            map.panTo([lat, lng], {
+                animate: false
+            });
+        }
 
         const puntosBase = colaPatrullaje
             .slice(0, indiceObjetivoActual)
@@ -635,7 +645,7 @@ function enfocarIncidenciaEnMapa(incidenciaId) {
     if (incidencia.lat && incidencia.lng && marcadoresPorId.has(incidenciaId)) {
         const marker = marcadoresPorId.get(incidenciaId);
 
-        map.setView([incidencia.lat, incidencia.lng], 16);
+        map.setView([incidencia.lat, incidencia.lng], ZOOM_PATRULLAJE);
 
         setTimeout(() => {
             marker.openPopup();
@@ -761,14 +771,26 @@ function calcularPrioridadOperativa(incidencia) {
 }
 
 function construirColaPatrullaje(incidencias) {
-    if (!incidencias || incidencias.length === 0) return [];
+    if (!Array.isArray(incidencias) || incidencias.length === 0) return [];
 
-    return [...incidencias]
-        .map((item) => ({
-            ...item,
-            prioridadOperativa: calcularPrioridadOperativa(item)
-        }))
-        .sort((a, b) => b.prioridadOperativa - a.prioridadOperativa);
+    const incidenciasValidas = incidencias
+        .filter(item => item.lat != null && item.lng != null)
+        .map(item => {
+            let prioridad = 1;
+
+            if (item.gravedad === "Crítica") prioridad = 5;
+            else if (item.gravedad === "Alta") prioridad = 4;
+            else if (item.gravedad === "Media") prioridad = 3;
+            else if (item.gravedad === "Baja") prioridad = 2;
+
+            return {
+                ...item,
+                prioridadOperativa: prioridad
+            };
+        });
+
+    // arma una ruta mixta: perímetro + incidencias
+    return construirRutaMixtaPatrullaje(incidenciasValidas);
 }
 
 function limpiarPatrullajeOperativo() {
@@ -793,9 +815,9 @@ function enfocarObjetivoPatrullaje(objetivo) {
     animarPatrulleroHaciaObjetivo(objetivo);
 
     if (objetivo.lat && objetivo.lng) {
-        map.flyTo([objetivo.lat, objetivo.lng], Math.max(map.getZoom(), 16), {
+        map.flyTo([objetivo.lat, objetivo.lng], Math.max(map.getZoom(), ZOOM_PATRULLAJE), {
             animate: true,
-            duration: 1.8
+            duration: 2.2
         });
     }
 
@@ -853,11 +875,17 @@ function renderPatrullajeOperativo() {
             div.classList.add("activo");
         }
 
-        div.innerHTML = `
-            <div class="titulo">${item.tipo || "Sin tipo"} - ${item.potrero || "Sin dato"}</div>
-            <div class="meta">Fecha: ${item.fecha || "-"} | Guardia: ${item.guardia || "-"}</div>
-            <div class="nivel">Prioridad operativa: ${item.prioridadOperativa}</div>
-        `;
+       div.innerHTML = `
+    <div class="titulo">
+        ${item.tipo || "Sin tipo"} - ${item.potrero || "Sin dato"}
+    </div>
+    <div class="meta">
+        Fecha: ${item.fecha || "-"} | Guardia: ${item.guardia || "-"}
+    </div>
+    <div class="nivel">
+        ${item.esPuntoRuta ? "Ruta táctica" : "Incidencia prioritaria"}: ${item.prioridadOperativa}
+    </div>
+`;
 
         div.addEventListener("click", () => {
             indiceObjetivoActual = index;
@@ -867,6 +895,113 @@ function renderPatrullajeOperativo() {
 
         listaObjetivosPatrullaje.appendChild(div);
     });
+}
+
+function obtenerCentroPotrero(potrero) {
+    const coords = potrero?.coordenadas || [];
+    if (!coords.length) return null;
+
+    let sumaLat = 0;
+    let sumaLng = 0;
+
+    coords.forEach(p => {
+        sumaLat += Number(p.lat || 0);
+        sumaLng += Number(p.lng || 0);
+    });
+
+    return {
+        lat: sumaLat / coords.length,
+        lng: sumaLng / coords.length
+    };
+}
+
+function obtenerPuntosPatrullajePotrero(potrero, salto = 2) {
+    const coords = potrero?.coordenadas || [];
+    if (!Array.isArray(coords) || coords.length < 3) return [];
+
+    const puntos = [];
+
+    for (let i = 0; i < coords.length; i += salto) {
+        const p = coords[i];
+        if (p?.lat != null && p?.lng != null) {
+            puntos.push({
+                lat: Number(p.lat),
+                lng: Number(p.lng),
+                tipo: "Recorrido perimetral",
+                potrero: potrero.nombre || "Sin nombre",
+                guardia: "Sistema",
+                fecha: new Date().toISOString().split("T")[0],
+                prioridadOperativa: "Patrullaje perimetral",
+                esPuntoRuta: true
+            });
+        }
+    }
+
+    // cerrar recorrido volviendo al primer punto
+    if (puntos.length > 0) {
+        puntos.push({ ...puntos[0] });
+    }
+
+    return puntos;
+}
+
+function construirRutaMixtaPatrullaje(incidencias) {
+    if (!Array.isArray(incidencias) || incidencias.length === 0) return [];
+
+    const conteoPorPotrero = {};
+
+    incidencias.forEach(item => {
+        const nombre = item.potrero && item.potrero.trim() !== "" ? item.potrero : "Sin dato";
+        conteoPorPotrero[nombre] = (conteoPorPotrero[nombre] || 0) + 1;
+    });
+
+    const rankingPotreros = Object.entries(conteoPorPotrero)
+        .map(([nombre, cantidad]) => ({ nombre, cantidad }))
+        .sort((a, b) => b.cantidad - a.cantidad);
+
+    const ruta = [];
+
+    rankingPotreros.forEach(({ nombre, cantidad }) => {
+        const potrero = potrerosConfig.find(p => p.nombre === nombre);
+        if (!potrero) return;
+
+        // 1) puntos del perímetro del potrero
+        const puntosPerimetro = obtenerPuntosPatrullajePotrero(potrero, 2);
+        ruta.push(...puntosPerimetro);
+
+        // 2) incidencias reales dentro de ese potrero
+        const incidenciasPotrero = incidencias
+            .filter(item => (item.potrero || "Sin dato") === nombre)
+            .filter(item => item.lat != null && item.lng != null)
+            .sort((a, b) => {
+                const prioridadA = a.prioridadOperativa || 0;
+                const prioridadB = b.prioridadOperativa || 0;
+                return prioridadB - prioridadA;
+            })
+            .map(item => ({
+                ...item,
+                esPuntoRuta: false
+            }));
+
+        ruta.push(...incidenciasPotrero);
+
+        // 3) centro del potrero como punto de control
+        const centro = obtenerCentroPotrero(potrero);
+        if (centro) {
+            ruta.push({
+                lat: centro.lat,
+                lng: centro.lng,
+                tipo: "Control central",
+                potrero: nombre,
+                guardia: "Sistema",
+                fecha: new Date().toISOString().split("T")[0],
+                prioridadOperativa: `Control del potrero (${cantidad} incidencias)`,
+                esPuntoRuta: true
+            });
+        }
+    });
+
+    return ruta;
 }
 
 function activarPatrullajeOperativo() {
@@ -888,9 +1023,9 @@ function activarPatrullajeOperativo() {
 
     const primerObjetivo = colaPatrullaje[indiceObjetivoActual];
     if (primerObjetivo && primerObjetivo.lat && primerObjetivo.lng) {
-        map.flyTo([primerObjetivo.lat, primerObjetivo.lng], 16, {
+        map.flyTo([primerObjetivo.lat, primerObjetivo.lng], ZOOM_PATRULLAJE, {
             animate: true,
-            duration: 1.5
+            duration: 1.8
         });
     }
     abrirMapaEnPantallaCompleta();
@@ -911,10 +1046,10 @@ function iniciarRecorridoAutomaticoPatrullaje() {
             detenerRecorridoAutomaticoPatrullaje();
             return;
         }
-            //velocidad de patrullero
-            // //
+        //velocidad de patrullero
+        // //
         avanzarPatrullajeVirtual();
-    }, 6500);
+    }, INTERVALO_PATRULLAJE_AUTO);
 }
 
 function detenerRecorridoAutomaticoPatrullaje() {
@@ -1451,23 +1586,32 @@ function agregarLeyenda() {
         const div = L.DomUtil.create("div", "info legend");
 
         div.innerHTML = `
-      <div style="
-        background: white;
-        padding: 12px 14px;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-        font-size: 13px;
-        line-height: 1.6;
-      ">
-        <strong>Leyenda</strong><br>
-        <div><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#dc2626;margin-right:8px;"></span>Faltante de ganado</div>
-        <div><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#f97316;margin-right:8px;"></span>Huellas de vehículo</div>
-        <div><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#8b5e3c;margin-right:8px;"></span>Alambrado manipulado</div>
-        <div><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#2563eb;margin-right:8px;"></span>Tranquera abierta</div>
-        <div><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#7c3aed;margin-right:8px;"></span>Movimiento nocturno</div>
-        <div><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#16a34a;margin-right:8px;"></span>Rastros de arreo</div>
-      </div>
-    `;
+            <div class="legend-toggle">📋 Leyenda</div>
+            <div class="legend-body">
+                <div><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#dc2626;margin-right:8px;"></span>Faltante de ganado</div>
+                <div><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#f97316;margin-right:8px;"></span>Huellas de vehículo</div>
+                <div><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#8b5e3c;margin-right:8px;"></span>Alambrado manipulado</div>
+                <div><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#2563eb;margin-right:8px;"></span>Tranquera abierta</div>
+                <div><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#7c3aed;margin-right:8px;"></span>Movimiento nocturno</div>
+                <div><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#16a34a;margin-right:8px;"></span>Rastros de arreo</div>
+            </div>
+        `;
+
+        if (window.innerWidth <= 760) {
+            div.classList.remove("legend-expandida");
+        } else {
+            div.classList.add("legend-expandida");
+        }
+
+        const toggle = div.querySelector(".legend-toggle");
+        toggle.addEventListener("click", () => {
+            if (window.innerWidth <= 760) {
+                div.classList.toggle("legend-expandida");
+            }
+        });
+
+        L.DomEvent.disableClickPropagation(div);
+        L.DomEvent.disableScrollPropagation(div);
 
         return div;
     };

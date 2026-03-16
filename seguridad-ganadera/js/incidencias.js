@@ -186,14 +186,16 @@ async function renderTabla() {
 
       const fila = document.createElement("tr");
       fila.innerHTML = `
-        <td>${formatearFecha(item.fecha)}</td>
-        <td>${item.potrero || "-"}</td>
-        <td>${item.tipo || "-"}</td>
-        <td>${item.guardia || "-"}</td>
-        <td>${item.cantidad ?? "-"}</td>
-        <td>${item.estado || "-"}</td>
-        <td>${item.gravedad || "-"}</td>
-      `;
+  <td>${formatearFecha(item.fecha)}</td>
+  <td>${item.potrero || "-"}</td>
+  <td>${item.tipo || "-"}</td>
+  <td>${item.guardia || "-"}</td>
+  <td>${item.cantidad ?? "-"}</td>
+  <td>${item.estado || "-"}</td>
+  <td>${item.gravedad || "-"}</td>
+  <td>${item.cargadoPor === "empleado" ? "Empleado " + (item.cargadoPorDni || "") : "Productor"}</td>
+  
+`;
 
       tablaIncidenciasBody.appendChild(fila);
     });

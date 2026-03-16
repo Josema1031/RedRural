@@ -106,6 +106,69 @@
       opacity: .6;
       cursor: not-allowed;
     }
+
+    
+    .form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:10px;
+}
+
+.campo{
+  display:flex;
+  flex-direction:column;
+}
+
+.campo label{
+  font-size:.85rem;
+  margin-bottom:4px;
+  color:#374151;
+}
+
+.campo input{
+  width:100%;
+  box-sizing:border-box;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid #e5e7eb;
+}
+
+@media(max-width:600px){
+  .form-grid{
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+
+  .campo label{
+    font-size:.78rem;
+  }
+
+  .campo input{
+    padding:9px;
+    font-size:14px;
+  }
+}
+
+.scroll-lista{
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 6px;
+  margin-top: 10px;
+}
+
+.scroll-lista::-webkit-scrollbar{
+  width: 8px;
+}
+
+.scroll-lista::-webkit-scrollbar-thumb{
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.scroll-lista::-webkit-scrollbar-track{
+  background: transparent;
+}
   </style>
 </head>
 
@@ -125,31 +188,40 @@
     <div class="grid">
       <div class="card">
         <h2 style="margin:0 0 8px">✅ Tareas asignadas</h2>
-        <div id="listaTareas" class="muted">Cargando...</div>
+        <div id="listaTareas" class="muted scroll-lista">Cargando...</div>
       </div>
 
       <div class="card">
         <h2 style="margin:0 0 8px">⛽ Cargar combustible</h2>
         <div class="muted">Registrá una carga para el productor.</div>
 
-        <label style="display:block;font-size:.85rem;margin-top:8px;margin-bottom:4px;color:#374151">
-          Vehículo (patente/ID)
-        </label>
-        <input id="eVehiculo" placeholder="Ej: ABC123 o Tractor-1"
-          style="width:100%;padding:10px;border-radius:10px;border:1px solid #e5e7eb" />
+        <div class="form-grid">
 
-        <div class="actions" style="margin-top:10px">
-          <input id="eLitros" type="number" step="0.01" placeholder="Litros"
-            style="flex:1;min-width:140px;padding:10px;border-radius:10px;border:1px solid #e5e7eb" />
-          <input id="eCosto" type="number" step="1" placeholder="$ Total"
-            style="flex:1;min-width:140px;padding:10px;border-radius:10px;border:1px solid #e5e7eb" />
-        </div>
+  <div class="campo">
+    <label>Vehículo (patente/ID)</label>
+    <input id="eVehiculo" placeholder="Ej: ABC123 o Tractor-1">
+  </div>
 
-        <div class="actions">
-          <input id="eOdom" type="number" step="1" placeholder="Odómetro (opcional)"
-            style="flex:1;min-width:180px;padding:10px;border-radius:10px;border:1px solid #e5e7eb" />
-          <button class="btn-ok" id="btnEmpleadoComb">➕ Registrar</button>
-        </div>
+  <div class="campo">
+    <label>Litros</label>
+    <input id="eLitros" type="number" step="0.01">
+  </div>
+
+  <div class="campo">
+    <label>$ Total</label>
+    <input id="eCosto" type="number" step="1">
+  </div>
+
+  <div class="campo">
+    <label>Odómetro</label>
+    <input id="eOdom" type="number" step="1">
+  </div>
+
+</div>
+
+<div style="margin-top:12px">
+  <button class="btn-ok" id="btnEmpleadoComb">➕ Registrar</button>
+</div>
 
         <div id="msgEmpleadoComb" class="muted" style="margin-top:10px"></div>
       </div>
@@ -157,7 +229,78 @@
 
       <div class="card">
         <h2 style="margin:0 0 8px">📣 Alertas del Productor</h2>
-        <div id="listaAlertas" class="muted">Cargando...</div>
+       <div id="listaAlertas" class="muted scroll-lista">Cargando...</div>
+      </div>
+
+      <div class="card">
+        <h2 style="margin:0 0 8px">🚨 Cargar incidencia</h2>
+       
+
+        <label style="display:block;font-size:.85rem;margin-top:8px;margin-bottom:4px;color:#374151">
+          Potrero / sector
+        </label>
+        <select id="incPotrero" style="width:100%;padding:10px;border-radius:10px;border:1px solid #e5e7eb">
+          <option value="">Cargando potreros...</option>
+        </select>
+
+        <div class="actions" style="margin-top:10px">
+          <select id="incTipo" style="flex:1;min-width:180px;padding:10px;border-radius:10px;border:1px solid #e5e7eb">
+            <option value="">Tipo de incidencia</option>
+            <option value="Faltante de ganado">Faltante de ganado</option>
+            <option value="Huellas de vehículo">Huellas de vehículo</option>
+            <option value="Alambrado manipulado">Alambrado manipulado</option>
+            <option value="Tranquera abierta">Tranquera abierta</option>
+            <option value="Movimiento nocturno">Movimiento nocturno</option>
+            <option value="Rastros de arreo">Rastros de arreo</option>
+          </select>
+
+          <input id="incCantidad" type="number" min="0" placeholder="Cantidad"
+            style="flex:1;min-width:120px;padding:10px;border-radius:10px;border:1px solid #e5e7eb" />
+        </div>
+
+        <div class="actions">
+          <select id="incGravedad"
+            style="flex:1;min-width:160px;padding:10px;border-radius:10px;border:1px solid #e5e7eb">
+            <option value="">Gravedad</option>
+            <option value="Baja">Baja</option>
+            <option value="Media">Media</option>
+            <option value="Alta">Alta</option>
+            <option value="Crítica">Crítica</option>
+          </select>
+
+          <select id="incEstado"
+            style="flex:1;min-width:160px;padding:10px;border-radius:10px;border:1px solid #e5e7eb">
+            <option value="">Estado</option>
+            <option value="Abierta">Abierta</option>
+            <option value="En seguimiento">En seguimiento</option>
+            <option value="Cerrada">Cerrada</option>
+          </select>
+        </div>
+
+        <div class="actions">
+          <input id="incLat" type="text" placeholder="Latitud"
+            style="flex:1;min-width:160px;padding:10px;border-radius:10px;border:1px solid #e5e7eb" />
+          <input id="incLng" type="text" placeholder="Longitud"
+            style="flex:1;min-width:160px;padding:10px;border-radius:10px;border:1px solid #e5e7eb" />
+        </div>
+
+        <div class="actions">
+          <button class="btn-ok" id="btnUbicacionInc">📍 Obtener ubicación</button>
+        </div>
+
+        <div id="estadoUbicacionInc" class="muted" style="margin-top:8px"></div>
+
+        <label style="display:block;font-size:.85rem;margin-top:12px;margin-bottom:4px;color:#374151">
+          Observaciones
+        </label>
+        <textarea id="incObservaciones" rows="4" placeholder="Describí lo ocurrido"
+          style="width:100%;padding:10px;border-radius:10px;border:1px solid #e5e7eb;resize:vertical"></textarea>
+
+        <div class="actions">
+          <button class="btn-ok" id="btnGuardarIncidenciaEmpleado">💾 Guardar incidencia</button>
+        </div>
+
+        <div id="msgIncEmpleado" class="muted" style="margin-top:10px"></div>
       </div>
 
 
@@ -192,7 +335,7 @@
     import { onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import {
       collection, query, where, onSnapshot, orderBy,
-      doc, updateDoc, setDoc, serverTimestamp, addDoc, getDoc
+      doc, updateDoc, setDoc, serverTimestamp, addDoc, getDoc, getDocs
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
@@ -204,6 +347,23 @@
     const listaAlertas = document.getElementById("listaAlertas");
     const estadoConexion = document.getElementById("estadoConexion");
 
+    // ===============================
+    // 🚨 INCIDENCIAS CARGADAS POR EMPLEADO
+    // ===============================
+    const incPotrero = document.getElementById("incPotrero");
+    const incTipo = document.getElementById("incTipo");
+    const incCantidad = document.getElementById("incCantidad");
+    const incGravedad = document.getElementById("incGravedad");
+    const incEstado = document.getElementById("incEstado");
+    const incLat = document.getElementById("incLat");
+    const incLng = document.getElementById("incLng");
+    const incObservaciones = document.getElementById("incObservaciones");
+    const btnUbicacionInc = document.getElementById("btnUbicacionInc");
+    const btnGuardarIncidenciaEmpleado = document.getElementById("btnGuardarIncidenciaEmpleado");
+    const msgIncEmpleado = document.getElementById("msgIncEmpleado");
+    const estadoUbicacionInc = document.getElementById("estadoUbicacionInc");
+
+    let potrerosEmpleado = [];
     sub.textContent = empleadoDni ? `Sesión: DNI ${empleadoDni}` : "Sin sesión activa.";
 
     function actualizarEstadoConexion() {
@@ -256,8 +416,8 @@
         try {
           if (!user) await asegurarAuth();
 
-          // ✅ VINCULAR UID ANÓNIMO AL DNI (clave para permisos de camiones/viajes)
           await vincularAuthUidEmpleado(empleadoDni);
+          await cargarPotrerosEmpleado();
 
           iniciarListeners();
         } catch (e) {
@@ -340,7 +500,202 @@
         }
       });
 
+      function setMsgInc(txt, ok = true) {
+        msgIncEmpleado.textContent = txt;
+        msgIncEmpleado.style.color = ok ? "#14532d" : "#b91c1c";
+        setTimeout(() => (msgIncEmpleado.textContent = ""), 4000);
+      }
 
+      function puntoDentroDePoligono(lat, lng, coordenadas) {
+        let dentro = false;
+
+        for (let i = 0, j = coordenadas.length - 1; i < coordenadas.length; j = i++) {
+          const xi = coordenadas[i].lng;
+          const yi = coordenadas[i].lat;
+          const xj = coordenadas[j].lng;
+          const yj = coordenadas[j].lat;
+
+          const intersecta =
+            ((yi > lat) !== (yj > lat)) &&
+            (lng < ((xj - xi) * (lat - yi)) / ((yj - yi) || 0.0000001) + xi);
+
+          if (intersecta) dentro = !dentro;
+        }
+
+        return dentro;
+      }
+
+      async function cargarPotrerosEmpleado() {
+        try {
+          if (!productorId || !incPotrero) return;
+
+          const qP = query(
+            collection(db, "potreros"),
+            where("productorId", "==", productorId)
+          );
+
+          const snap = await getDocs(qP);
+          potrerosEmpleado = [];
+
+          incPotrero.innerHTML = `
+            <option value="">Seleccionar</option>
+            <option value="Fuera de potrero">Fuera de potrero</option>
+          `;
+
+          snap.forEach((docSnap) => {
+            const p = docSnap.data();
+            potrerosEmpleado.push({ id: docSnap.id, ...p });
+
+            const option = document.createElement("option");
+            option.value = p.nombre || "Sin nombre";
+            option.textContent = p.nombre || "Sin nombre";
+            incPotrero.appendChild(option);
+          });
+        } catch (e) {
+          console.error("Error cargando potreros para empleado:", e);
+          incPotrero.innerHTML = `
+            <option value="">Seleccionar</option>
+            <option value="Fuera de potrero">Fuera de potrero</option>
+          `;
+        }
+      }
+
+      function detectarPotreroDesdeCoords(lat, lng) {
+        if (!Array.isArray(potrerosEmpleado) || potrerosEmpleado.length === 0) return "";
+
+        for (const potrero of potrerosEmpleado) {
+          const coords = potrero.coordenadas || [];
+          if (!Array.isArray(coords) || coords.length < 3) continue;
+
+          const dentro = puntoDentroDePoligono(lat, lng, coords);
+          if (dentro) {
+            return potrero.nombre || "";
+          }
+        }
+
+        return "Fuera de potrero";
+      }
+
+      function obtenerUbicacionIncidenciaEmpleado() {
+        if (!navigator.geolocation) {
+          estadoUbicacionInc.textContent = "La geolocalización no está disponible en este dispositivo.";
+          return;
+        }
+
+        estadoUbicacionInc.textContent = "Obteniendo ubicación...";
+
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+
+            incLat.value = lat;
+            incLng.value = lng;
+
+            const potreroDetectado = detectarPotreroDesdeCoords(lat, lng);
+            if (potreroDetectado) {
+              incPotrero.value = potreroDetectado;
+            }
+
+            estadoUbicacionInc.textContent = "Ubicación cargada correctamente.";
+          },
+          (error) => {
+            console.error("Error obteniendo ubicación de incidencia:", error);
+
+            switch (error.code) {
+              case error.PERMISSION_DENIED:
+                estadoUbicacionInc.textContent = "Permiso de ubicación denegado.";
+                break;
+              case error.POSITION_UNAVAILABLE:
+                estadoUbicacionInc.textContent = "Ubicación no disponible.";
+                break;
+              case error.TIMEOUT:
+                estadoUbicacionInc.textContent = "Tiempo agotado al obtener ubicación.";
+                break;
+              default:
+                estadoUbicacionInc.textContent = "No se pudo obtener la ubicación.";
+            }
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+          }
+        );
+      }
+
+      btnUbicacionInc?.addEventListener("click", () => {
+        obtenerUbicacionIncidenciaEmpleado();
+      });
+
+      btnGuardarIncidenciaEmpleado?.addEventListener("click", async () => {
+        try {
+          const tipo = (incTipo?.value || "").trim();
+          const gravedad = (incGravedad?.value || "").trim();
+          const estado = (incEstado?.value || "").trim();
+          const observaciones = (incObservaciones?.value || "").trim();
+
+          const cantidad = incCantidad?.value ? Number(incCantidad.value) : null;
+          const lat = incLat?.value !== "" ? Number(incLat.value) : null;
+          const lng = incLng?.value !== "" ? Number(incLng.value) : null;
+
+          if (!tipo) return setMsgInc("⚠️ Seleccioná el tipo de incidencia.", false);
+          //if (!gravedad) return setMsgInc("⚠️ Seleccioná la gravedad.", false);//
+          //if (!estado) return setMsgInc("⚠️ Seleccioná el estado.", false);//
+
+          let potreroFinal = (incPotrero?.value || "").trim();
+
+          if (lat != null && lng != null) {
+            potreroFinal = detectarPotreroDesdeCoords(lat, lng) || potreroFinal || "Fuera de potrero";
+          } else {
+            potreroFinal = potreroFinal || "Fuera de potrero";
+          }
+
+          await addDoc(collection(db, "seguridad_ganadera_incidencias"), {
+            productorId,
+            empleadoDni,
+            establecimiento: "",
+            fecha: new Date().toISOString().split("T")[0],
+            tipo,
+            guardia: empleadoDni,
+            cantidad,
+            gravedad,
+            estado,
+            potrero: potreroFinal,
+            lat,
+            lng,
+            evidencia: "",
+            evidenciaUrl: "",
+            respuestaAplicada: "Aviso interno",
+            observaciones,
+            creadoEn: serverTimestamp(),
+
+            // extras útiles para trazabilidad
+            cargadoPor: "empleado",
+            cargadoPorDni: empleadoDni,
+            origen: "panel_empleado"
+          });
+
+          incPotrero.value = "";
+          incTipo.value = "";
+          incCantidad.value = "";
+          incGravedad.value = "";
+          incEstado.value = "";
+          incLat.value = "";
+          incLng.value = "";
+          incObservaciones.value = "";
+          estadoUbicacionInc.textContent = "";
+
+          setMsgInc(
+            navigator.onLine
+              ? "✅ Incidencia guardada correctamente."
+              : "🟠 Incidencia guardada offline. Se sincronizará al volver internet."
+          );
+        } catch (e) {
+          console.error("Error guardando incidencia del empleado:", e);
+          setMsgInc("❌ No se pudo guardar la incidencia.", false);
+        }
+      });
 
       function iniciarListeners() {
         // ✅ TAREAS: filtramos por productorId + empleadoId (dni) y orden por timestamp
