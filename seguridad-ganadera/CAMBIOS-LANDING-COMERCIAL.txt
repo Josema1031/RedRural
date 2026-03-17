@@ -1,0 +1,13 @@
+CAMBIOS REALIZADOS
+
+1. Se creó una landing comercial nueva en /comercial.html
+2. Se tomó la información del antiguo botón Contacto y se reorganizó en una estructura más clara:
+   - propuesta principal
+   - proceso en 3 etapas
+   - qué necesita del productor
+   - qué recibe el productor
+   - implementación
+3. Se quitó el formulario largo del contacto porque cargaba demasiado la lectura y no aportaba valor comercial inmediato.
+4. Se simplificó info/contacto.html para que funcione como acceso breve a la landing comercial.
+5. Se actualizó index.html para que el botón Contacto pase a Comercial.
+6. Se agregaron estilos nuevos al final de css/styles.css sin romper la base del proyecto.

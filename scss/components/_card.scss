@@ -23,3 +23,49 @@
       flex: 1;
       min-width: 220px;
     }
+
+    /* =====================================
+   CARDS DEL RESUMEN HOY EN 2 COLUMNAS
+   ===================================== */
+
+.hoy-cards{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.hoy-card{
+  flex:1 1 calc(50% - 10px);
+  min-width:0;
+  padding:12px;
+}
+
+.hoy-card strong{
+  display:block;
+  font-size:15px;
+  line-height:1.25;
+}
+
+.hoy-card .muted{
+  font-size:12px;
+  line-height:1.35;
+}
+
+@media (max-width:600px){
+  .hoy-cards{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  .hoy-card{
+    min-width:0;
+    padding:12px;
+  }
+}
+
+@media (max-width:380px){
+  .hoy-cards{
+    grid-template-columns:1fr;
+  }
+}

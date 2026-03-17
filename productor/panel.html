@@ -48,11 +48,11 @@
       <div class="indicador"></div>
     </button>
 
-    <a href="../seguridad-ganadera/index.html" class="nav-btn">
-  <span class="icono">🛡️</span>
-  <span class="texto">SEGURIDA</span>
-  <div class="indicador"></div>
-</a>
+    <a href="../seguridad-ganadera/operativo/panel.html" class="nav-btn">
+      <span class="icono">🛡️</span>
+      <span class="texto">SEGURIDA</span>
+      <div class="indicador"></div>
+    </a>
 
 
 
@@ -250,32 +250,31 @@
       <small>Resumen rápido y tareas críticas del día.</small>
 
       <div class="card" style="margin-top:14px;">
-        <div class="fila" style="align-items:stretch;">
-          <div class="card" style="flex:1; min-width:220px;">
+        <div class="fila hoy-cards" style="align-items:stretch;">
+          <div class="card hoy-card">
             <strong>👷 Empleados</strong>
             <div id="hoyEmpleados" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
             <div class="muted" style="margin-top:6px;">Registrados</div>
           </div>
 
-          <div class="card" style="flex:1; min-width:220px;">
+          <div class="card hoy-card">
             <strong>📝 Pendientes</strong>
             <div id="hoyPendientes" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
             <div class="muted" style="margin-top:6px;">Tareas sin completar</div>
           </div>
 
-          <div class="card" style="flex:1; min-width:220px;">
+          <div class="card hoy-card">
             <strong>🚨 Alertas (24h)</strong>
             <div id="hoyAlertas24" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
             <div class="muted" style="margin-top:6px;">Generadas en las últimas 24h</div>
           </div>
-
-          <div class="card" style="flex:1; min-width:220px;">
+          <div class="card hoy-card">
             <strong>🛣️ Caminos mal</strong>
             <div id="hoyCaminosMalos" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
             <div class="muted" style="margin-top:6px;">Complicados/Intransitables hoy</div>
           </div>
 
-          <div class="card" style="flex:1; min-width:220px;">
+          <div class="card hoy-card">
             <strong>🚚 Camiones</strong>
             <div id="hoyCamionesOff" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
             <div class="muted" style="margin-top:6px;">Disponible ahora</div>
@@ -291,7 +290,7 @@
         </div>
 
         <div class="card" style="margin-top:14px;">
-          <strong>⚡ Pendientes críticos</strong>
+          <strong>⚡ Tareas Pendientes</strong>
           <div id="hoyListaPendientes" class="lista-simple" style="margin-top:10px;">
             <small class="muted">Cargando...</small>
           </div>
