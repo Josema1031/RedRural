@@ -107,69 +107,194 @@
       cursor: not-allowed;
     }
 
-    
-    .form-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-top:10px;
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .campo {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .campo label {
+      font-size: .85rem;
+      margin-bottom: 4px;
+      color: #374151;
+    }
+
+    .campo input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+    }
+
+    @media(max-width:600px) {
+      .form-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .campo label {
+        font-size: .78rem;
+      }
+
+      .campo input {
+        padding: 9px;
+        font-size: 14px;
+      }
+    }
+
+    .scroll-lista {
+      max-height: 320px;
+      overflow-y: auto;
+      padding-right: 6px;
+      margin-top: 10px;
+    }
+
+    .scroll-lista::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .scroll-lista::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+
+    .scroll-lista::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .panel-switch {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+      margin-bottom: 14px;
+    }
+
+    .switch-btn {
+      flex: 1;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-weight: 800;
+      cursor: pointer;
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .switch-btn.activo {
+      background: #14532d;
+      color: white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+    }
+
+    .modulo-empleado.hidden-mod {
+      display: none;
+    }
+
+    .modulo-empleado.visible-mod {
+      display: block;
+    }
+
+    .grid-operativo,
+    .grid-diario {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    @media (min-width: 900px) {
+
+      .grid-operativo,
+      .grid-diario {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .urgencias-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .mini-card-urgencia {
+      min-width: 0;
+      padding: 14px;
+    }
+
+    @media (max-width: 480px) {
+      .urgencias-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .mini-card-urgencia {
+        padding: 12px;
+      }
+
+      .mini-card-urgencia .muted {
+        font-size: 12px;
+        line-height: 1.25;
+      }
+    }
+
+    .label-incidencia {
+  display: block;
+  font-size: .85rem;
+  margin-top: 8px;
+  margin-bottom: 4px;
+  color: #374151;
 }
 
-.campo{
-  display:flex;
-  flex-direction:column;
+.input-incidencia-full {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  box-sizing: border-box;
 }
 
-.campo label{
-  font-size:.85rem;
-  margin-bottom:4px;
-  color:#374151;
-}
-
-.campo input{
-  width:100%;
-  box-sizing:border-box;
-  padding:10px;
-  border-radius:10px;
-  border:1px solid #e5e7eb;
-}
-
-@media(max-width:600px){
-  .form-grid{
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-  }
-
-  .campo label{
-    font-size:.78rem;
-  }
-
-  .campo input{
-    padding:9px;
-    font-size:14px;
-  }
-}
-
-.scroll-lista{
-  max-height: 320px;
-  overflow-y: auto;
-  padding-right: 6px;
+.actions-incidencia {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
   margin-top: 10px;
 }
 
-.scroll-lista::-webkit-scrollbar{
-  width: 8px;
-}
-
-.scroll-lista::-webkit-scrollbar-thumb{
-  background: #cbd5e1;
+.input-incidencia {
+  width: 100%;
+  min-width: 0;
+  padding: 10px;
   border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  box-sizing: border-box;
 }
 
-.scroll-lista::-webkit-scrollbar-track{
-  background: transparent;
+@media (max-width: 480px) {
+  .actions-incidencia {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .input-incidencia,
+  .input-incidencia-full {
+    padding: 9px;
+    font-size: 14px;
+  }
+
+  .label-incidencia {
+    font-size: 12px;
+  }
 }
   </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 
 <body>
@@ -185,150 +310,238 @@
     <p class="muted" id="sub"></p>
     <div id="estadoConexion" class="card" style="padding:10px 14px;margin-top:10px;font-size:14px"></div>
 
-    <div class="grid">
-      <div class="card">
-        <h2 style="margin:0 0 8px">✅ Tareas asignadas</h2>
-        <div id="listaTareas" class="muted scroll-lista">Cargando...</div>
-      </div>
 
-      <div class="card">
-        <h2 style="margin:0 0 8px">⛽ Cargar combustible</h2>
-        <div class="muted">Registrá una carga para el productor.</div>
-
-        <div class="form-grid">
-
-  <div class="campo">
-    <label>Vehículo (patente/ID)</label>
-    <input id="eVehiculo" placeholder="Ej: ABC123 o Tractor-1">
-  </div>
-
-  <div class="campo">
-    <label>Litros</label>
-    <input id="eLitros" type="number" step="0.01">
-  </div>
-
-  <div class="campo">
-    <label>$ Total</label>
-    <input id="eCosto" type="number" step="1">
-  </div>
-
-  <div class="campo">
-    <label>Odómetro</label>
-    <input id="eOdom" type="number" step="1">
-  </div>
-
-</div>
-
-<div style="margin-top:12px">
-  <button class="btn-ok" id="btnEmpleadoComb">➕ Registrar</button>
-</div>
-
-        <div id="msgEmpleadoComb" class="muted" style="margin-top:10px"></div>
-      </div>
-
-
-      <div class="card">
-        <h2 style="margin:0 0 8px">📣 Alertas del Productor</h2>
-       <div id="listaAlertas" class="muted scroll-lista">Cargando...</div>
-      </div>
-
-      <div class="card">
-        <h2 style="margin:0 0 8px">🚨 Cargar incidencia</h2>
-       
-
-        <label style="display:block;font-size:.85rem;margin-top:8px;margin-bottom:4px;color:#374151">
-          Potrero / sector
-        </label>
-        <select id="incPotrero" style="width:100%;padding:10px;border-radius:10px;border:1px solid #e5e7eb">
-          <option value="">Cargando potreros...</option>
-        </select>
-
-        <div class="actions" style="margin-top:10px">
-          <select id="incTipo" style="flex:1;min-width:180px;padding:10px;border-radius:10px;border:1px solid #e5e7eb">
-            <option value="">Tipo de incidencia</option>
-            <option value="Faltante de ganado">Faltante de ganado</option>
-            <option value="Huellas de vehículo">Huellas de vehículo</option>
-            <option value="Alambrado manipulado">Alambrado manipulado</option>
-            <option value="Tranquera abierta">Tranquera abierta</option>
-            <option value="Movimiento nocturno">Movimiento nocturno</option>
-            <option value="Rastros de arreo">Rastros de arreo</option>
-          </select>
-
-          <input id="incCantidad" type="number" min="0" placeholder="Cantidad"
-            style="flex:1;min-width:120px;padding:10px;border-radius:10px;border:1px solid #e5e7eb" />
-        </div>
-
-        <div class="actions">
-          <select id="incGravedad"
-            style="flex:1;min-width:160px;padding:10px;border-radius:10px;border:1px solid #e5e7eb">
-            <option value="">Gravedad</option>
-            <option value="Baja">Baja</option>
-            <option value="Media">Media</option>
-            <option value="Alta">Alta</option>
-            <option value="Crítica">Crítica</option>
-          </select>
-
-          <select id="incEstado"
-            style="flex:1;min-width:160px;padding:10px;border-radius:10px;border:1px solid #e5e7eb">
-            <option value="">Estado</option>
-            <option value="Abierta">Abierta</option>
-            <option value="En seguimiento">En seguimiento</option>
-            <option value="Cerrada">Cerrada</option>
-          </select>
-        </div>
-
-        <div class="actions">
-          <input id="incLat" type="text" placeholder="Latitud"
-            style="flex:1;min-width:160px;padding:10px;border-radius:10px;border:1px solid #e5e7eb" />
-          <input id="incLng" type="text" placeholder="Longitud"
-            style="flex:1;min-width:160px;padding:10px;border-radius:10px;border:1px solid #e5e7eb" />
-        </div>
-
-        <div class="actions">
-          <button class="btn-ok" id="btnUbicacionInc">📍 Obtener ubicación</button>
-        </div>
-
-        <div id="estadoUbicacionInc" class="muted" style="margin-top:8px"></div>
-
-        <label style="display:block;font-size:.85rem;margin-top:12px;margin-bottom:4px;color:#374151">
-          Observaciones
-        </label>
-        <textarea id="incObservaciones" rows="4" placeholder="Describí lo ocurrido"
-          style="width:100%;padding:10px;border-radius:10px;border:1px solid #e5e7eb;resize:vertical"></textarea>
-
-        <div class="actions">
-          <button class="btn-ok" id="btnGuardarIncidenciaEmpleado">💾 Guardar incidencia</button>
-        </div>
-
-        <div id="msgIncEmpleado" class="muted" style="margin-top:10px"></div>
-      </div>
-
-
-      <div class="card">
-        <h2 style="margin:0 0 8px">🚚 Monitoreo del camión</h2>
-        <div class="muted" style="margin-bottom:10px">
-          Enviá tu ubicación en tiempo real al Productor.
-        </div>
-
-        <label style="display:block;font-size:.85rem;margin-top:8px;margin-bottom:4px;color:#374151">
-          ID / Patente del camión
-        </label>
-        <input id="camionId" placeholder="Ej: ABC123 o CAMION-1"
-          style="width:100%;padding:10px;border-radius:10px;border:1px solid #e5e7eb" />
-
-        <div class="actions" style="margin-top:10px">
-          <button class="btn-ok" id="btnStartTrack">▶ Iniciar</button>
-          <button class="btn" id="btnStopTrack"
-            style="background:#7f1d1d;color:#fff;border-radius:10px;padding:8px 10px;font-weight:800" disabled>
-            ■ Detener
-          </button>
-        </div>
-
-        <div id="msgTrack" class="muted" style="margin-top:10px">Estado: detenido</div>
-      </div>
+    <div class="panel-switch">
+      <button class="switch-btn activo" data-modulo="mod-diario">🧑‍🌾 Trabajo diario</button>
+      <button class="switch-btn" data-modulo="mod-operativo">🚓 Operativo rural</button>
     </div>
 
+    <section id="mod-diario" class="modulo-empleado visible-mod">
+      <div class="grid grid-diario">
+        <div class="card">
+          <h2 style="margin:0 0 8px">✅ Tareas asignadas</h2>
+          <div id="listaTareas" class="muted scroll-lista">Cargando...</div>
+        </div>
+
+        <div class="card">
+          <h2 style="margin:0 0 8px">⛽ Cargar combustible</h2>
+          <div class="muted">Registrá una carga para el productor.</div>
+
+          <div class="form-grid">
+
+            <div class="campo">
+              <label>Vehículo (patente/ID)</label>
+              <input id="eVehiculo" placeholder="Ej: ABC123 o Tractor-1">
+            </div>
+
+            <div class="campo">
+              <label>Litros</label>
+              <input id="eLitros" type="number" step="0.01">
+            </div>
+
+            <div class="campo">
+              <label>$ Total</label>
+              <input id="eCosto" type="number" step="1">
+            </div>
+
+            <div class="campo">
+              <label>Odómetro</label>
+              <input id="eOdom" type="number" step="1">
+            </div>
+
+          </div>
+
+          <div style="margin-top:12px">
+            <button class="btn-ok" id="btnEmpleadoComb">➕ Registrar</button>
+          </div>
+
+          <div id="msgEmpleadoComb" class="muted" style="margin-top:10px"></div>
+        </div>
+
+
+        <div class="card">
+          <h2 style="margin:0 0 8px">📣 Alertas del Productor</h2>
+          <div id="listaAlertas" class="muted scroll-lista">Cargando...</div>
+        </div>
+
+        <div class="card">
+  <h2 style="margin:0 0 8px">🚨 Cargar incidencia</h2>
+
+  <label class="label-incidencia">Potrero / sector</label>
+  <select id="incPotrero" class="input-incidencia-full">
+    <option value="">Cargando potreros...</option>
+  </select>
+
+  <div class="actions actions-incidencia">
+    <select id="incTipo" class="input-incidencia">
+      <option value="">Tipo de incidencia</option>
+      <option value="Faltante de ganado">Faltante de ganado</option>
+      <option value="Huellas de vehículo">Huellas de vehículo</option>
+      <option value="Alambrado manipulado">Alambrado manipulado</option>
+      <option value="Tranquera abierta">Tranquera abierta</option>
+      <option value="Movimiento nocturno">Movimiento nocturno</option>
+      <option value="Rastros de arreo">Rastros de arreo</option>
+    </select>
+
+    <input id="incCantidad" class="input-incidencia" type="number" min="0" placeholder="Cantidad" />
   </div>
+
+  <div class="actions actions-incidencia">
+    <select id="incGravedad" class="input-incidencia">
+      <option value="">Gravedad</option>
+      <option value="Baja">Baja</option>
+      <option value="Media">Media</option>
+      <option value="Alta">Alta</option>
+      <option value="Crítica">Crítica</option>
+    </select>
+
+    <select id="incEstado" class="input-incidencia">
+      <option value="">Estado</option>
+      <option value="Abierta">Abierta</option>
+      <option value="En seguimiento">En seguimiento</option>
+      <option value="Cerrada">Cerrada</option>
+    </select>
+  </div>
+
+  <div class="actions actions-incidencia">
+    <input id="incLat" class="input-incidencia" type="text" placeholder="Latitud" />
+    <input id="incLng" class="input-incidencia" type="text" placeholder="Longitud" />
+  </div>
+
+  <div class="actions">
+    <button class="btn-ok" id="btnUbicacionInc">📍 Obtener ubicación</button>
+  </div>
+
+  <div id="estadoUbicacionInc" class="muted" style="margin-top:8px"></div>
+
+  <label class="label-incidencia">Observaciones</label>
+
+  <textarea id="incObservaciones" rows="4" placeholder="Describí lo ocurrido"
+    style="width:100%;padding:10px;border-radius:10px;border:1px solid #e5e7eb;resize:vertical"></textarea>
+
+  <div class="actions">
+    <button class="btn-ok" id="btnGuardarIncidenciaEmpleado">💾 Guardar incidencia</button>
+  </div>
+
+  <div id="msgIncEmpleado" class="muted" style="margin-top:10px"></div>
+</div>
+
+
+        <div class="card">
+          <h2 style="margin:0 0 8px">🚚 Monitoreo del camión</h2>
+          <div class="muted" style="margin-bottom:10px">
+            Enviá tu ubicación en tiempo real al Productor.
+          </div>
+
+          <label style="display:block;font-size:.85rem;margin-top:8px;margin-bottom:4px;color:#374151">
+            ID / Patente del camión
+          </label>
+          <input id="camionId" placeholder="Ej: ABC123 o CAMION-1"
+            style="width:100%;padding:10px;border-radius:10px;border:1px solid #e5e7eb" />
+
+          <div class="actions" style="margin-top:10px">
+            <button class="btn-ok" id="btnStartTrack">▶ Iniciar</button>
+            <button class="btn" id="btnStopTrack"
+              style="background:#7f1d1d;color:#fff;border-radius:10px;padding:8px 10px;font-weight:800" disabled>
+              ■ Detener
+            </button>
+          </div>
+
+          <div id="msgTrack" class="muted" style="margin-top:10px">Estado: detenido</div>
+        </div>
+      </div>
+
+
+    </section>
+
+    <section id="mod-operativo" class="modulo-empleado hidden-mod">
+      <div class="grid grid-operativo">
+        <div class="card">
+          <h2 style="margin:0 0 8px">🚓 Solicitudes de patrulla</h2>
+          <div class="muted">Acá vas a ver los pedidos del productor y podrás aceptarlos.</div>
+          <div id="listaPatrullas" class="scroll-lista" style="margin-top:10px;">Cargando...</div>
+        </div>
+
+        <div class="card" style="margin-top:10px;">
+          <strong>🚨 Estado de urgencias</strong>
+
+          <div class="urgencias-grid">
+            <div class="card mini-card-urgencia">
+              <div class="muted">Urgentes</div>
+              <div id="countUrgentesEmpleado" style="font-size:24px;font-weight:900;margin-top:6px;">0</div>
+            </div>
+
+            <div class="card mini-card-urgencia">
+              <div class="muted">Asignadas a mí</div>
+              <div id="countAsignadasEmpleado" style="font-size:24px;font-weight:900;margin-top:6px;">0</div>
+            </div>
+          </div>
+
+          <div id="alertaUrgenteEmpleado"
+            style="display:none;margin-top:10px;padding:12px;border-radius:12px;background:#fee2e2;color:#991b1b;font-weight:800;">
+            🚨 Tenés una patrulla urgente pendiente de atención
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 style="margin:0 0 8px">🗺️ Mapa de patrulla</h2>
+          <div class="muted">Acá vas a ver la ubicación del pedido seleccionado.</div>
+          <div id="mapPatrulla" style="height:320px;border-radius:12px;margin-top:10px;background:#e5e7eb;"></div>
+        </div>
+
+        <div class="card">
+          <h2 style="margin:0 0 8px">🎮 Control de patrulla</h2>
+          <div class="muted">Desde acá vas a iniciar y finalizar el servicio seleccionado.</div>
+
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+            <button id="btnSalirAlLugar" class="btn-secundario" type="button" disabled>
+              🚗 Salir al lugar
+            </button>
+
+            <button id="btnIniciarPatrullaGps" class="btn-ok" type="button" disabled>
+              ▶ Iniciar patrulla
+            </button>
+
+            <button id="btnFinalizarPatrullaGps" class="btn" type="button" disabled
+              style="background:#7f1d1d;color:#fff;border-radius:10px;padding:8px 10px;font-weight:800">
+              ■ Finalizar patrulla
+            </button>
+            <div style="margin-top:10px;">
+              <label for="tipoNovedadPatrulla" style="display:block;font-weight:700;margin-bottom:6px;">
+                Tipo de cierre
+              </label>
+              <select id="tipoNovedadPatrulla"
+                style="width:100%;padding:10px;border-radius:10px;border:1px solid #d1d5db;">
+                <option value="sin_novedad">✅ Sin novedad</option>
+                <option value="novedad_menor">⚠️ Novedad menor</option>
+                <option value="incidencia_grave">🚨 Incidencia grave</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-top:10px;">
+            <input id="obsFinalPatrulla" type="text" placeholder="Observación final del servicio (opcional)">
+          </div>
+
+          <div style="margin-top:10px;">
+            <input id="motivoRechazoPatrulla" type="text" placeholder="Motivo de rechazo de asignación (opcional)">
+          </div>
+
+          <div id="msgPatrullaGps" class="muted" style="margin-top:10px;">Sin patrulla seleccionada.</div>
+        </div>
+
+      </div>
+    </section>
+
+
+
+
+
+
+
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script type="module">
     import { auth, db } from "../firebase-init.js";
@@ -345,7 +558,20 @@
     const sub = document.getElementById("sub");
     const listaTareas = document.getElementById("listaTareas");
     const listaAlertas = document.getElementById("listaAlertas");
+    const listaPatrullas = document.getElementById("listaPatrullas");
     const estadoConexion = document.getElementById("estadoConexion");
+    const countUrgentesEmpleado = document.getElementById("countUrgentesEmpleado");
+    const countAsignadasEmpleado = document.getElementById("countAsignadasEmpleado");
+    const alertaUrgenteEmpleado = document.getElementById("alertaUrgenteEmpleado");
+
+    const btnIniciarPatrullaGps = document.getElementById("btnIniciarPatrullaGps");
+    const btnFinalizarPatrullaGps = document.getElementById("btnFinalizarPatrullaGps");
+    const tipoNovedadPatrulla = document.getElementById("tipoNovedadPatrulla");
+    const msgPatrullaGps = document.getElementById("msgPatrullaGps");
+    const btnSalirAlLugar = document.getElementById("btnSalirAlLugar");
+    const obsFinalPatrulla = document.getElementById("obsFinalPatrulla");
+    const motivoRechazoPatrulla = document.getElementById("motivoRechazoPatrulla");
+
 
     // ===============================
     // 🚨 INCIDENCIAS CARGADAS POR EMPLEADO
@@ -364,6 +590,17 @@
     const estadoUbicacionInc = document.getElementById("estadoUbicacionInc");
 
     let potrerosEmpleado = [];
+    let patrullaSeleccionadaId = null;
+    let patrullaSeleccionadaData = null;
+    let watchPatrullaId = null;
+    let patrullaRutaPts = [];
+    let patrullaLastPt = null;
+    let patrullaDistanciaM = 0;
+    let intervaloCronometro = null;
+    let patrullaInicioMs = null;
+    let mapaPatrulla = null;
+    let marcadorPatrulla = null;
+    let ultimasAsignacionesVistas = new Set();
     sub.textContent = empleadoDni ? `Sesión: DNI ${empleadoDni}` : "Sin sesión activa.";
 
     function actualizarEstadoConexion() {
@@ -419,7 +656,11 @@
           await vincularAuthUidEmpleado(empleadoDni);
           await cargarPotrerosEmpleado();
 
+          initMapaPatrulla();
           iniciarListeners();
+          await restaurarPatrullaActiva();
+
+
         } catch (e) {
           console.error("Auth empleado:", e);
           listaTareas.textContent = "No se pudo iniciar sesión (auth).";
@@ -628,6 +869,18 @@
         obtenerUbicacionIncidenciaEmpleado();
       });
 
+      btnSalirAlLugar?.addEventListener("click", async () => {
+        await salirAlLugar();
+      });
+
+      btnIniciarPatrullaGps?.addEventListener("click", async () => {
+        await iniciarGpsPatrulla();
+      });
+
+      btnFinalizarPatrullaGps?.addEventListener("click", async () => {
+        await finalizarGpsPatrulla();
+      });
+
       btnGuardarIncidenciaEmpleado?.addEventListener("click", async () => {
         try {
           const tipo = (incTipo?.value || "").trim();
@@ -697,8 +950,716 @@
         }
       });
 
+
+      function estadoPatrullaColor(estado) {
+        switch (estado) {
+          case "pendiente":
+            return "background:#fef3c7;color:#92400e;";
+          case "aceptada":
+            return "background:#dbeafe;color:#1d4ed8;";
+          case "en_curso":
+            return "background:#dcfce7;color:#166534;";
+          case "finalizada":
+            return "background:#e5e7eb;color:#374151;";
+          case "cancelada":
+            return "background:#fee2e2;color:#b91c1c;";
+          default:
+            return "background:#f3f4f6;color:#374151;";
+        }
+      }
+
+      function estadoPatrullaTexto(estado) {
+        switch (estado) {
+          case "pendiente": return "Pendiente";
+          case "aceptada": return "Aceptada";
+          case "en_curso": return "En curso";
+          case "finalizada": return "Finalizada";
+          case "cancelada": return "Cancelada";
+          default: return estado || "Sin estado";
+        }
+      }
+
+      function initMapaPatrulla() {
+        if (mapaPatrulla) return;
+
+        mapaPatrulla = L.map("mapPatrulla").setView([-33, -59.3], 10);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
+          attribution: "&copy; OpenStreetMap"
+        }).addTo(mapaPatrulla);
+
+        setTimeout(() => mapaPatrulla.invalidateSize(), 300);
+      }
+
+      function mostrarPatrullaEnMapa(data) {
+        if (!mapaPatrulla) initMapaPatrulla();
+
+        const lat = Number(data?.lat);
+        const lng = Number(data?.lng);
+
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+
+        if (marcadorPatrulla) {
+          marcadorPatrulla.setLatLng([lat, lng]);
+        } else {
+          marcadorPatrulla = L.marker([lat, lng]).addTo(mapaPatrulla);
+        }
+
+        marcadorPatrulla.bindPopup(`
+    <b>🚓 ${String(data?.motivo || "Patrulla").replaceAll("_", " ")}</b><br>
+    Campo: ${data?.nombreCampo || "Sin nombre"}<br>
+    Prioridad: ${data?.prioridad || "media"}
+  `);
+
+        mapaPatrulla.setView([lat, lng], 15, { animate: true });
+      }
+
+      function setMsgPatrullaGps(texto, ok = true) {
+        if (!msgPatrullaGps) return;
+        msgPatrullaGps.textContent = texto;
+        msgPatrullaGps.style.color = ok ? "#14532d" : "#b91c1c";
+      }
+
+      async function publicarUbicacionEmpleado(lat, lng, accuracy = null) {
+        try {
+          if (!empleadoDni || !productorId) return;
+
+          await setDoc(doc(db, "empleados_tracking", empleadoDni), {
+            empleadoDni,
+            productorId,
+            lat,
+            lng,
+            accuracy: accuracy ?? null,
+            updatedAt: Date.now()
+          }, { merge: true });
+        } catch (e) {
+          console.error("Error publicando ubicación del empleado:", e);
+        }
+      }
+
+      function distMetrosPatrulla(lat1, lng1, lat2, lng2) {
+        const R = 6371000;
+        const toRad = (v) => (v * Math.PI) / 180;
+
+        const dLat = toRad(lat2 - lat1);
+        const dLng = toRad(lng2 - lng1);
+
+        const a =
+          Math.sin(dLat / 2) ** 2 +
+          Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+          Math.sin(dLng / 2) ** 2;
+
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return Math.round(R * c);
+      }
+
+      function calcularEtaMinutos(distanciaMetros) {
+        // velocidad rural estimada simple: 40 km/h
+        const velocidadMMin = 40000 / 60;
+        if (!Number.isFinite(distanciaMetros) || distanciaMetros <= 0) return null;
+        return Math.max(1, Math.round(distanciaMetros / velocidadMMin));
+      }
+
+      function actualizarUIEstadoPatrulla(data) {
+        const estado = data?.estado || "pendiente";
+
+        if (btnSalirAlLugar) btnSalirAlLugar.disabled = true;
+        if (btnIniciarPatrullaGps) btnIniciarPatrullaGps.disabled = true;
+        if (btnFinalizarPatrullaGps) btnFinalizarPatrullaGps.disabled = true;
+
+        if (estado === "aceptada") {
+          if (btnSalirAlLugar) btnSalirAlLugar.disabled = false;
+        }
+
+        if (estado === "en_camino") {
+          if (btnIniciarPatrullaGps) btnIniciarPatrullaGps.disabled = false;
+        }
+
+        if (estado === "en_curso") {
+          if (btnFinalizarPatrullaGps) btnFinalizarPatrullaGps.disabled = false;
+        }
+
+        if (estado === "finalizada" || estado === "cancelada" || estado === "pendiente") {
+          if (btnSalirAlLugar) btnSalirAlLugar.disabled = true;
+          if (btnIniciarPatrullaGps) btnIniciarPatrullaGps.disabled = true;
+          if (btnFinalizarPatrullaGps) btnFinalizarPatrullaGps.disabled = true;
+        }
+
+        if (data?.estado === "en_curso") {
+          iniciarCronometro();
+        } else {
+          detenerCronometro();
+        }
+      }
+
+      function iniciarCronometro() {
+        if (intervaloCronometro) {
+          clearInterval(intervaloCronometro);
+        }
+
+        intervaloCronometro = setInterval(() => {
+          if (!patrullaInicioMs) return;
+
+          const ahora = Date.now();
+          const diff = ahora - patrullaInicioMs;
+
+          const segundos = Math.floor(diff / 1000) % 60;
+          const minutos = Math.floor(diff / 60000) % 60;
+          const horas = Math.floor(diff / 3600000);
+
+          const texto = `${String(horas).padStart(2, "0")}:${String(minutos).padStart(2, "0")}:${String(segundos).padStart(2, "0")}`;
+
+          if (msgPatrullaGps) {
+            msgPatrullaGps.textContent = `🟢 Patrulla en curso • Tiempo: ${texto}`;
+          }
+        }, 1000);
+      }
+
+      function detenerCronometro() {
+        if (intervaloCronometro) {
+          clearInterval(intervaloCronometro);
+          intervaloCronometro = null;
+        }
+      }
+
+      function calcularImportePatrulla(data) {
+        const base = 12000;
+
+        const distanciaM = Number(data?.distanciaM || 0);
+        const distanciaKm = distanciaM / 1000;
+
+        const inicioMs = Number(data?.inicioMs || 0);
+        const finMs = Number(data?.finMs || Date.now());
+        const duracionMin = inicioMs > 0 ? Math.max(1, Math.round((finMs - inicioMs) / 60000)) : 0;
+
+        const costoDistancia = Math.round(distanciaKm * 800);
+        const costoTiempo = Math.round(duracionMin * 120);
+
+        let subtotal = base + costoDistancia + costoTiempo;
+
+        const prioridad = String(data?.prioridad || "media").toLowerCase();
+        const tipoNovedadFinal = String(data?.tipoNovedadFinal || "sin_novedad").toLowerCase();
+
+        if (prioridad === "alta") {
+          subtotal = Math.round(subtotal * 1.25);
+        }
+
+        if (tipoNovedadFinal === "incidencia_grave") {
+          subtotal = Math.round(subtotal * 1.20);
+        }
+
+        return {
+          base,
+          distanciaKm: Number(distanciaKm.toFixed(2)),
+          duracionMin,
+          costoDistancia,
+          costoTiempo,
+          prioridad,
+          tipoNovedadFinal,
+          total: subtotal
+        };
+      }
+
+      function seleccionarPatrulla(docId, data) {
+        patrullaSeleccionadaId = docId;
+        patrullaSeleccionadaData = data;
+
+        actualizarUIEstadoPatrulla(data);
+
+
+
+        const motivo = String(data?.motivo || "Patrulla").replaceAll("_", " ");
+        const campo = data?.nombreCampo || "Sin nombre";
+        setMsgPatrullaGps(`✅ Patrulla seleccionada: ${motivo} • ${campo}`);
+
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              publicarUbicacionEmpleado(
+                pos.coords.latitude,
+                pos.coords.longitude,
+                Math.round(pos.coords.accuracy || 0)
+              );
+            },
+            (err) => {
+              console.error("No se pudo publicar ubicación inicial del empleado:", err);
+            },
+            {
+              enableHighAccuracy: true,
+              timeout: 10000,
+              maximumAge: 10000
+            }
+          );
+        }
+      }
+
+      async function salirAlLugar() {
+        if (!patrullaSeleccionadaId || !patrullaSeleccionadaData) {
+          setMsgPatrullaGps("⚠️ Primero seleccioná una patrulla.", false);
+          return;
+        }
+
+        try {
+          const latObj = Number(patrullaSeleccionadaData?.lat);
+          const lngObj = Number(patrullaSeleccionadaData?.lng);
+
+          let etaMin = null;
+
+          if ("geolocation" in navigator && Number.isFinite(latObj) && Number.isFinite(lngObj)) {
+            await new Promise((resolve) => {
+              navigator.geolocation.getCurrentPosition(
+                async (pos) => {
+                  const latEmp = pos.coords.latitude;
+                  const lngEmp = pos.coords.longitude;
+
+                  await publicarUbicacionEmpleado(
+                    latEmp,
+                    lngEmp,
+                    Math.round(pos.coords.accuracy || 0)
+                  );
+
+                  const dist = distMetrosPatrulla(latEmp, lngEmp, latObj, lngObj);
+                  etaMin = calcularEtaMinutos(dist);
+                  resolve();
+                },
+                (err) => {
+                  console.error("No se pudo obtener GPS para ETA:", err);
+                  resolve();
+                },
+                {
+                  enableHighAccuracy: true,
+                  timeout: 12000,
+                  maximumAge: 5000
+                }
+              );
+            });
+          }
+
+          await updateDoc(doc(db, "solicitudesPatrulla", patrullaSeleccionadaId), {
+            estado: "en_camino",
+            patrulleroDni: empleadoDni,
+            enCaminoEn: serverTimestamp(),
+            etaMin: etaMin
+          });
+
+          patrullaSeleccionadaData = {
+            ...patrullaSeleccionadaData,
+            estado: "en_camino",
+            patrulleroDni: empleadoDni,
+            etaMin: etaMin
+          };
+
+          actualizarUIEstadoPatrulla(patrullaSeleccionadaData);
+
+          setMsgPatrullaGps(`🚗 En camino al lugar${etaMin ? ` • ETA aprox: ${etaMin} min` : ""}`);
+        } catch (e) {
+          console.error("Error al pasar a en_camino:", e);
+          setMsgPatrullaGps("❌ No se pudo marcar salida al lugar.", false);
+        }
+      }
+
+      async function iniciarGpsPatrulla(esRestauracion = false) {
+        if (!patrullaSeleccionadaId || !patrullaSeleccionadaData) {
+          setMsgPatrullaGps("⚠️ Primero seleccioná una solicitud.", false);
+          return;
+        }
+
+        if (!("geolocation" in navigator)) {
+          setMsgPatrullaGps("❌ Este dispositivo no tiene geolocalización.", false);
+          return;
+        }
+
+        if (watchPatrullaId) {
+          navigator.geolocation.clearWatch(watchPatrullaId);
+          watchPatrullaId = null;
+        }
+
+        if (watchPatrullaId) {
+          navigator.geolocation.clearWatch(watchPatrullaId);
+          watchPatrullaId = null;
+        }
+
+        if (!esRestauracion) {
+          patrullaRutaPts = [];
+          patrullaLastPt = null;
+          patrullaDistanciaM = 0;
+          patrullaInicioMs = Date.now();
+        } else {
+          patrullaRutaPts = Array.isArray(patrullaRutaPts) ? patrullaRutaPts : [];
+          patrullaDistanciaM = Number(patrullaDistanciaM || 0);
+          patrullaInicioMs = Number(patrullaInicioMs || Date.now());
+        }
+
+        patrullaSeleccionadaData = {
+          ...patrullaSeleccionadaData,
+          estado: "en_curso",
+          patrulleroDni: empleadoDni,
+          trackingActivo: true
+        };
+
+        actualizarUIEstadoPatrulla(patrullaSeleccionadaData);
+
+        if (btnSalirAlLugar) btnSalirAlLugar.disabled = true;
+
+        try {
+          const payload = {
+            estado: "en_curso",
+            patrulleroDni: empleadoDni,
+            trackingActivo: true
+          };
+
+          if (!esRestauracion) {
+            payload.iniciadaEn = serverTimestamp();
+            payload.inicioMs = patrullaInicioMs;
+          }
+
+          await updateDoc(doc(db, "solicitudesPatrulla", patrullaSeleccionadaId), payload);
+        } catch (e) {
+          console.error("Error iniciando patrulla:", e);
+
+          actualizarUIEstadoPatrulla({
+            ...patrullaSeleccionadaData,
+            estado: patrullaSeleccionadaData?.estado || "aceptada"
+          });
+
+          setMsgPatrullaGps("❌ No se pudo iniciar la patrulla.", false);
+          return;
+        }
+
+        setMsgPatrullaGps("📡 Iniciando GPS de patrulla...");
+
+        watchPatrullaId = navigator.geolocation.watchPosition(
+          async (pos) => {
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+            const t = Date.now();
+
+            if (!patrullaLastPt) {
+              patrullaLastPt = { lat, lng };
+              patrullaRutaPts.push({ lat, lng, t });
+            } else {
+              const d = distMetrosPatrulla(patrullaLastPt.lat, patrullaLastPt.lng, lat, lng);
+              if (d >= 15) {
+                patrullaDistanciaM += d;
+                patrullaLastPt = { lat, lng };
+                patrullaRutaPts.push({ lat, lng, t });
+
+                if (patrullaRutaPts.length > 150) {
+                  patrullaRutaPts.splice(0, patrullaRutaPts.length - 150);
+                }
+              }
+            }
+
+            try {
+              await updateDoc(doc(db, "solicitudesPatrulla", patrullaSeleccionadaId), {
+                estado: "en_curso",
+                patrulleroDni: empleadoDni,
+                trackingActivo: true,
+                trackingLat: lat,
+                trackingLng: lng,
+                trackingAccuracy: Math.round(pos.coords.accuracy || 0),
+                trackingUltimaActualizacionMs: Date.now(),
+                distanciaM: Math.round(patrullaDistanciaM),
+                rutaPts: patrullaRutaPts
+              });
+
+              await publicarUbicacionEmpleado(lat, lng, Math.round(pos.coords.accuracy || 0));
+
+
+              if (typeof mostrarPatrullaEnMapa === "function") {
+                mostrarPatrullaEnMapa({
+                  ...patrullaSeleccionadaData,
+                  lat,
+                  lng
+                });
+              }
+
+              setMsgPatrullaGps(`✅ Patrullando... ${lat.toFixed(5)}, ${lng.toFixed(5)} • ${Math.round(patrullaDistanciaM)} m`);
+            } catch (e) {
+              console.error("Error actualizando GPS de patrulla:", e);
+            }
+          },
+          (err) => {
+            console.error("GPS patrulla error:", err);
+
+            let msg = "❌ Error de GPS.";
+            if (err?.code === 1) msg = "❌ Permiso denegado para GPS.";
+            if (err?.code === 2) msg = "❌ No se pudo obtener señal GPS.";
+            if (err?.code === 3) msg = "❌ Timeout GPS.";
+
+            setMsgPatrullaGps(msg, false);
+            btnIniciarPatrullaGps.disabled = false;
+            btnFinalizarPatrullaGps.disabled = true;
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 20000,
+            maximumAge: 10000
+          }
+        );
+      }
+
+      async function finalizarGpsPatrulla() {
+        if (!patrullaSeleccionadaId) {
+          setMsgPatrullaGps("⚠️ No hay patrulla activa.", false);
+          return;
+        }
+
+        if (watchPatrullaId) {
+          navigator.geolocation.clearWatch(watchPatrullaId);
+          watchPatrullaId = null;
+        }
+        patrullaSeleccionadaData = {
+          ...patrullaSeleccionadaData,
+          estado: "finalizada",
+          patrulleroDni: empleadoDni,
+          trackingActivo: false
+        };
+
+        actualizarUIEstadoPatrulla(patrullaSeleccionadaData);
+
+        const tipoNovedad = tipoNovedadPatrulla?.value || "sin_novedad";
+        const observacionFinal = (obsFinalPatrulla?.value || "").trim();
+
+        const finMs = Date.now();
+
+        const resumenCobro = calcularImportePatrulla({
+          ...patrullaSeleccionadaData,
+          distanciaM: Math.round(patrullaDistanciaM),
+          inicioMs: patrullaInicioMs,
+          finMs: finMs,
+          tipoNovedadFinal: tipoNovedad
+        });
+
+        if ((tipoNovedad === "novedad_menor" || tipoNovedad === "incidencia_grave") && !observacionFinal) {
+          alert("Debés escribir una observación final cuando hubo una novedad.");
+          return;
+        }
+
+        try {
+          await updateDoc(doc(db, "solicitudesPatrulla", patrullaSeleccionadaId), {
+            estado: "finalizada",
+            patrulleroDni: empleadoDni,
+            finalizadaEn: serverTimestamp(),
+            trackingActivo: false,
+            distanciaM: Math.round(patrullaDistanciaM),
+            rutaPts: patrullaRutaPts,
+            inicioMs: patrullaInicioMs,
+            finMs: finMs,
+            observacionFinal: observacionFinal,
+            tipoNovedadFinal: tipoNovedad,
+            huboNovedad: tipoNovedad !== "sin_novedad",
+
+            cobroCalculado: true,
+            importeTotal: resumenCobro.total,
+            tarifaBase: resumenCobro.base,
+            duracionMin: resumenCobro.duracionMin,
+            distanciaKm: resumenCobro.distanciaKm,
+            costoDistancia: resumenCobro.costoDistancia,
+            costoTiempo: resumenCobro.costoTiempo
+          });
+
+          detenerCronometro();
+
+          patrullaSeleccionadaData = {
+            ...patrullaSeleccionadaData,
+            estado: "finalizada",
+            patrulleroDni: empleadoDni,
+            trackingActivo: false,
+            distanciaM: Math.round(patrullaDistanciaM),
+            rutaPts: patrullaRutaPts,
+            inicioMs: patrullaInicioMs,
+            finMs: finMs,
+            observacionFinal: observacionFinal,
+            tipoNovedadFinal: tipoNovedad,
+            huboNovedad: tipoNovedad !== "sin_novedad",
+
+            cobroCalculado: true,
+            importeTotal: resumenCobro.total,
+            tarifaBase: resumenCobro.base,
+            duracionMin: resumenCobro.duracionMin,
+            distanciaKm: resumenCobro.distanciaKm,
+            costoDistancia: resumenCobro.costoDistancia,
+            costoTiempo: resumenCobro.costoTiempo
+          };
+
+
+          actualizarUIEstadoPatrulla(patrullaSeleccionadaData);
+
+          if (obsFinalPatrulla) obsFinalPatrulla.value = "";
+          if (tipoNovedadPatrulla) tipoNovedadPatrulla.value = "sin_novedad";
+
+          const txtCierre =
+            tipoNovedad === "sin_novedad"
+              ? "✅ Sin novedad"
+              : tipoNovedad === "novedad_menor"
+                ? "⚠️ Novedad menor"
+                : "🚨 Incidencia grave";
+
+          setMsgPatrullaGps(
+            `🏁 Patrulla finalizada. ${txtCierre} • Total estimado: $${resumenCobro.total.toLocaleString("es-AR")}`
+          );
+
+        } catch (e) {
+          console.error("Error finalizando patrulla:", e);
+          setMsgPatrullaGps("❌ No se pudo finalizar la patrulla.", false);
+        }
+        alert(
+          `Servicio finalizado\n\n` +
+          `Tiempo: ${resumenCobro.duracionMin} min\n` +
+          `Distancia: ${resumenCobro.distanciaKm} km\n` +
+          `Importe estimado: $${resumenCobro.total.toLocaleString("es-AR")}`
+        );
+      }
+
+      function prioridadPeso(prioridad) {
+        switch ((prioridad || "").toLowerCase()) {
+          case "alta":
+            return 3;
+          case "media":
+            return 2;
+          case "baja":
+            return 1;
+          default:
+            return 0;
+        }
+      }
+
+      function mostrarAlertaUrgenteVisual(texto) {
+        if (!alertaUrgenteEmpleado) return;
+
+        alertaUrgenteEmpleado.style.display = "block";
+        alertaUrgenteEmpleado.textContent = texto;
+
+        setTimeout(() => {
+          if (alertaUrgenteEmpleado) {
+            alertaUrgenteEmpleado.style.display = "none";
+          }
+        }, 5000);
+      }
+
+      async function restaurarPatrullaActiva() {
+        try {
+          const q = query(
+            collection(db, "solicitudesPatrulla"),
+            where("productorId", "==", productorId),
+            where("patrulleroDni", "==", empleadoDni)
+          );
+
+          const snap = await getDocs(q);
+
+          if (snap.empty) {
+            console.log("No hay patrulla activa para restaurar.");
+            return;
+          }
+
+          const candidatas = [];
+
+          snap.forEach((docSnap) => {
+            const data = docSnap.data();
+            const estado = data?.estado || "";
+
+            if (["asignada", "aceptada", "en_camino", "en_curso"].includes(estado)) {
+              candidatas.push({
+                id: docSnap.id,
+                ...data
+              });
+            }
+          });
+
+          if (!candidatas.length) {
+            console.log("No hay patrullas en estado restaurable.");
+            return;
+          }
+
+          candidatas.sort((a, b) => {
+            const ta = a?.creadoEn?.seconds || 0;
+            const tb = b?.creadoEn?.seconds || 0;
+            return tb - ta;
+          });
+
+          const patrulla = candidatas[0];
+
+          patrullaSeleccionadaId = patrulla.id;
+          patrullaSeleccionadaData = patrulla;
+
+          seleccionarPatrulla(patrulla.id, patrulla);
+
+          if (typeof mostrarPatrullaEnMapa === "function") {
+            mostrarPatrullaEnMapa(patrulla);
+          }
+
+          if (patrulla.estado === "asignada") {
+            setMsgPatrullaGps("📌 Tenés una asignación pendiente restaurada.");
+            return;
+          }
+
+          if (patrulla.estado === "aceptada") {
+            if (btnSalirAlLugar) btnSalirAlLugar.disabled = false;
+            if (btnIniciarPatrullaGps) btnIniciarPatrullaGps.disabled = false;
+            if (btnFinalizarPatrullaGps) btnFinalizarPatrullaGps.disabled = true;
+
+            setMsgPatrullaGps("✅ Patrulla aceptada restaurada. Ya podés salir al lugar.");
+            return;
+          }
+
+          if (patrulla.estado === "en_camino") {
+            if (btnSalirAlLugar) btnSalirAlLugar.disabled = true;
+            if (btnIniciarPatrullaGps) btnIniciarPatrullaGps.disabled = false;
+            if (btnFinalizarPatrullaGps) btnFinalizarPatrullaGps.disabled = true;
+
+            setMsgPatrullaGps("🚗 Patrulla en camino restaurada.");
+            return;
+          }
+
+          if (patrulla.estado === "en_curso") {
+            if (btnSalirAlLugar) btnSalirAlLugar.disabled = true;
+            if (btnIniciarPatrullaGps) btnIniciarPatrullaGps.disabled = true;
+            if (btnFinalizarPatrullaGps) btnFinalizarPatrullaGps.disabled = false;
+
+            patrullaRutaPts = Array.isArray(patrulla.rutaPts) ? [...patrulla.rutaPts] : [];
+            patrullaDistanciaM = Number(patrulla.distanciaM || 0);
+            patrullaInicioMs = Number(patrulla.inicioMs || Date.now());
+
+            if (patrullaRutaPts.length > 0) {
+              const ultimo = patrullaRutaPts[patrullaRutaPts.length - 1];
+              patrullaLastPt = {
+                lat: Number(ultimo.lat),
+                lng: Number(ultimo.lng)
+              };
+            } else if (
+              Number.isFinite(Number(patrulla.trackingLat)) &&
+              Number.isFinite(Number(patrulla.trackingLng))
+            ) {
+              patrullaLastPt = {
+                lat: Number(patrulla.trackingLat),
+                lng: Number(patrulla.trackingLng)
+              };
+            } else {
+              patrullaLastPt = null;
+            }
+
+            setMsgPatrullaGps("🟢 Patrulla en curso restaurada. Reactivando GPS...");
+
+            await iniciarGpsPatrulla(true);
+          }
+        } catch (e) {
+          console.error("Error restaurando patrulla activa:", e);
+        }
+      }
+
+
       function iniciarListeners() {
-        // ✅ TAREAS: filtramos por productorId + empleadoId (dni) y orden por timestamp
+        console.log("DEBUG iniciarListeners");
+        console.log("productorId:", productorId);
+        console.log("empleadoDni:", empleadoDni);
+        console.log("listaTareas:", !!listaTareas);
+        console.log("listaPatrullas:", !!listaPatrullas);
+        console.log("listaAlertas:", !!listaAlertas);
+        // ===============================
+        // ✅ TAREAS
+        // ===============================
         const qT = query(
           collection(db, "tareas"),
           where("productorId", "==", productorId),
@@ -722,18 +1683,17 @@
             const estadoTxt = t.completada ? "✅ Completada" : "🕒 Pendiente";
 
             div.innerHTML = `
-              <div><b>📌 ${t.texto ?? "(sin texto)"}</b></div>
-              <div class="muted">
-                ${t.categoria ?? "Sin categoría"} • ${t.prioridad ?? ""} • ${estadoTxt}
-              </div>
-              ${t.completada ? "" : `
-                <div class="actions">
-                  <button class="btn-ok">✅ Marcar realizada</button>
-                </div>
-              `}
-            `;
+        <div><b>📌 ${t.texto ?? "(sin texto)"}</b></div>
+        <div class="muted">
+          ${t.categoria ?? "Sin categoría"} • ${t.prioridad ?? ""} • ${estadoTxt}
+        </div>
+        ${t.completada ? "" : `
+          <div class="actions">
+            <button class="btn-ok">✅ Marcar realizada</button>
+          </div>
+        `}
+      `;
 
-            // 👉 SOLO si está pendiente, habilitamos botón
             if (!t.completada) {
               const btn = div.querySelector(".btn-ok");
               btn.addEventListener("click", async () => {
@@ -750,7 +1710,6 @@
                   if (!navigator.onLine) {
                     btn.textContent = "🟠 Pendiente de sincronizar";
                   }
-
                 } catch (e) {
                   console.error("No se pudo completar:", e);
                   btn.disabled = false;
@@ -762,14 +1721,255 @@
 
             listaTareas.appendChild(div);
           });
-
         }, (err) => {
           console.error("Snapshot tareas:", err);
           listaTareas.textContent = "Error cargando tareas (reglas/índices).";
         });
 
-        // ✅ ALERTAS: por ahora mostramos alertas del productor (si existen)
-        // (si tu estructura tiene campo 'para': 'todos' o DNI, filtramos en cliente)
+        // ===============================
+        // 🚓 SOLICITUDES DE PATRULLA
+        // ===============================
+        const qP = query(
+          collection(db, "solicitudesPatrulla"),
+          where("productorId", "==", productorId),
+          orderBy("creadoEn", "desc")
+        );
+
+        onSnapshot(qP, (snap) => {
+          listaPatrullas.innerHTML = "";
+
+          if (snap.empty) {
+            listaPatrullas.innerHTML = `<div class="muted">No hay solicitudes de patrulla.</div>`;
+            return;
+          }
+
+          const solicitudes = [];
+
+          snap.forEach((docSnap) => {
+            const p = docSnap.data();
+            solicitudes.push({
+              id: docSnap.id,
+              ...p
+            });
+          });
+
+          const urgentes = solicitudes.filter(s =>
+            (s.prioridad || "").toLowerCase() === "alta" &&
+            ["pendiente", "asignada", "aceptada", "en_camino"].includes(s.estado || "")
+          );
+
+          const asignadasAMi = solicitudes.filter(s =>
+            (s.asignadoPatrulleroDni || "") === empleadoDni &&
+            (s.estado || "") === "asignada"
+          );
+
+          if (countUrgentesEmpleado) countUrgentesEmpleado.textContent = urgentes.length;
+          if (countAsignadasEmpleado) countAsignadasEmpleado.textContent = asignadasAMi.length;
+
+          if (urgentes.length > 0 && alertaUrgenteEmpleado) {
+            alertaUrgenteEmpleado.style.display = "block";
+            alertaUrgenteEmpleado.textContent = "🚨 Hay patrullas urgentes pendientes";
+          } else if (alertaUrgenteEmpleado) {
+            alertaUrgenteEmpleado.style.display = "none";
+          }
+
+          asignadasAMi.forEach((s) => {
+            if (!ultimasAsignacionesVistas.has(s.id)) {
+              ultimasAsignacionesVistas.add(s.id);
+              mostrarAlertaUrgenteVisual(`📢 Nueva asignación para vos: ${String(s.motivo || "Patrulla").replaceAll("_", " ")}`);
+            }
+          });
+
+          solicitudes.sort((a, b) => {
+            const pa = prioridadPeso(a.prioridad);
+            const pb = prioridadPeso(b.prioridad);
+
+            if (pb !== pa) return pb - pa;
+
+            const da = Number.isFinite(Number(a.sugeridoDistanciaM)) ? Number(a.sugeridoDistanciaM) : 999999999;
+            const db = Number.isFinite(Number(b.sugeridoDistanciaM)) ? Number(b.sugeridoDistanciaM) : 999999999;
+
+            if (da !== db) return da - db;
+
+            const ta = a?.creadoEn?.seconds || 0;
+            const tb = b?.creadoEn?.seconds || 0;
+            return tb - ta;
+          });
+
+          solicitudes.forEach((p) => {
+            const estado = p.estado || "pendiente";
+
+            const asignadoADni = p.asignadoPatrulleroDni || "";
+            const esParaMi = !asignadoADni || asignadoADni === empleadoDni;
+            if (!esParaMi) return;
+
+            const prioridad = (p.prioridad || "media").toLowerCase();
+            const distanciaSugerida = Number(p.sugeridoDistanciaM || 0);
+
+            const esNuevaAsignacionParaMi =
+              (p.estado === "asignada") &&
+              (p.asignadoPatrulleroDni === empleadoDni);
+
+            const div = document.createElement("div");
+            div.className = "item";
+
+            if (esNuevaAsignacionParaMi) {
+              div.style.border = "2px solid #dc2626";
+              div.style.boxShadow = "0 0 0 3px rgba(220,38,38,0.15)";
+            }
+
+            const badgePrioridad =
+              prioridad === "alta"
+                ? `<span style="background:#fee2e2;color:#991b1b;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:800;">🔴 Alta</span>`
+                : prioridad === "media"
+                  ? `<span style="background:#fef3c7;color:#92400e;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:800;">🟡 Media</span>`
+                  : `<span style="background:#dcfce7;color:#166534;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:800;">🟢 Baja</span>`;
+
+            div.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+      <strong>🚓 ${String(p.motivo || "Sin motivo").replaceAll("_", " ")}</strong>
+      <span class="muted"><b>${estado}</b></span>
+    </div>
+
+    <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">
+      ${badgePrioridad}
+    </div>
+
+    <div class="muted" style="margin-top:6px;">Duración: ${p.duracionHoras || "-"} h</div>
+    <div class="muted" style="margin-top:4px;">Detalle: ${p.detalle || "Sin detalle"}</div>
+    <div class="muted" style="margin-top:4px;">Campo: ${p.nombreCampo || "Sin nombre"}</div>
+    <div class="muted" style="margin-top:4px;">Distancia sugerida: ${distanciaSugerida ? `${distanciaSugerida} m` : "—"}</div>
+
+    <div class="actions">
+      ${estado === "pendiente"
+                ? `<button class="btn-ok btn-aceptar">✅ Aceptar servicio</button>`
+                : estado === "asignada" && asignadoADni === empleadoDni
+                  ? `
+            <button class="btn-ok btn-aceptar-asignacion">✅ Aceptar asignación</button>
+            <button class="btn-rechazar-asignacion" style="background:#b91c1c;color:#fff;border:none;padding:8px 10px;border-radius:10px;font-weight:800;cursor:pointer;">
+              ❌ Rechazar asignación
+            </button>
+          `
+                  : ""
+              }
+    </div>
+  `;
+
+            const btnAceptar = div.querySelector(".btn-aceptar");
+            if (btnAceptar) {
+              btnAceptar.addEventListener("click", async () => {
+                try {
+                  btnAceptar.disabled = true;
+                  btnAceptar.textContent = "Aceptando...";
+
+                  await updateDoc(doc(db, "solicitudesPatrulla", p.id), {
+                    estado: "aceptada",
+                    patrulleroDni: empleadoDni,
+                    aceptadaEn: serverTimestamp()
+                  });
+
+                  seleccionarPatrulla(p.id, {
+                    ...p,
+                    estado: "aceptada",
+                    patrulleroDni: empleadoDni
+                  });
+
+                  if (typeof mostrarPatrullaEnMapa === "function") {
+                    mostrarPatrullaEnMapa(p);
+                  }
+                } catch (e) {
+                  console.error("Error al aceptar patrulla:", e);
+                  btnAceptar.disabled = false;
+                  btnAceptar.textContent = "✅ Aceptar servicio";
+                  alert("No se pudo aceptar la solicitud.");
+                }
+              });
+            }
+
+            const btnAceptarAsignacion = div.querySelector(".btn-aceptar-asignacion");
+            if (btnAceptarAsignacion) {
+              btnAceptarAsignacion.addEventListener("click", async () => {
+                try {
+                  btnAceptarAsignacion.disabled = true;
+                  btnAceptarAsignacion.textContent = "Aceptando...";
+
+                  await updateDoc(doc(db, "solicitudesPatrulla", p.id), {
+                    estado: "aceptada",
+                    patrulleroDni: empleadoDni,
+                    aceptadaEn: serverTimestamp()
+                  });
+
+                  seleccionarPatrulla(p.id, {
+                    ...p,
+                    estado: "aceptada",
+                    patrulleroDni: empleadoDni
+                  });
+
+                  if (typeof mostrarPatrullaEnMapa === "function") {
+                    mostrarPatrullaEnMapa(p);
+                  }
+                } catch (e) {
+                  console.error("Error al aceptar asignación:", e);
+                  btnAceptarAsignacion.disabled = false;
+                  btnAceptarAsignacion.textContent = "✅ Aceptar asignación";
+                  alert("No se pudo aceptar la asignación.");
+                }
+              });
+            }
+
+            const btnRechazarAsignacion = div.querySelector(".btn-rechazar-asignacion");
+            if (btnRechazarAsignacion) {
+              btnRechazarAsignacion.addEventListener("click", async () => {
+                try {
+                  const motivoRechazo = (motivoRechazoPatrulla?.value || "").trim();
+
+                  btnRechazarAsignacion.disabled = true;
+                  btnRechazarAsignacion.textContent = "Rechazando...";
+
+                  await updateDoc(doc(db, "solicitudesPatrulla", p.id), {
+                    estado: "pendiente",
+                    asignadoPatrulleroDni: null,
+                    asignadoEn: null,
+                    rechazadaPorDni: empleadoDni,
+                    rechazadaEn: serverTimestamp(),
+                    motivoRechazo: motivoRechazo || ""
+                  });
+
+                  if (motivoRechazoPatrulla) motivoRechazoPatrulla.value = "";
+
+                  if (patrullaSeleccionadaId === p.id) {
+                    patrullaSeleccionadaId = null;
+                    patrullaSeleccionadaData = null;
+                  }
+
+                  setMsgPatrullaGps("⏪ Asignación rechazada. La solicitud volvió a pendiente.", false);
+                } catch (e) {
+                  console.error("Error al rechazar asignación:", e);
+                  btnRechazarAsignacion.disabled = false;
+                  btnRechazarAsignacion.textContent = "❌ Rechazar asignación";
+                  alert("No se pudo rechazar la asignación.");
+                }
+              });
+            }
+
+            div.addEventListener("click", () => {
+              seleccionarPatrulla(p.id, p);
+
+              if (typeof mostrarPatrullaEnMapa === "function") {
+                mostrarPatrullaEnMapa(p);
+              }
+            });
+
+            listaPatrullas.appendChild(div);
+          });
+
+        }, (err) => {
+          console.error("Snapshot patrullas:", err);
+          listaPatrullas.textContent = "Error cargando patrullas.";
+        });
+        // ===============================
+        // ✅ ALERTAS
+        // ===============================
         const qA = query(
           collection(db, "alertas"),
           where("productorId", "==", productorId),
@@ -787,7 +1987,7 @@
           let cant = 0;
           snap.forEach((d) => {
             const a = d.data();
-            const para = (a.para || "todos").toString().trim(); // "todos" o DNI
+            const para = (a.para || "todos").toString().trim();
 
             if (para !== "todos" && para !== empleadoDni) return;
 
@@ -795,9 +1995,9 @@
             const div = document.createElement("div");
             div.className = "item";
             div.innerHTML = `
-              <div><b>🚨 ${a.tipo ?? "Alerta"}</b></div>
-              <div class="muted">${a.descripcion ?? ""}</div>
-            `;
+        <div><b>🚨 ${a.tipo ?? "Alerta"}</b></div>
+        <div class="muted">${a.descripcion ?? ""}</div>
+      `;
             listaAlertas.appendChild(div);
           });
 
@@ -806,269 +2006,299 @@
           console.error("Snapshot alertas:", err);
           listaAlertas.textContent = "Error cargando alertas (reglas/índices).";
         });
+      }
 
-        // ===============================
-        // 🚚 TRACKING CAMIÓN — OPCIÓN 2
-        // - No se detiene por salir.
-        // - Reanuda solo si estaba activo.
-        // - WakeLock para evitar que el celular duerma.
-        // ===============================
-        let watchId = null;
-        // ===============================
-        // 📍 Ruta + Distancia (para guardar al detener)
-        // ===============================
-        let rutaPts = [];          // [{lat,lng,t}, ...]
-        let lastPt = null;         // {lat,lng}
-        let distanciaM = 0;        // acumulado
-        let inicioMs = 0;
+      // ===============================
+      // 🚚 TRACKING CAMIÓN — OPCIÓN 2
+      // - No se detiene por salir.
+      // - Reanuda solo si estaba activo.
+      // - WakeLock para evitar que el celular duerma.
+      // ===============================
+      let watchId = null;
+      // ===============================
+      // 📍 Ruta + Distancia (para guardar al detener)
+      // ===============================
+      let rutaPts = [];          // [{lat,lng,t}, ...]
+      let lastPt = null;         // {lat,lng}
+      let distanciaM = 0;        // acumulado
+      let inicioMs = 0;
 
-        const UMBRAL_METROS_GUARDAR = 5;   // evita ruido GPS
-        const MAX_PUNTOS_GUARDAR = 2000;    // límite por seguridad (doc size)
+      const UMBRAL_METROS_GUARDAR = 5;   // evita ruido GPS
+      const MAX_PUNTOS_GUARDAR = 2000;    // límite por seguridad (doc size)
 
-        // Haversine
-        function distMetros(lat1, lon1, lat2, lon2) {
-          const R = 6371000;
-          const toRad = (x) => x * Math.PI / 180;
-          const dLat = toRad(lat2 - lat1);
-          const dLon = toRad(lon2 - lon1);
-          const a =
-            Math.sin(dLat / 2) ** 2 +
-            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-            Math.sin(dLon / 2) ** 2;
-          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-          return Math.round(R * c);
-        }
+      // Haversine
+      function distMetros(lat1, lon1, lat2, lon2) {
+        const R = 6371000;
+        const toRad = (x) => x * Math.PI / 180;
+        const dLat = toRad(lat2 - lat1);
+        const dLon = toRad(lon2 - lon1);
+        const a =
+          Math.sin(dLat / 2) ** 2 +
+          Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+          Math.sin(dLon / 2) ** 2;
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return Math.round(R * c);
+      }
 
 
-        const camionIdEl = document.getElementById("camionId");
-        const btnStartTrack = document.getElementById("btnStartTrack");
-        const btnStopTrack = document.getElementById("btnStopTrack");
-        const msgTrack = document.getElementById("msgTrack");
+      const camionIdEl = document.getElementById("camionId");
+      const btnStartTrack = document.getElementById("btnStartTrack");
+      const btnStopTrack = document.getElementById("btnStopTrack");
+      const msgTrack = document.getElementById("msgTrack");
 
-        const TRACK_KEY = "trackingActivo";
-        const TRACK_CAMION_KEY = "trackingCamionId";
+      const TRACK_KEY = "trackingActivo";
+      const TRACK_CAMION_KEY = "trackingCamionId";
 
-        function setMsg(t, ok = true) {
-          msgTrack.textContent = t;
-          msgTrack.style.color = ok ? "#14532d" : "#b91c1c";
-        }
+      function setMsg(t, ok = true) {
+        msgTrack.textContent = t;
+        msgTrack.style.color = ok ? "#14532d" : "#b91c1c";
+      }
 
-        async function upsertCamion(camionId, payload) {
-          await setDoc(doc(db, "camiones", camionId), payload, { merge: true });
-        }
+      async function upsertCamion(camionId, payload) {
+        await setDoc(doc(db, "camiones", camionId), payload, { merge: true });
+      }
 
-        // --------------------
-        // Wake Lock
-        // --------------------
-        let wakeLock = null;
+      // --------------------
+      // Wake Lock
+      // --------------------
+      let wakeLock = null;
 
-        async function activarWakeLock() {
-          try {
-            if ("wakeLock" in navigator) {
-              wakeLock = await navigator.wakeLock.request("screen");
-              console.log("✅ WakeLock activo");
-            }
-          } catch (e) {
-            console.warn("WakeLock no disponible:", e);
+      async function activarWakeLock() {
+        try {
+          if ("wakeLock" in navigator) {
+            wakeLock = await navigator.wakeLock.request("screen");
+            console.log("✅ WakeLock activo");
           }
+        } catch (e) {
+          console.warn("WakeLock no disponible:", e);
         }
+      }
 
-        async function desactivarWakeLock() {
-          try {
-            if (wakeLock) {
-              await wakeLock.release();
-              wakeLock = null;
-              console.log("⏹ WakeLock liberado");
-            }
-          } catch { }
-        }
-
-        // Si vuelve a primer plano y estaba activo, re-pedir WakeLock
-        document.addEventListener("visibilitychange", () => {
-          if (document.visibilityState === "visible" && localStorage.getItem(TRACK_KEY) === "1") {
-            activarWakeLock();
+      async function desactivarWakeLock() {
+        try {
+          if (wakeLock) {
+            await wakeLock.release();
+            wakeLock = null;
+            console.log("⏹ WakeLock liberado");
           }
+        } catch { }
+      }
+
+      // Si vuelve a primer plano y estaba activo, re-pedir WakeLock
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible" && localStorage.getItem(TRACK_KEY) === "1") {
+          activarWakeLock();
+        }
+      });
+
+      // --------------------
+      // Start
+      // --------------------
+      btnStartTrack.addEventListener("click", async () => {
+        const camionId = (camionIdEl.value || "").trim();
+        if (!camionId) return setMsg("⚠️ Ingresá el ID/patente del camión.", false);
+
+        if (!("geolocation" in navigator)) {
+          return setMsg("❌ Este dispositivo no tiene geolocalización.", false);
+        }
+
+        // Persistir estado para reanudar
+        localStorage.setItem(TRACK_KEY, "1");
+        localStorage.setItem(TRACK_CAMION_KEY, camionId);
+        await activarWakeLock();
+
+        // Evitar doble tracking
+        if (watchId) navigator.geolocation.clearWatch(watchId);
+
+        btnStartTrack.disabled = true;
+        btnStopTrack.disabled = false;
+
+        setMsg("📡 Iniciando monitoreo...");
+
+        // 🟢 Nuevo viaje
+        rutaPts = [];
+        lastPt = null;
+        distanciaM = 0;
+        inicioMs = Date.now();
+
+
+        // Primer ping
+        await upsertCamion(camionId, {
+          productorId,
+          camionId,
+          empleadoDni,
+          online: true,
+          updatedAt: serverTimestamp(),
+          lastSeen: Date.now()
         });
 
-        // --------------------
-        // Start
-        // --------------------
-        btnStartTrack.addEventListener("click", async () => {
-          const camionId = (camionIdEl.value || "").trim();
-          if (!camionId) return setMsg("⚠️ Ingresá el ID/patente del camión.", false);
+        watchId = navigator.geolocation.watchPosition(
+          async (pos) => {
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
 
-          if (!("geolocation" in navigator)) {
-            return setMsg("❌ Este dispositivo no tiene geolocalización.", false);
-          }
+            // ✅ guardar ruta (local) + calcular distancia
+            const t = Date.now();
 
-          // Persistir estado para reanudar
-          localStorage.setItem(TRACK_KEY, "1");
-          localStorage.setItem(TRACK_CAMION_KEY, camionId);
-          await activarWakeLock();
-
-          // Evitar doble tracking
-          if (watchId) navigator.geolocation.clearWatch(watchId);
-
-          btnStartTrack.disabled = true;
-          btnStopTrack.disabled = false;
-
-          setMsg("📡 Iniciando monitoreo...");
-
-          // 🟢 Nuevo viaje
-          rutaPts = [];
-          lastPt = null;
-          distanciaM = 0;
-          inicioMs = Date.now();
-
-
-          // Primer ping
-          await upsertCamion(camionId, {
-            productorId,
-            camionId,
-            empleadoDni,
-            online: true,
-            updatedAt: serverTimestamp(),
-            lastSeen: Date.now()
-          });
-
-          watchId = navigator.geolocation.watchPosition(
-            async (pos) => {
-              const lat = pos.coords.latitude;
-              const lng = pos.coords.longitude;
-
-              // ✅ guardar ruta (local) + calcular distancia
-              const t = Date.now();
-
-              if (!lastPt) {
+            if (!lastPt) {
+              lastPt = { lat, lng };
+              rutaPts.push({ lat, lng, t });
+            } else {
+              const d = distMetros(lastPt.lat, lastPt.lng, lat, lng);
+              if (d >= UMBRAL_METROS_GUARDAR) {
+                distanciaM += d;
                 lastPt = { lat, lng };
                 rutaPts.push({ lat, lng, t });
-              } else {
-                const d = distMetros(lastPt.lat, lastPt.lng, lat, lng);
-                if (d >= UMBRAL_METROS_GUARDAR) {
-                  distanciaM += d;
-                  lastPt = { lat, lng };
-                  rutaPts.push({ lat, lng, t });
 
-                  // límite (evita doc enorme)
-                  if (rutaPts.length > MAX_PUNTOS_GUARDAR) {
-                    rutaPts.splice(0, rutaPts.length - MAX_PUNTOS_GUARDAR);
-                  }
+                // límite (evita doc enorme)
+                if (rutaPts.length > MAX_PUNTOS_GUARDAR) {
+                  rutaPts.splice(0, rutaPts.length - MAX_PUNTOS_GUARDAR);
                 }
               }
+            }
 
 
-              await upsertCamion(camionId, {
+            await upsertCamion(camionId, {
+              productorId,
+              camionId,
+              empleadoDni,
+              lat,
+              lng,
+              accuracy: Math.round(pos.coords.accuracy || 0),
+              speed: pos.coords.speed ?? null,
+              heading: pos.coords.heading ?? null,
+              online: true,
+              updatedAt: serverTimestamp(),
+              lastSeen: Date.now()
+            });
+
+            setMsg(`✅ Enviando ubicación… (${lat.toFixed(5)}, ${lng.toFixed(5)})`);
+          },
+          (err) => {
+            console.error("GPS watch error:", err);
+
+            let msg = "❌ Error de GPS. Activá permisos/ubicación del celular.";
+            if (err?.code === 1) msg = "❌ Permiso denegado. Activá ubicación para este sitio.";
+            if (err?.code === 2) msg = "❌ No se pudo obtener señal GPS. Probá al aire libre.";
+            if (err?.code === 3) msg = "❌ Timeout GPS. Reintentá o movete a un lugar con mejor señal.";
+
+            setMsg(msg, false);
+            btnStartTrack.disabled = false;
+            btnStopTrack.disabled = true;
+          }
+          ,
+          {
+            enableHighAccuracy: true,
+            timeout: 20000,      // más tiempo
+            maximumAge: 10000    // aceptá cache 10s
+          }
+
+        );
+      });
+
+      // --------------------
+      // Stop (única forma de “detener” real)
+      // --------------------
+      btnStopTrack.addEventListener("click", async () => {
+        const camionId = (camionIdEl.value || "").trim();
+
+        localStorage.removeItem(TRACK_KEY);
+        localStorage.removeItem(TRACK_CAMION_KEY);
+        await desactivarWakeLock();
+
+        if (watchId) {
+          navigator.geolocation.clearWatch(watchId);
+          watchId = null;
+        }
+
+        btnStartTrack.disabled = false;
+        btnStopTrack.disabled = true;
+
+        setMsg("⏹ Monitoreo detenido.");
+
+        if (camionId) {
+          try {
+            await updateDoc(doc(db, "camiones", camionId), {
+              online: false,
+              updatedAt: serverTimestamp(),
+              lastSeen: Date.now()
+            });
+          } catch (e) {
+            console.warn("No pude marcar offline:", e);
+          }
+          // ✅ Guardar viaje al detener
+          try {
+            const finMs = Date.now();
+            // ✅ forzar punto final si solo hay 1 punto
+            if (rutaPts.length === 1 && lastPt) {
+              rutaPts.push({ lat: lastPt.lat, lng: lastPt.lng, t: Date.now() });
+            }
+
+            // Solo guardo si tengo mínimo 2 puntos
+            if (camionId && rutaPts.length >= 2 && inicioMs) {
+              await addDoc(collection(db, "viajes_camiones"), {
                 productorId,
                 camionId,
                 empleadoDni,
-                lat,
-                lng,
-                accuracy: Math.round(pos.coords.accuracy || 0),
-                speed: pos.coords.speed ?? null,
-                heading: pos.coords.heading ?? null,
-                online: true,
-                updatedAt: serverTimestamp(),
-                lastSeen: Date.now()
+                inicioMs,
+                finMs,
+                distanciaM: Math.round(distanciaM),
+                rutaPts: rutaPts
               });
 
-              setMsg(`✅ Enviando ubicación… (${lat.toFixed(5)}, ${lng.toFixed(5)})`);
-            },
-            (err) => {
-              console.error("GPS watch error:", err);
-
-              let msg = "❌ Error de GPS. Activá permisos/ubicación del celular.";
-              if (err?.code === 1) msg = "❌ Permiso denegado. Activá ubicación para este sitio.";
-              if (err?.code === 2) msg = "❌ No se pudo obtener señal GPS. Probá al aire libre.";
-              if (err?.code === 3) msg = "❌ Timeout GPS. Reintentá o movete a un lugar con mejor señal.";
-
-              setMsg(msg, false);
-              btnStartTrack.disabled = false;
-              btnStopTrack.disabled = true;
             }
-            ,
-            {
-              enableHighAccuracy: true,
-              timeout: 20000,      // más tiempo
-              maximumAge: 10000    // aceptá cache 10s
-            }
-
-          );
-        });
-
-        // --------------------
-        // Stop (única forma de “detener” real)
-        // --------------------
-        btnStopTrack.addEventListener("click", async () => {
-          const camionId = (camionIdEl.value || "").trim();
-
-          localStorage.removeItem(TRACK_KEY);
-          localStorage.removeItem(TRACK_CAMION_KEY);
-          await desactivarWakeLock();
-
-          if (watchId) {
-            navigator.geolocation.clearWatch(watchId);
-            watchId = null;
+          } catch (e) {
+            console.warn("No pude guardar el viaje:", e);
           }
 
-          btnStartTrack.disabled = false;
-          btnStopTrack.disabled = true;
 
-          setMsg("⏹ Monitoreo detenido.");
-
-          if (camionId) {
-            try {
-              await updateDoc(doc(db, "camiones", camionId), {
-                online: false,
-                updatedAt: serverTimestamp(),
-                lastSeen: Date.now()
-              });
-            } catch (e) {
-              console.warn("No pude marcar offline:", e);
-            }
-            // ✅ Guardar viaje al detener
-            try {
-              const finMs = Date.now();
-              // ✅ forzar punto final si solo hay 1 punto
-              if (rutaPts.length === 1 && lastPt) {
-                rutaPts.push({ lat: lastPt.lat, lng: lastPt.lng, t: Date.now() });
-              }
-
-              // Solo guardo si tengo mínimo 2 puntos
-              if (camionId && rutaPts.length >= 2 && inicioMs) {
-                await addDoc(collection(db, "viajes_camiones"), {
-                  productorId,
-                  camionId,
-                  empleadoDni,
-                  inicioMs,
-                  finMs,
-                  distanciaM: Math.round(distanciaM),
-                  rutaPts: rutaPts
-                });
-
-              }
-            } catch (e) {
-              console.warn("No pude guardar el viaje:", e);
-            }
-
-
-          }
-        });
-
-        // --------------------
-        // Auto-reanudar si estaba activo
-        // --------------------
-        const estabaActivo = localStorage.getItem(TRACK_KEY) === "1";
-        const camionGuardado = (localStorage.getItem(TRACK_CAMION_KEY) || "").trim();
-
-        if (estabaActivo && camionGuardado) {
-          camionIdEl.value = camionGuardado;
-          btnStartTrack.click();
         }
+      });
 
+      // --------------------
+      // Auto-reanudar si estaba activo
+      // --------------------
+      const estabaActivo = localStorage.getItem(TRACK_KEY) === "1";
+      const camionGuardado = (localStorage.getItem(TRACK_CAMION_KEY) || "").trim();
 
-
+      if (estabaActivo && camionGuardado) {
+        camionIdEl.value = camionGuardado;
+        btnStartTrack.click();
       }
+
     }
+
+    function initSwitchModulosEmpleado() {
+      const botones = document.querySelectorAll(".switch-btn");
+      const modulos = document.querySelectorAll(".modulo-empleado");
+
+      botones.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const destino = btn.dataset.modulo;
+
+          botones.forEach((b) => b.classList.remove("activo"));
+          btn.classList.add("activo");
+
+          modulos.forEach((mod) => {
+            if (mod.id === destino) {
+              mod.classList.remove("hidden-mod");
+              mod.classList.add("visible-mod");
+            } else {
+              mod.classList.remove("visible-mod");
+              mod.classList.add("hidden-mod");
+            }
+          });
+
+          if (destino === "mod-operativo") {
+            setTimeout(() => {
+              if (mapaPatrulla) mapaPatrulla.invalidateSize();
+            }, 200);
+          }
+        });
+      });
+    }
+
+    initSwitchModulosEmpleado();
   </script>
   <script>
     if ("serviceWorker" in navigator) {
@@ -1078,7 +2308,11 @@
           .catch((e) => console.warn("❌ SW error (empleado):", e));
       });
     }
+
+
   </script>
+
+
 
 </body>
 

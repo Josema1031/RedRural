@@ -7,6 +7,7 @@
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
   <link rel="stylesheet" href="../css/main.css">
   <title>Panel del Productor — RuralControl</title>
 </head>
@@ -50,12 +51,15 @@
 
     <a href="../seguridad-ganadera/operativo/panel.html" class="nav-btn">
       <span class="icono">🛡️</span>
-      <span class="texto">SEGURIDA</span>
+      <span class="texto">Seguridad</span>
       <div class="indicador"></div>
     </a>
 
-
-
+    <button data-target="sec-uber-rural" class="nav-btn">
+      <span class="icono">🚓</span>
+      <span class="texto">Vigia Rural</span>
+      <div class="indicador"></div>
+    </button>
 
     <button data-target="sec-gestion" class="nav-btn">
       <span class="icono">📊</span>
@@ -289,6 +293,7 @@
           <button class="btn-secundario" id="btnHoyIrCamiones" type="button">🚚 Ir a Camiones</button>
         </div>
 
+
         <div class="card" style="margin-top:14px;">
           <strong>⚡ Tareas Pendientes</strong>
           <div id="hoyListaPendientes" class="lista-simple" style="margin-top:10px;">
@@ -339,6 +344,199 @@
 
         <p id="hoyMsg" class="status-msg"></p>
       </div>
+    </section>
+
+    <!-- ============================= -->
+    <!-- SECCIÓN: UBER RURAL -->
+    <!-- ============================= -->
+    <section id="sec-uber-rural" class="hidden">
+      <h2>🚓 Vigia Rural</h2>
+
+      <div class="card" style="margin-top:14px;">
+        <div class="header-seguridad">
+          <strong>🚓 Seguridad física</strong>
+
+          <button id="btnPatrulla" class="btn-patrulla" type="button">
+            🚓 Solicitar patrulla
+          </button>
+        </div>
+
+        <div id="formPatrulla" class="form-patrulla hidden-block" style="margin-top:12px;">
+          <div class="fila">
+            <select id="motivoPatrulla">
+              <option value="movimiento_sospechoso">Movimiento sospechoso</option>
+              <option value="control_preventivo">Control preventivo</option>
+              <option value="recorrida_nocturna">Recorrida nocturna</option>
+              <option value="robo_o_intrusion">Posible robo o intrusión</option>
+
+            </select>
+
+            <select id="prioridadPatrulla">
+              <option value="baja">Prioridad baja</option>
+              <option value="media">Prioridad media</option>
+              <option value="alta">🚨 Prioridad alta</option>
+            </select>
+
+            <select id="duracionPatrulla">
+              <option value="1">1 hora</option>
+              <option value="2">2 horas</option>
+              <option value="4">4 horas</option>
+              <option value="8">8 horas</option>
+            </select>
+          </div>
+
+          <div class="fila">
+            <input id="nombreCampoPatrulla" type="text" placeholder="Nombre del campo o referencia">
+            <button id="btnUbicacionPatrulla" class="btn-secundario" type="button">📍 Usar ubicación actual</button>
+          </div>
+
+          <div class="fila">
+            <input id="latPatrulla" type="number" step="any" placeholder="Latitud">
+            <input id="lngPatrulla" type="number" step="any" placeholder="Longitud">
+          </div>
+
+          <div style="margin-top:10px;">
+            <small class="muted">🗺️ Tocá el mapa para marcar el lugar donde debe patrullar.</small>
+            <div id="mapSelectorPatrulla" style="height:280px;border-radius:12px;margin-top:8px;background:#e5e7eb;">
+            </div>
+          </div>
+
+          <div class="fila">
+            <input id="detallePatrulla" type="text" placeholder="Detalle breve (opcional)">
+            <button id="enviarPatrulla" class="btn-primario" type="button">✅ Enviar solicitud</button>
+          </div>
+        </div>
+
+        <p class="status-msg" id="msgPatrulla"></p>
+
+        <div class="card" style="margin-top:14px;">
+          <strong>📋 Mis solicitudes de patrulla</strong>
+          <small class="muted">Acá vas a ver el estado de los pedidos enviados.</small>
+
+          <div id="listaSolicitudesPatrulla" class="lista-simple" style="margin-top:10px;">
+            <small class="muted">Todavía no hay solicitudes cargadas.</small>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <strong>🧭 Patrullero más cercano</strong>
+          <small class="muted">Calcula qué empleado está más cerca de la solicitud seleccionada.</small>
+
+          <div id="patrulleroCercanoBox" class="lista-simple" style="margin-top:10px;">
+            <small class="muted">Seleccioná una solicitud para calcular la cercanía.</small>
+          </div>
+
+          <div class="botones-patrulla-dos">
+            <button id="btnCalcularPatrulleroCercano" class="btn-secundario" type="button">
+              📍 Calcular más cercano
+            </button>
+            <button id="btnSugerirAsignacionPatrulla" class="btn-primario" type="button">
+              🤖 Sugerir asignación
+            </button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <strong>🛰️ Patrulla en vivo</strong>
+          <small class="muted">Seguimiento en tiempo real de la solicitud seleccionada.</small>
+
+          <div id="estadoPatrullaVivo" class="status-msg" style="margin-top:10px;">
+            Sin patrulla seleccionada.
+          </div>
+
+          <div id="datosPatrullaVivo" class="muted" style="margin-top:8px;">
+            Esperando datos...
+          </div>
+
+          <div class="botones-patrulla">
+            <button id="btnCancelarPatrulla" class="btn-secundario" type="button">
+              ❌ Cancelar
+            </button>
+
+            <a id="btnWhatsappPatrullero" class="btn-primario" href="#" target="_blank" rel="noopener noreferrer"
+              style="text-decoration:none; pointer-events:none; opacity:.6;">
+              💬 WhatsApp
+            </a>
+
+            <button id="btnPdfPatrulla" class="btn-primario" type="button">
+              📄 informe PDF
+            </button>
+          </div>
+
+          <div id="mapPatrullaVivo" style="height:320px;border-radius:12px;margin-top:10px;background:#e5e7eb;"></div>
+        </div>
+      </div>
+
+
+      <div class="card" style="margin-top:14px;">
+        <strong>📚 Historial de patrullas</strong>
+        <small class="muted">Servicios finalizados y cancelados del campo.</small>
+
+        <div class="fila" style="margin-top:10px;">
+          <input id="filtroPatrullaCampo" type="text" placeholder="Filtrar por campo">
+          <select id="filtroPatrullaEstado">
+            <option value="">Todos los estados</option>
+            <option value="finalizada">Finalizada</option>
+            <option value="cancelada">Cancelada</option>
+            <option value="aceptada">Aceptada</option>
+            <option value="en_curso">En curso</option>
+            <option value="pendiente">Pendiente</option>
+          </select>
+          <button id="btnFiltrarHistorialPatrullas" class="btn-secundario" type="button">🔎 Filtrar</button>
+          <button id="btnLimpiarHistorialPatrullas" class="btn-secundario" type="button">🧹 Limpiar</button>
+        </div>
+
+        <div id="listaHistorialPatrullas" class="lista-simple" style="margin-top:10px;">
+          <small class="muted">Cargando historial...</small>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px;">
+        <strong>🎯 Tablero operativo de patrullas</strong>
+        <small class="muted">Resumen rápido del estado actual del servicio.</small>
+
+        <div class="fila hoy-cards" style="align-items:stretch; margin-top:10px;">
+          <div class="card hoy-card">
+            <strong>⏳ Pendientes</strong>
+            <div id="patrullasPendientesCount" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
+          </div>
+
+          <div class="card hoy-card">
+            <strong>✅ Aceptadas</strong>
+            <div id="patrullasAceptadasCount" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
+          </div>
+
+          <div class="card hoy-card">
+            <strong>🚓 En curso</strong>
+            <div id="patrullasEnCursoCount" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
+          </div>
+
+          <div class="card hoy-card">
+            <strong>🏁 Finalizadas</strong>
+            <div id="patrullasFinalizadasCount" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
+          </div>
+        </div>
+
+        <div class="card hoy-card">
+          <strong>🚨 Urgentes</strong>
+          <div id="patrullasUrgentesCount" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
+        </div>
+
+        <div class="card" style="margin-top:12px;">
+          <strong>📍 Patrullas activas ahora</strong>
+          <div id="listaPatrullasActivas" class="lista-simple" style="margin-top:10px;">
+            <small class="muted">Cargando...</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px;">
+        <strong>🚨 Patrullas críticas</strong>
+        <div id="listaPatrullasCriticas" class="lista-simple" style="margin-top:10px;">
+          <small class="muted">Sin urgencias activas.</small>
+        </div>
+      </div>
+
     </section>
 
     <!-- ============================= -->
@@ -647,6 +845,7 @@
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
 
+
   <!-- Firebase -->
   <script type="module">
     import { auth, db, firebaseConfig } from "../firebase-init.js?v=2";
@@ -662,7 +861,37 @@
     const secondaryApp = initializeApp(firebaseConfig, "secondary");
     const secondaryAuth = getAuth(secondaryApp);
 
+    let mapaSelectorPatrulla = null;
+    let marcadorSelectorPatrulla = null;
+    let mapaPatrullaVivo = null;
+    let marcadorPatrullaVivo = null;
+    let solicitudPatrullaSeleccionadaId = null;
+    let solicitudPatrullaSeleccionadaData = null;
+    let patrulleroMasCercanoData = null;
+    let lineaRutaPatrullaVivo = null;
+
     let productorId = null;
+
+    const btnCancelarPatrulla = document.getElementById("btnCancelarPatrulla");
+    const btnWhatsappPatrullero = document.getElementById("btnWhatsappPatrullero");
+    const btnPdfPatrulla = document.getElementById("btnPdfPatrulla");
+    const patrulleroCercanoBox = document.getElementById("patrulleroCercanoBox");
+    const btnCalcularPatrulleroCercano = document.getElementById("btnCalcularPatrulleroCercano");
+    const btnSugerirAsignacionPatrulla = document.getElementById("btnSugerirAsignacionPatrulla");
+    let historialPatrullasCache = [];
+
+    const listaHistorialPatrullas = document.getElementById("listaHistorialPatrullas");
+    const filtroPatrullaCampo = document.getElementById("filtroPatrullaCampo");
+    const filtroPatrullaEstado = document.getElementById("filtroPatrullaEstado");
+    const btnFiltrarHistorialPatrullas = document.getElementById("btnFiltrarHistorialPatrullas");
+    const btnLimpiarHistorialPatrullas = document.getElementById("btnLimpiarHistorialPatrullas");
+    const patrullasPendientesCount = document.getElementById("patrullasPendientesCount");
+    const patrullasAceptadasCount = document.getElementById("patrullasAceptadasCount");
+    const patrullasEnCursoCount = document.getElementById("patrullasEnCursoCount");
+    const patrullasFinalizadasCount = document.getElementById("patrullasFinalizadasCount");
+    const patrullasUrgentesCount = document.getElementById("patrullasUrgentesCount");
+    const listaPatrullasCriticas = document.getElementById("listaPatrullasCriticas");
+    const listaPatrullasActivas = document.getElementById("listaPatrullasActivas");
 
     // =========================
     // 1) GATE POR AUTH
@@ -1179,6 +1408,1095 @@
         document.querySelector('[data-target="sec-camiones"]')?.click();
       });
     }
+
+    function initMapaSelectorPatrulla() {
+      if (mapaSelectorPatrulla) {
+        setTimeout(() => mapaSelectorPatrulla.invalidateSize(), 200);
+        return;
+      }
+
+      const el = document.getElementById("mapSelectorPatrulla");
+      if (!el || typeof L === "undefined") return;
+
+      mapaSelectorPatrulla = L.map("mapSelectorPatrulla").setView([-33.1416, -59.3097], 12);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "&copy; OpenStreetMap"
+      }).addTo(mapaSelectorPatrulla);
+
+      mapaSelectorPatrulla.on("click", (e) => {
+        const lat = e.latlng.lat;
+        const lng = e.latlng.lng;
+
+        const inputLat = document.getElementById("latPatrulla");
+        const inputLng = document.getElementById("lngPatrulla");
+
+        if (inputLat) inputLat.value = lat.toFixed(6);
+        if (inputLng) inputLng.value = lng.toFixed(6);
+
+        if (marcadorSelectorPatrulla) {
+          marcadorSelectorPatrulla.setLatLng([lat, lng]);
+        } else {
+          marcadorSelectorPatrulla = L.marker([lat, lng]).addTo(mapaSelectorPatrulla);
+        }
+
+        marcadorSelectorPatrulla.bindPopup("📍 Punto de patrulla seleccionado").openPopup();
+      });
+
+      setTimeout(() => mapaSelectorPatrulla.invalidateSize(), 300);
+    }
+
+    function actualizarMapaSelectorPatrulla(lat, lng) {
+      if (!mapaSelectorPatrulla || !Number.isFinite(lat) || !Number.isFinite(lng)) return;
+
+      if (marcadorSelectorPatrulla) {
+        marcadorSelectorPatrulla.setLatLng([lat, lng]);
+      } else {
+        marcadorSelectorPatrulla = L.marker([lat, lng]).addTo(mapaSelectorPatrulla);
+      }
+
+      mapaSelectorPatrulla.setView([lat, lng], 15, { animate: true });
+    }
+
+    function initMapaPatrullaVivo() {
+      if (mapaPatrullaVivo) {
+        setTimeout(() => mapaPatrullaVivo.invalidateSize(), 200);
+        return;
+      }
+
+      const el = document.getElementById("mapPatrullaVivo");
+      if (!el || typeof L === "undefined") return;
+
+      mapaPatrullaVivo = L.map("mapPatrullaVivo").setView([-33.1416, -59.3097], 12);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "&copy; OpenStreetMap"
+      }).addTo(mapaPatrullaVivo);
+
+      setTimeout(() => mapaPatrullaVivo.invalidateSize(), 300);
+    }
+
+    function actualizarMapaPatrullaVivo(data) {
+      if (!mapaPatrullaVivo) initMapaPatrullaVivo();
+
+      const lat = Number(data?.trackingLat ?? data?.lat);
+      const lng = Number(data?.trackingLng ?? data?.lng);
+
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+
+      if (marcadorPatrullaVivo) {
+        marcadorPatrullaVivo.setLatLng([lat, lng]);
+      } else {
+        marcadorPatrullaVivo = L.marker([lat, lng]).addTo(mapaPatrullaVivo);
+      }
+
+      const motivo = String(data?.motivo || "Patrulla").replaceAll("_", " ");
+      const estado = data?.estado || "sin_estado";
+      const distancia = Math.round(Number(data?.distanciaM || 0));
+
+      marcadorPatrullaVivo.bindPopup(`
+    <b>🚓 ${motivo}</b><br>
+    Estado: ${estado}<br>
+    Distancia: ${distancia} m
+  `);
+
+      if (lineaRutaPatrullaVivo) {
+        mapaPatrullaVivo.removeLayer(lineaRutaPatrullaVivo);
+        lineaRutaPatrullaVivo = null;
+      }
+
+      if (Array.isArray(data?.rutaPts) && data.rutaPts.length > 1) {
+        const puntos = data.rutaPts
+          .filter(p => Number.isFinite(Number(p.lat)) && Number.isFinite(Number(p.lng)))
+          .map(p => [Number(p.lat), Number(p.lng)]);
+
+        if (puntos.length > 1) {
+          lineaRutaPatrullaVivo = L.polyline(puntos, {
+            weight: 4,
+            opacity: 0.8
+          }).addTo(mapaPatrullaVivo);
+
+          const grupo = L.featureGroup([marcadorPatrullaVivo, lineaRutaPatrullaVivo]);
+          mapaPatrullaVivo.fitBounds(grupo.getBounds(), { padding: [20, 20] });
+          return;
+        }
+      }
+
+      mapaPatrullaVivo.setView([lat, lng], 15, { animate: true });
+    }
+
+    async function renderPatrullaVivo(data) {
+      const estadoEl = document.getElementById("estadoPatrullaVivo");
+      const datosEl = document.getElementById("datosPatrullaVivo");
+
+      if (!estadoEl || !datosEl) return;
+
+      const estado = data?.estado || "sin_estado";
+      const motivo = String(data?.motivo || "Patrulla").replaceAll("_", " ");
+      const patrulleroDni = data?.patrulleroDni || "";
+      const distancia = Math.round(Number(data?.distanciaM || 0));
+      const campo = data?.nombreCampo || "Sin nombre";
+      const prioridad = data?.prioridad || "media";
+      const prioridadHtml =
+        prioridad === "alta"
+          ? `<span style="background:#fee2e2;color:#991b1b;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:800;">🔴 Alta</span>`
+          : prioridad === "media"
+            ? `<span style="background:#fef3c7;color:#92400e;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:800;">🟡 Media</span>`
+            : `<span style="background:#dcfce7;color:#166534;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:800;">🟢 Baja</span>`;
+      const etaMin = Number(data?.etaMin || 0);
+      const observacionFinal = data?.observacionFinal || "Sin observaciones finales";
+      const sugeridoPatrulleroDni = data?.sugeridoPatrulleroDni || "Sin sugerencia";
+      const sugeridoDistanciaM = Number(data?.sugeridoDistanciaM || 0);
+      const rechazadaPorDni = data?.rechazadaPorDni || "—";
+      const motivoRechazo = data?.motivoRechazo || "—";
+
+      let ultimaActTxt = "Sin actualización";
+      if (Number.isFinite(data?.trackingUltimaActualizacionMs)) {
+        ultimaActTxt = new Date(data.trackingUltimaActualizacionMs).toLocaleString("es-AR");
+      }
+
+      let patrulleroTexto = "Sin asignar";
+      let telefonoPatrullero = "";
+
+      if (patrulleroDni) {
+        try {
+          const empSnap = await getDoc(doc(db, "employees", patrulleroDni));
+          if (empSnap.exists()) {
+            const emp = empSnap.data();
+            patrulleroTexto = `${emp?.nombre || "Sin nombre"} (${patrulleroDni})`;
+            telefonoPatrullero = String(emp?.telefono || "").replace(/\D/g, "");
+          } else {
+            patrulleroTexto = patrulleroDni;
+          }
+        } catch (e) {
+          console.error("Error leyendo empleado patrullero:", e);
+          patrulleroTexto = patrulleroDni;
+        }
+      }
+
+      estadoEl.textContent = `Estado: ${estado} • Motivo: ${motivo}`;
+
+
+      datosEl.innerHTML = `
+          <div><strong>Campo:</strong> ${campo}</div>
+          <div><strong>Patrullero:</strong> ${patrulleroTexto}</div>
+         <div><strong>Prioridad:</strong> ${prioridadHtml}</div>
+          <div><strong>Distancia:</strong> ${distancia} m</div>
+          <div><strong>ETA:</strong> ${etaMin ? `${etaMin} min` : "—"}</div>
+          <div><strong>Última actualización:</strong> ${ultimaActTxt}</div>
+          <div><strong>Observación final:</strong> ${observacionFinal}</div>
+          <div><strong>Sugerido:</strong> ${sugeridoPatrulleroDni}</div>
+          <div><strong>Distancia sugerida:</strong> ${sugeridoDistanciaM ? `${sugeridoDistanciaM} m` : "—"}</div>
+          <div><strong>Rechazada por:</strong> ${rechazadaPorDni}</div>
+          <div><strong>Motivo rechazo:</strong> ${motivoRechazo}</div>
+        `;
+
+      if (btnWhatsappPatrullero) {
+        if (telefonoPatrullero) {
+          const mensaje = encodeURIComponent(`Hola, te contacto desde Red Rural por la patrulla del campo ${campo}.`);
+          btnWhatsappPatrullero.href = `https://wa.me/${telefonoPatrullero}?text=${mensaje}`;
+          btnWhatsappPatrullero.style.pointerEvents = "auto";
+          btnWhatsappPatrullero.style.opacity = "1";
+        } else {
+          btnWhatsappPatrullero.href = "#";
+          btnWhatsappPatrullero.style.pointerEvents = "none";
+          btnWhatsappPatrullero.style.opacity = ".6";
+        }
+      }
+
+      actualizarMapaPatrullaVivo(data);
+    }
+    async function descargarInformePatrullaPDF(data) {
+      try {
+        if (!data) {
+          alert("Primero seleccioná una patrulla.");
+          return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const docPdf = new jsPDF();
+
+        const motivo = String(data?.motivo || "Patrulla").replaceAll("_", " ");
+        const estado = data?.estado || "sin_estado";
+        const prioridad = data?.prioridad || "media";
+        const campo = data?.nombreCampo || "Sin nombre";
+        const detalle = data?.detalle || "Sin detalle";
+        const patrulleroDni = data?.patrulleroDni || "Sin asignar";
+        const distancia = Math.round(Number(data?.distanciaM || 0));
+        const observacionFinal = data?.observacionFinal || "Sin observaciones finales";
+
+        let patrulleroNombre = "Sin asignar";
+        let patrulleroTelefono = "";
+
+        if (data?.patrulleroDni) {
+          try {
+            const empSnap = await getDoc(doc(db, "employees", data.patrulleroDni));
+            if (empSnap.exists()) {
+              const emp = empSnap.data();
+              patrulleroNombre = emp?.nombre || patrulleroDni;
+              patrulleroTelefono = emp?.telefono || "";
+            } else {
+              patrulleroNombre = patrulleroDni;
+            }
+          } catch (e) {
+            console.error("Error leyendo empleado para PDF:", e);
+            patrulleroNombre = patrulleroDni;
+          }
+        }
+
+        const creadoEn = data?.creadoEn?.seconds
+          ? new Date(data.creadoEn.seconds * 1000).toLocaleString("es-AR")
+          : "Sin fecha";
+
+        const finalizadaEn = data?.finalizadaEn?.seconds
+          ? new Date(data.finalizadaEn.seconds * 1000).toLocaleString("es-AR")
+          : "Sin finalizar";
+
+        const inicioMs = data?.inicioMs ? new Date(data.inicioMs).toLocaleString("es-AR") : "Sin inicio";
+        const finMs = data?.finMs ? new Date(data.finMs).toLocaleString("es-AR") : "Sin fin";
+
+        let y = 20;
+
+        docPdf.setFont("helvetica", "bold");
+        docPdf.setFontSize(16);
+        docPdf.text("Informe de Patrulla Rural", 14, y);
+
+        y += 10;
+        docPdf.setFont("helvetica", "normal");
+        docPdf.setFontSize(11);
+        docPdf.text(`Fecha de emisión: ${new Date().toLocaleString("es-AR")}`, 14, y);
+
+        y += 12;
+        docPdf.setFont("helvetica", "bold");
+        docPdf.text("Datos del servicio", 14, y);
+
+        y += 8;
+        docPdf.setFont("helvetica", "normal");
+        docPdf.text(`Campo: ${campo}`, 14, y); y += 7;
+        docPdf.text(`Motivo: ${motivo}`, 14, y); y += 7;
+        docPdf.text(`Estado: ${estado}`, 14, y); y += 7;
+        docPdf.text(`Prioridad: ${prioridad}`, 14, y); y += 7;
+        docPdf.text(`Detalle: ${detalle}`, 14, y); y += 7;
+        docPdf.text(`Fecha de solicitud: ${creadoEn}`, 14, y); y += 7;
+        docPdf.text(`Inicio patrulla: ${inicioMs}`, 14, y); y += 7;
+        docPdf.text(`Fin patrulla: ${finMs}`, 14, y); y += 7;
+        docPdf.text(`Fecha finalización: ${finalizadaEn}`, 14, y); y += 7;
+        docPdf.text(`Distancia recorrida: ${distancia} m`, 14, y);
+
+        y += 10;
+        docPdf.setFont("helvetica", "bold");
+        docPdf.text("Datos del patrullero", 14, y);
+
+        y += 8;
+        docPdf.setFont("helvetica", "normal");
+        docPdf.text(`Nombre: ${patrulleroNombre}`, 14, y); y += 7;
+        docPdf.text(`DNI: ${patrulleroDni}`, 14, y); y += 7;
+        docPdf.text(`Teléfono: ${patrulleroTelefono || "Sin teléfono"}`, 14, y);
+
+        y += 10;
+        docPdf.setFont("helvetica", "bold");
+        docPdf.text("Observación final", 14, y);
+
+        y += 8;
+        docPdf.setFont("helvetica", "normal");
+
+        const obsLines = docPdf.splitTextToSize(observacionFinal, 180);
+        docPdf.text(obsLines, 14, y);
+        y += obsLines.length * 7;
+
+        y += 10;
+        docPdf.setFontSize(10);
+        docPdf.text("Documento generado automáticamente por Red Rural.", 14, y);
+
+        const nombreArchivo = `informe_patrulla_${campo.replace(/\s+/g, "_")}_${Date.now()}.pdf`;
+        docPdf.save(nombreArchivo);
+
+      } catch (error) {
+        console.error("Error generando PDF de patrulla:", error);
+        alert("No se pudo generar el PDF.");
+      }
+    }
+
+    async function renderHistorialPatrullas(lista) {
+      if (!listaHistorialPatrullas) return;
+
+      if (!Array.isArray(lista) || lista.length === 0) {
+        listaHistorialPatrullas.innerHTML = `<small class="muted">No hay patrullas para mostrar.</small>`;
+        return;
+      }
+
+      const htmlParts = [];
+
+      for (const item of lista) {
+        const motivo = String(item?.motivo || "Sin motivo").replaceAll("_", " ");
+        const estado = item?.estado || "sin_estado";
+        const campo = item?.nombreCampo || "Sin nombre";
+        const distancia = Math.round(Number(item?.distanciaM || 0));
+        const observacionFinal = item?.observacionFinal || "Sin observaciones finales";
+        const prioridad = item?.prioridad || "media";
+        const prioridadLabel =
+          prioridad === "alta"
+            ? "🔴 Alta"
+            : prioridad === "media"
+              ? "🟡 Media"
+              : "🟢 Baja";
+        const motivoRechazo = item?.motivoRechazo || "";
+        const patrulleroDni = item?.patrulleroDni || "";
+
+        let fechaTxt = "Sin fecha";
+        if (item?.creadoEn?.seconds) {
+          fechaTxt = new Date(item.creadoEn.seconds * 1000).toLocaleString("es-AR");
+        }
+
+        let patrulleroTexto = "Sin asignar";
+        if (patrulleroDni) {
+          try {
+            const empSnap = await getDoc(doc(db, "employees", patrulleroDni));
+            if (empSnap.exists()) {
+              const emp = empSnap.data();
+              patrulleroTexto = `${emp?.nombre || "Sin nombre"} (${patrulleroDni})`;
+            } else {
+              patrulleroTexto = patrulleroDni;
+            }
+          } catch (e) {
+            console.error("Error leyendo empleado del historial:", e);
+            patrulleroTexto = patrulleroDni;
+          }
+        }
+
+        htmlParts.push(`
+      <div class="item-patrulla" data-historial-id="${item.id}">
+        <div class="item-patrulla-top">
+          <strong>🚓 ${motivo}</strong>
+          <span class="${getClaseEstadoPatrulla(estado)}">${getTextoEstadoPatrulla(estado)}</span>
+        </div>
+
+        <div style="margin-top:6px;"><small><strong>Campo:</strong> ${campo}</small></div>
+        <div style="margin-top:4px;"><small><strong>Patrullero:</strong> ${patrulleroTexto}</small></div>
+        <div style="margin-top:4px;"><small><strong>Prioridad:</strong> ${prioridadLabel}</small></div>
+        <div style="margin-top:4px;"><small><strong>Distancia:</strong> ${distancia} m</small></div>
+        <div style="margin-top:4px;"><small><strong>Observación:</strong> ${observacionFinal}</small></div>
+       ${formatearResumenPatrullaFinalizada(item)}
+       <div style="margin-top:4px;"><small><strong>Motivo rechazo:</strong> ${motivoRechazo || "—"}</small></div>
+        <div style="margin-top:4px;"><small><strong>Fecha:</strong> ${fechaTxt}</small></div>
+
+        <div class="fila" style="margin-top:10px;">
+          <button class="btn-secundario btn-ver-patrulla" type="button">👁 Ver</button>
+          <button class="btn-primario btn-pdf-patrulla-item" type="button">📄 PDF</button>
+        </div>
+      </div>
+    `);
+      }
+
+      listaHistorialPatrullas.innerHTML = htmlParts.join("");
+
+      const items = listaHistorialPatrullas.querySelectorAll(".item-patrulla");
+
+      items.forEach((el) => {
+        const id = el.getAttribute("data-historial-id");
+        const data = lista.find(x => x.id === id);
+        if (!data) return;
+
+        const btnVer = el.querySelector(".btn-ver-patrulla");
+        const btnPdf = el.querySelector(".btn-pdf-patrulla-item");
+
+        btnVer?.addEventListener("click", async () => {
+          solicitudPatrullaSeleccionadaId = id;
+          solicitudPatrullaSeleccionadaData = data;
+          await renderPatrullaVivo(data);
+          initMapaPatrullaVivo();
+          document.getElementById("sec-hoy")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+
+        btnPdf?.addEventListener("click", async () => {
+          await descargarInformePatrullaPDF(data);
+        });
+      });
+    }
+
+    function escucharHistorialPatrullas() {
+      if (!productorId || !listaHistorialPatrullas) return;
+
+      const q = query(
+        collection(db, "solicitudesPatrulla"),
+        where("productorId", "==", productorId)
+      );
+
+      onSnapshot(q, async (snap) => {
+        const docs = [];
+
+        snap.forEach((docSnap) => {
+          docs.push({
+            id: docSnap.id,
+            ...docSnap.data()
+          });
+        });
+
+        docs.sort((a, b) => {
+          const aTime = a?.creadoEn?.seconds || 0;
+          const bTime = b?.creadoEn?.seconds || 0;
+          return bTime - aTime;
+        });
+
+        historialPatrullasCache = docs;
+        await aplicarFiltrosHistorialPatrullas();
+        await renderTableroOperativoPatrullas(docs);
+      }, (error) => {
+        console.error("Error al leer historial de patrullas:", error);
+        listaHistorialPatrullas.innerHTML = `<small style="color:#b91c1c;">❌ No se pudo cargar el historial.</small>`;
+      });
+    }
+
+    async function aplicarFiltrosHistorialPatrullas() {
+      let lista = [...historialPatrullasCache];
+
+      const campoTxt = (filtroPatrullaCampo?.value || "").trim().toLowerCase();
+      const estadoSel = (filtroPatrullaEstado?.value || "").trim().toLowerCase();
+
+      if (campoTxt) {
+        lista = lista.filter(item =>
+          String(item?.nombreCampo || "").toLowerCase().includes(campoTxt)
+        );
+      }
+
+      if (estadoSel) {
+        lista = lista.filter(item =>
+          String(item?.estado || "").toLowerCase() === estadoSel
+        );
+      }
+
+      await renderHistorialPatrullas(lista);
+    }
+
+    async function renderTableroOperativoPatrullas(lista) {
+      if (!Array.isArray(lista)) lista = [];
+
+      const pendientes = lista.filter(x => (x.estado || "pendiente") === "pendiente").length;
+      const aceptadas = lista.filter(x => x.estado === "aceptada").length;
+      const enCurso = lista.filter(x => x.estado === "en_curso").length;
+      const finalizadas = lista.filter(x => x.estado === "finalizada").length;
+      const urgentes = lista.filter(x =>
+        (x.prioridad || "").toLowerCase() === "alta" &&
+        ["pendiente", "asignada", "aceptada", "en_camino", "en_curso"].includes(x.estado || "")
+      ).length;
+
+      if (patrullasPendientesCount) patrullasPendientesCount.textContent = pendientes;
+      if (patrullasAceptadasCount) patrullasAceptadasCount.textContent = aceptadas;
+      if (patrullasEnCursoCount) patrullasEnCursoCount.textContent = enCurso;
+      if (patrullasFinalizadasCount) patrullasFinalizadasCount.textContent = finalizadas;
+      if (patrullasUrgentesCount) patrullasUrgentesCount.textContent = urgentes;
+
+      if (!listaPatrullasActivas) return;
+
+      const activas = lista
+        .filter(x => ["asignada", "aceptada", "en_camino", "en_curso"].includes(x.estado || ""))
+        .sort((a, b) => {
+          const pa = (a.prioridad === "alta" ? 3 : a.prioridad === "media" ? 2 : 1);
+          const pb = (b.prioridad === "alta" ? 3 : b.prioridad === "media" ? 2 : 1);
+
+          if (pb !== pa) return pb - pa;
+
+          const ta = a?.creadoEn?.seconds || 0;
+          const tb = b?.creadoEn?.seconds || 0;
+          return tb - ta;
+        });
+
+      if (activas.length === 0) {
+        listaPatrullasActivas.innerHTML = `<small class="muted">No hay patrullas activas en este momento.</small>`;
+        return;
+      }
+
+      const bloques = [];
+
+      for (const item of activas) {
+        const motivo = String(item?.motivo || "Sin motivo").replaceAll("_", " ");
+        const campo = item?.nombreCampo || "Sin nombre";
+        const estado = item?.estado || "sin_estado";
+        const distancia = Math.round(Number(item?.distanciaM || 0));
+        const patrulleroDni = item?.patrulleroDni || "";
+        const prioridad = item?.prioridad || "media";
+        const prioridadLabel =
+          prioridad === "alta"
+            ? "🔴 Alta"
+            : prioridad === "media"
+              ? "🟡 Media"
+              : "🟢 Baja";
+        let patrulleroTexto = "Sin asignar";
+        if (patrulleroDni) {
+          try {
+            const empSnap = await getDoc(doc(db, "employees", patrulleroDni));
+            if (empSnap.exists()) {
+              const emp = empSnap.data();
+              patrulleroTexto = `${emp?.nombre || "Sin nombre"} (${patrulleroDni})`;
+            } else {
+              patrulleroTexto = patrulleroDni;
+            }
+          } catch (e) {
+            console.error("Error leyendo patrullero en tablero:", e);
+            patrulleroTexto = patrulleroDni;
+          }
+        }
+
+        bloques.push(`
+      <div class="item-patrulla" data-activa-id="${item.id}">
+        <div class="item-patrulla-top">
+          <strong>🚓 ${motivo}</strong>
+          <span class="${getClaseEstadoPatrulla(estado)}">${getTextoEstadoPatrulla(estado)}</span>
+        </div>
+
+        <div style="margin-top:6px;"><small><strong>Campo:</strong> ${campo}</small></div>
+        <div style="margin-top:4px;"><small><strong>Patrullero:</strong> ${patrulleroTexto}</small></div>
+        <div style="margin-top:4px;"><small><strong>Prioridad:</strong> ${prioridadLabel}</small></div>
+        <div style="margin-top:4px;"><small><strong>Distancia:</strong> ${distancia} m</small></div>
+
+        <div class="fila" style="margin-top:10px;">
+          <button class="btn-secundario btn-ver-activa" type="button">👁 Ver en vivo</button>
+        </div>
+      </div>
+    `);
+      }
+
+      listaPatrullasActivas.innerHTML = bloques.join("");
+
+      const items = listaPatrullasActivas.querySelectorAll(".item-patrulla");
+
+      items.forEach((el) => {
+        const id = el.getAttribute("data-activa-id");
+        const data = activas.find(x => x.id === id);
+        if (!data) return;
+
+        el.querySelector(".btn-ver-activa")?.addEventListener("click", async () => {
+          solicitudPatrullaSeleccionadaId = id;
+          solicitudPatrullaSeleccionadaData = data;
+          await renderPatrullaVivo(data);
+          initMapaPatrullaVivo();
+          document.getElementById("sec-hoy")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
+
+      const criticas = lista
+        .filter(x =>
+          (x.prioridad || "").toLowerCase() === "alta" &&
+          ["pendiente", "asignada", "aceptada", "en_camino", "en_curso"].includes(x.estado || "")
+        )
+        .sort((a, b) => {
+          const ta = a?.creadoEn?.seconds || 0;
+          const tb = b?.creadoEn?.seconds || 0;
+          return tb - ta;
+        });
+
+      if (listaPatrullasCriticas) {
+        if (!criticas.length) {
+          listaPatrullasCriticas.innerHTML = `<small class="muted">Sin urgencias activas.</small>`;
+        } else {
+          listaPatrullasCriticas.innerHTML = criticas.map(item => `
+              <div class="item-patrulla">
+                <div class="item-patrulla-top">
+                  <strong>🚨 ${String(item.motivo || "Patrulla").replaceAll("_", " ")}</strong>
+                  <span class="${getClaseEstadoPatrulla(item.estado || "pendiente")}">${getTextoEstadoPatrulla(item.estado || "pendiente")}</span>
+                </div>
+                <div style="margin-top:6px;"><small><strong>Campo:</strong> ${item.nombreCampo || "Sin nombre"}</small></div>
+                <div style="margin-top:4px;"><small><strong>Distancia sugerida:</strong> ${item.sugeridoDistanciaM ? `${item.sugeridoDistanciaM} m` : "—"}</small></div>
+              </div>
+            `).join("");
+        }
+      }
+    }
+
+    function distanciaMetros(lat1, lng1, lat2, lng2) {
+      const R = 6371000;
+      const toRad = (v) => (v * Math.PI) / 180;
+
+      const dLat = toRad(lat2 - lat1);
+      const dLng = toRad(lng2 - lng1);
+
+      const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+        Math.sin(dLng / 2) ** 2;
+
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return Math.round(R * c);
+    }
+
+    async function calcularPatrulleroMasCercano() {
+      if (!solicitudPatrullaSeleccionadaData) {
+        if (patrulleroCercanoBox) {
+          patrulleroCercanoBox.innerHTML = `<small style="color:#b91c1c;">❌ Primero seleccioná una solicitud.</small>`;
+        }
+        return;
+      }
+
+      const latObj = Number(solicitudPatrullaSeleccionadaData?.lat);
+      const lngObj = Number(solicitudPatrullaSeleccionadaData?.lng);
+
+      if (!Number.isFinite(latObj) || !Number.isFinite(lngObj)) {
+        patrulleroCercanoBox.innerHTML = `<small style="color:#b91c1c;">❌ La solicitud no tiene coordenadas válidas.</small>`;
+        return;
+      }
+
+      patrulleroCercanoBox.innerHTML = `<small class="muted">Calculando patrullero más cercano...</small>`;
+
+      try {
+        const snap = await getDocs(query(
+          collection(db, "empleados_tracking"),
+          where("productorId", "==", productorId)
+        ));
+
+        const candidatos = [];
+
+        snap.forEach((docSnap) => {
+          const t = docSnap.data();
+          const lat = Number(t?.lat);
+          const lng = Number(t?.lng);
+
+          if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+
+          const d = distanciaMetros(latObj, lngObj, lat, lng);
+
+          candidatos.push({
+            id: docSnap.id,
+            ...t,
+            distanciaM: d
+          });
+        });
+
+        if (!candidatos.length) {
+          patrulleroMasCercanoData = null;
+          patrulleroCercanoBox.innerHTML = `<small class="muted">No hay ubicaciones activas de empleados todavía.</small>`;
+          return;
+        }
+
+        candidatos.sort((a, b) => a.distanciaM - b.distanciaM);
+        const mejor = candidatos[0];
+        patrulleroMasCercanoData = mejor;
+
+        let nombre = mejor.empleadoDni || mejor.id;
+        try {
+          const empSnap = await getDoc(doc(db, "employees", mejor.empleadoDni || mejor.id));
+          if (empSnap.exists()) {
+            const emp = empSnap.data();
+            nombre = `${emp?.nombre || nombre} (${mejor.empleadoDni || mejor.id})`;
+          }
+        } catch (e) {
+          console.error("Error leyendo empleado cercano:", e);
+        }
+
+        patrulleroCercanoBox.innerHTML = `
+              <div class="item-patrulla">
+                <div class="item-patrulla-top">
+                  <strong>👮 ${nombre}</strong>
+                  <span class="estado-patrulla estado-aceptada">Más cercano</span>
+                </div>
+                <div style="margin-top:6px;"><small><strong>Distancia estimada:</strong> ${mejor.distanciaM} m</small></div>
+                <div style="margin-top:4px;"><small><strong>Última actualización:</strong> ${new Date(mejor.updatedAt || Date.now()).toLocaleString("es-AR")}</small></div>
+              </div>
+            `;
+      } catch (e) {
+        console.error("Error calculando patrullero más cercano:", e);
+        patrulleroMasCercanoData = null;
+        patrulleroCercanoBox.innerHTML = `<small style="color:#b91c1c;">❌ No se pudo calcular el patrullero más cercano.</small>`;
+      }
+    }
+
+    async function sugerirAsignacionPatrulla() {
+      if (!solicitudPatrullaSeleccionadaId || !solicitudPatrullaSeleccionadaData) {
+        alert("Primero seleccioná una solicitud.");
+        return;
+      }
+
+      if (!patrulleroMasCercanoData) {
+        alert("Primero calculá el patrullero más cercano.");
+        return;
+      }
+
+      try {
+        await updateDoc(doc(db, "solicitudesPatrulla", solicitudPatrullaSeleccionadaId), {
+          sugeridoPatrulleroDni: patrulleroMasCercanoData.empleadoDni || patrulleroMasCercanoData.id,
+          sugeridoDistanciaM: patrulleroMasCercanoData.distanciaM,
+          sugeridoEn: serverTimestamp(),
+
+          estado: "asignada",
+          asignadoPatrulleroDni: patrulleroMasCercanoData.empleadoDni || patrulleroMasCercanoData.id,
+          asignadoEn: serverTimestamp()
+        });
+
+        alert("✅ Sugerencia de asignación guardada.");
+      } catch (e) {
+        console.error("Error sugiriendo asignación:", e);
+        alert("❌ No se pudo guardar la sugerencia.");
+      }
+    }
+
+    function initPatrullas() {
+      const btnPatrulla = document.getElementById("btnPatrulla");
+      const formPatrulla = document.getElementById("formPatrulla");
+      const btnEnviar = document.getElementById("enviarPatrulla");
+      const msg = document.getElementById("msgPatrulla");
+      const btnUbicacion = document.getElementById("btnUbicacionPatrulla");
+      const inputLat = document.getElementById("latPatrulla");
+      const inputLng = document.getElementById("lngPatrulla");
+      const inputNombreCampo = document.getElementById("nombreCampoPatrulla");
+
+      if (!btnPatrulla || !formPatrulla || !btnEnviar || !msg) return;
+
+      btnPatrulla.addEventListener("click", () => {
+        formPatrulla.classList.toggle("hidden-block");
+
+        if (!formPatrulla.classList.contains("hidden-block")) {
+          initMapaSelectorPatrulla();
+        }
+      });
+
+      if (btnUbicacion) {
+        btnUbicacion.addEventListener("click", () => {
+          if (!navigator.geolocation) {
+            msg.textContent = "❌ Tu navegador no permite geolocalización.";
+            msg.style.color = "#b91c1c";
+            return;
+          }
+
+          msg.textContent = "Obteniendo ubicación...";
+          msg.style.color = "#14532d";
+
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              inputLat.value = pos.coords.latitude;
+              inputLng.value = pos.coords.longitude;
+
+              initMapaSelectorPatrulla();
+              actualizarMapaSelectorPatrulla(pos.coords.latitude, pos.coords.longitude);
+
+              msg.textContent = "✅ Ubicación cargada correctamente.";
+              msg.style.color = "#166534";
+            },
+
+
+            (error) => {
+              console.error("Error obteniendo ubicación:", error);
+              msg.textContent = "❌ No se pudo obtener la ubicación.";
+              msg.style.color = "#b91c1c";
+            },
+            {
+              enableHighAccuracy: true,
+              timeout: 10000,
+              maximumAge: 0
+            }
+          );
+        });
+      }
+
+      if (inputLat && inputLng) {
+        const syncMapaDesdeInputs = () => {
+          const lat = Number(inputLat.value);
+          const lng = Number(inputLng.value);
+
+          if (Number.isFinite(lat) && Number.isFinite(lng)) {
+            initMapaSelectorPatrulla();
+            actualizarMapaSelectorPatrulla(lat, lng);
+          }
+        };
+
+        inputLat.addEventListener("change", syncMapaDesdeInputs);
+        inputLng.addEventListener("change", syncMapaDesdeInputs);
+      }
+
+      btnEnviar.addEventListener("click", async () => {
+        const motivo = document.getElementById("motivoPatrulla")?.value || "";
+        const duracion = document.getElementById("duracionPatrulla")?.value || "";
+        const detalle = document.getElementById("detallePatrulla")?.value?.trim() || "";
+        const prioridad = document.getElementById("prioridadPatrulla").value;
+
+        const nombreCampo = inputNombreCampo?.value?.trim() || "Campo sin nombre";
+        const lat = Number(inputLat?.value);
+        const lng = Number(inputLng?.value);
+
+        if (!productorId) {
+          msg.textContent = "❌ No se encontró el productor logueado.";
+          msg.style.color = "#b91c1c";
+          return;
+        }
+
+        try {
+          if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+            msg.textContent = "❌ Tenés que cargar la ubicación del lugar a patrullar.";
+            msg.style.color = "#b91c1c";
+            return;
+          }
+          msg.textContent = "Enviando solicitud...";
+          msg.style.color = "#14532d";
+
+          await addDoc(collection(db, "solicitudesPatrulla"), {
+            productorId,
+            motivo,
+            duracionHoras: Number(duracion),
+            detalle,
+            prioridad,
+            nombreCampo,
+            lat,
+            lng,
+            estado: "pendiente",
+            creadoEn: serverTimestamp()
+          });
+
+          msg.textContent = "✅ Solicitud de patrulla enviada correctamente.";
+          msg.style.color = "#166534";
+
+          document.getElementById("motivoPatrulla").value = "movimiento_sospechoso";
+          document.getElementById("duracionPatrulla").value = "1";
+          document.getElementById("detallePatrulla").value = "";
+          inputNombreCampo.value = "";
+          inputLat.value = "";
+          inputLng.value = "";
+          if (marcadorSelectorPatrulla && mapaSelectorPatrulla) {
+            mapaSelectorPatrulla.removeLayer(marcadorSelectorPatrulla);
+            marcadorSelectorPatrulla = null;
+          }
+          formPatrulla.classList.add("hidden-block");
+
+
+        } catch (error) {
+          console.error("Error al guardar solicitud de patrulla:", error);
+          msg.textContent = "❌ No se pudo enviar la solicitud.";
+          msg.style.color = "#b91c1c";
+        }
+      });
+
+      if (btnCancelarPatrulla) {
+        btnCancelarPatrulla.addEventListener("click", async () => {
+          if (!solicitudPatrullaSeleccionadaId) {
+            msg.textContent = "❌ Primero seleccioná una solicitud en 'Mis solicitudes de patrulla'.";
+            msg.style.color = "#b91c1c";
+            return;
+          }
+
+          const confirmar = confirm("¿Querés cancelar esta patrulla?");
+          if (!confirmar) return;
+
+          try {
+            await updateDoc(doc(db, "solicitudesPatrulla", solicitudPatrullaSeleccionadaId), {
+              estado: "cancelada",
+              canceladaEn: serverTimestamp(),
+              trackingActivo: false
+            });
+
+            msg.textContent = "✅ Patrulla cancelada correctamente.";
+            msg.style.color = "#166534";
+          } catch (e) {
+            console.error("Error cancelando patrulla:", e);
+            msg.textContent = "❌ No se pudo cancelar la patrulla.";
+            msg.style.color = "#b91c1c";
+          }
+
+
+        });
+      }
+
+      if (btnPdfPatrulla) {
+        btnPdfPatrulla.addEventListener("click", async () => {
+          if (!solicitudPatrullaSeleccionadaData) {
+            msg.textContent = "❌ Primero seleccioná una solicitud en 'Mis solicitudes de patrulla'.";
+            msg.style.color = "#b91c1c";
+            return;
+          }
+
+          await descargarInformePatrullaPDF(solicitudPatrullaSeleccionadaData);
+        });
+      }
+      btnFiltrarHistorialPatrullas?.addEventListener("click", async () => {
+        await aplicarFiltrosHistorialPatrullas();
+      });
+
+      btnLimpiarHistorialPatrullas?.addEventListener("click", async () => {
+        if (filtroPatrullaCampo) filtroPatrullaCampo.value = "";
+        if (filtroPatrullaEstado) filtroPatrullaEstado.value = "";
+        await aplicarFiltrosHistorialPatrullas();
+      });
+
+      btnCalcularPatrulleroCercano?.addEventListener("click", async () => {
+        await calcularPatrulleroMasCercano();
+      });
+
+      btnSugerirAsignacionPatrulla?.addEventListener("click", async () => {
+        await sugerirAsignacionPatrulla();
+      });
+    }
+    function getClaseEstadoPatrulla(estado) {
+      switch (estado) {
+        case "en_camino":
+          return "estado-patrulla estado-aceptada";
+        case "pendiente":
+          return "estado-patrulla estado-pendiente";
+        case "asignada":
+          return "estado-patrulla estado-aceptada";
+        case "aceptada":
+          return "estado-patrulla estado-aceptada";
+        case "en_curso":
+          return "estado-patrulla estado-en-curso";
+        case "finalizada":
+          return "estado-patrulla estado-finalizada";
+        case "cancelada":
+          return "estado-patrulla estado-cancelada";
+        default:
+          return "estado-patrulla estado-finalizada";
+      }
+    }
+
+    function getTextoEstadoPatrulla(estado) {
+      switch (estado) {
+        case "en_camino":
+          return "En camino";
+        case "pendiente":
+          return "Pendiente";
+        case "asignada":
+          return "Asignada";
+        case "aceptada":
+          return "Aceptada";
+        case "en_curso":
+          return "En curso";
+        case "finalizada":
+          return "Finalizada";
+        case "cancelada":
+          return "Cancelada";
+        default:
+          return estado || "Sin estado";
+      }
+    }
+
+    function formatearResumenPatrullaFinalizada(p) {
+      if (!p || p.estado !== "finalizada") return "";
+
+      const tipoNovedad = p.tipoNovedadFinal || "sin_novedad";
+
+      const txtNovedad =
+        tipoNovedad === "sin_novedad"
+          ? "✅ Sin novedad"
+          : tipoNovedad === "novedad_menor"
+            ? "⚠️ Novedad menor"
+            : "🚨 Incidencia grave";
+
+      const observacion = (p.observacionFinal || "").trim() || "Sin observación";
+
+      const alertaExtra =
+        tipoNovedad === "incidencia_grave"
+          ? `<div style="margin-top:8px;padding:10px;border-radius:10px;background:#fee2e2;color:#991b1b;font-weight:800;">
+         🚨 Incidencia grave detectada
+       </div>`
+          : "";
+
+      return `
+    <div style="margin-top:10px;padding:10px;border:1px solid #d1d5db;border-radius:10px;background:#f8fafc;">
+      <div style="font-weight:700;margin-bottom:6px;">📋 Resumen</div>
+      <div><small><b>Cierre:</b> ${txtNovedad}</small></div>
+      <div><small><b>Observación:</b> ${observacion}</small></div>
+      <div><small><b>Duración:</b> ${p.duracionMin || 0} min</small></div>
+      <div><small><b>Distancia:</b> ${p.distanciaKm || 0} km</small></div>
+      <div><small><b>Total:</b> $${(p.importeTotal || 0).toLocaleString("es-AR")}</small></div>
+      ${alertaExtra}
+    </div>
+  `;
+    }
+
+    function escucharSolicitudesPatrulla() {
+      const cont = document.getElementById("listaSolicitudesPatrulla");
+      if (!cont || !productorId) return;
+
+      const q = query(
+        collection(db, "solicitudesPatrulla"),
+        where("productorId", "==", productorId)
+      );
+
+      onSnapshot(q, (snap) => {
+        if (snap.empty) {
+          cont.innerHTML = `<small class="muted">Todavía no hay solicitudes cargadas.</small>`;
+
+          return;
+        }
+
+        const docs = [];
+        snap.forEach(docSnap => {
+          docs.push({
+            id: docSnap.id,
+            ...docSnap.data()
+          });
+        });
+
+        docs.sort((a, b) => {
+          const aTime = a?.creadoEn?.seconds || 0;
+          const bTime = b?.creadoEn?.seconds || 0;
+          return bTime - aTime;
+        });
+
+        cont.innerHTML = docs.map(item => {
+          const motivo = item.motivo || "Sin motivo";
+          const detalle = item.detalle || "Sin detalle";
+          const duracion = item.duracionHoras || "-";
+          const estado = item.estado || "pendiente";
+          const prioridad = item.prioridad || "media";
+          const estadoClase = getClaseEstadoPatrulla(estado);
+          const estadoTexto = getTextoEstadoPatrulla(estado);
+
+          let fechaTxt = "Sin fecha";
+          if (item?.creadoEn?.seconds) {
+            fechaTxt = new Date(item.creadoEn.seconds * 1000).toLocaleString("es-AR");
+          }
+
+          return `
+  <div class="item-patrulla" data-solicitud-id="${item.id}">
+          <div class="item-patrulla-top">
+            <strong>🚓 ${motivo.replaceAll("_", " ")}</strong>
+            <span class="${estadoClase}">${estadoTexto}</span>
+          </div>
+
+          <div style="margin-top:6px;">
+            <small><strong>Duración:</strong> ${duracion} h</small>
+          </div>
+
+          <div style="margin-top:4px;">
+            <small><strong>Detalle:</strong> ${detalle}</small>
+          </div>
+
+          <div style="margin-top:4px;">
+            <small><strong>Prioridad:</strong> ${prioridad}</small>
+          </div>
+
+          <div style="margin-top:4px;">
+            <small><strong>Fecha:</strong> ${fechaTxt}</small>
+          </div>
+        </div>
+      `;
+
+
+        }).join("");
+        const items = cont.querySelectorAll(".item-patrulla");
+
+        items.forEach((el) => {
+          el.addEventListener("click", () => {
+            const id = el.getAttribute("data-solicitud-id");
+            const data = docs.find(d => d.id === id);
+            if (!data) return;
+
+            solicitudPatrullaSeleccionadaId = id;
+            solicitudPatrullaSeleccionadaData = data;
+
+            renderPatrullaVivo(data);
+            initMapaPatrullaVivo();
+          });
+        });
+        if (solicitudPatrullaSeleccionadaId) {
+          const actual = docs.find(d => d.id === solicitudPatrullaSeleccionadaId);
+          if (actual) {
+            solicitudPatrullaSeleccionadaData = actual;
+            renderPatrullaVivo(actual);
+          }
+        }
+      }, (error) => {
+        console.error("Error al leer solicitudes de patrulla:", error);
+        cont.innerHTML = `<small style="color:#b91c1c;">❌ No se pudieron cargar las solicitudes.</small>`;
+      });
+    }
     // =========================
     // 2) NAVEGACIÓN ENTRE SECCIONES
     // =========================
@@ -1458,6 +2776,10 @@
       initCalculadora();
       initClima();
       initHoy();
+      initPatrullas();
+      initMapaPatrullaVivo();
+      escucharSolicitudesPatrulla();
+      escucharHistorialPatrullas();
       actualizarHoy();
       limpiarRutaGuardada();
       initGestion(); // ✅ nuevo
@@ -2784,6 +4106,7 @@
     const msgAlertas = document.getElementById("msgAlertas");
     const listaAlertas = document.getElementById("listaAlertas");
 
+
     async function guardarAlertaFirestore(tipo, descripcion) {
       // guarda la alerta para historial
       return await addDoc(collection(db, "alertas"), {
@@ -3023,6 +4346,7 @@
             <strong>🚜 ${pat}</strong><br>
             <small>${tipo} • ${activo ? "activo" : "inactivo"}</small>
           </div>
+          
         `;
             listaVehiculos.appendChild(div);
           }
