@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Facturación real</title>
+<link rel="stylesheet" href="../css/v54-facturacion-real.css">
+</head>
+<body>
+<main style="max-width:1200px;margin:0 auto;padding:24px">
+<h1>V54 · Facturación real conectada</h1>
+
+<section class="card">
+<h2>Registrar factura</h2>
+<form id="formFactura">
+<input id="cliente" placeholder="Cliente">
+<input id="campo" placeholder="Campo">
+<input id="monto" type="number" placeholder="Monto">
+<input id="fecha" type="date">
+<button type="submit">Guardar factura</button>
+</form>
+<p id="status"></p>
+</section>
+
+<section class="card">
+<h2>Listado de facturas</h2>
+<table>
+<thead>
+<tr>
+<th>Cliente</th>
+<th>Campo</th>
+<th>Monto</th>
+<th>Fecha</th>
+</tr>
+</thead>
+<tbody id="tablaFacturas"></tbody>
+</table>
+</section>
+
+</main>
+
+<script type="module">
+import { registrarFactura, listarFacturas } from "../js/core/v54-facturacion-real.js";
+
+const form = document.getElementById("formFactura");
+const tabla = document.getElementById("tablaFacturas");
+const status = document.getElementById("status");
+
+async function render(){
+tabla.innerHTML = "Cargando...";
+const items = await listarFacturas();
+if(!items.length){
+tabla.innerHTML = "<tr><td colspan='4'>Sin facturas</td></tr>";
+return;
+}
+tabla.innerHTML = items.map(i=>`
+<tr>
+<td>${i.cliente}</td>
+<td>${i.campo}</td>
+<td>$ ${Number(i.monto).toLocaleString()}</td>
+<td>${i.fecha}</td>
+</tr>
+`).join("");
+}
+
+form.addEventListener("submit", async (e)=>{
+e.preventDefault();
+status.textContent = "Guardando...";
+await registrarFactura({
+cliente: document.getElementById("cliente").value,
+campo: document.getElementById("campo").value,
+monto: document.getElementById("monto").value,
+fecha: document.getElementById("fecha").value
+});
+form.reset();
+status.textContent = "Factura guardada";
+render();
+});
+
+render();
+</script>
+
+</body>
+</html>

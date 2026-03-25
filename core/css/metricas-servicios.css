@@ -1,0 +1,46 @@
+
+.card-metricas-servicios,
+.card-historial-servicios{
+  background:#fff;
+  border-radius:14px;
+  padding:16px;
+  box-shadow:0 8px 20px rgba(0,0,0,.08);
+  margin-top:12px;
+}
+.grid-metricas-servicios{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+  gap:10px;
+  margin-top:12px;
+}
+.item-metrica{
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.item-metrica span{
+  font-size:.8rem;
+  color:#6b7280;
+}
+.tabla-historial-servicios{
+  display:grid;
+  gap:8px;
+  margin-top:12px;
+}
+.fila-historial-servicio{
+  display:grid;
+  grid-template-columns:1fr 1.4fr .9fr .8fr .9fr;
+  gap:10px;
+  padding:10px;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  font-size:.95rem;
+}
+@media (max-width: 720px){
+  .fila-historial-servicio{
+    grid-template-columns:1fr;
+  }
+}

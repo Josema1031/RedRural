@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>V60 · Panel financiero completo</title>
+  <link rel="stylesheet" href="../css/v60-panel-financiero.css">
+</head>
+<body>
+  <main class="wrap">
+    <h1>V60 · Panel financiero completo</h1>
+
+    <section class="stats">
+      <article><strong id="clientes">0</strong><span>Clientes</span></article>
+      <article><strong id="facturado">$ 0</strong><span>Facturado</span></article>
+      <article><strong id="pagado">$ 0</strong><span>Pagado</span></article>
+      <article><strong id="costos">$ 0</strong><span>Costos</span></article>
+      <article><strong id="saldo">$ 0</strong><span>Saldo pendiente</span></article>
+      <article><strong id="margen">$ 0</strong><span>Margen</span></article>
+    </section>
+
+    <section class="card">
+      <h2>Estado financiero general</h2>
+      <div id="estadoGeneral" class="summary"></div>
+    </section>
+
+    <section class="card">
+      <h2>Resumen por cliente</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Campo</th>
+            <th>Facturado</th>
+            <th>Pagado</th>
+            <th>Saldo</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody id="tablaClientes"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script type="module">
+    import { auth } from "../firebase-init.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { calcularPanelFinancieroCompleto } from "../js/core/v60-panel-financiero.js";
+
+    const ids = {
+      clientes: document.getElementById("clientes"),
+      facturado: document.getElementById("facturado"),
+      pagado: document.getElementById("pagado"),
+      costos: document.getElementById("costos"),
+      saldo: document.getElementById("saldo"),
+      margen: document.getElementById("margen"),
+      estadoGeneral: document.getElementById("estadoGeneral"),
+      tablaClientes: document.getElementById("tablaClientes")
+    };
+
+    async function render() {
+      ids.tablaClientes.innerHTML = "<tr><td colspan='6'>Cargando...</td></tr>";
+      try {
+        const data = await calcularPanelFinancieroCompleto();
+
+        ids.clientes.textContent = data.resumen.clientes;
+        ids.facturado.textContent = "$ " + Number(data.resumen.totalFacturado).toLocaleString("es-AR");
+        ids.pagado.textContent = "$ " + Number(data.resumen.totalPagado).toLocaleString("es-AR");
+        ids.costos.textContent = "$ " + Number(data.resumen.totalCostos).toLocaleString("es-AR");
+        ids.saldo.textContent = "$ " + Number(data.resumen.saldoPendiente).toLocaleString("es-AR");
+        ids.margen.textContent = "$ " + Number(data.resumen.margen).toLocaleString("es-AR");
+
+        ids.estadoGeneral.innerHTML = `
+          <p><strong>Clientes activos:</strong> ${data.resumen.clientes}</p>
+          <p><strong>Estado general:</strong> ${data.resumen.estadoGeneral}</p>
+          <p><strong>Rentabilidad estimada:</strong> ${data.resumen.rentabilidad}%</p>
+        `;
+
+        if (!data.detalle.length) {
+          ids.tablaClientes.innerHTML = "<tr><td colspan='6'>Sin datos financieros.</td></tr>";
+          return;
+        }
+
+        ids.tablaClientes.innerHTML = data.detalle.map(item => `
+          <tr>
+            <td>${item.cliente || ""}</td>
+            <td>${item.campo || ""}</td>
+            <td>$ ${Number(item.facturado || 0).toLocaleString("es-AR")}</td>
+            <td>$ ${Number(item.pagado || 0).toLocaleString("es-AR")}</td>
+            <td>$ ${Number(item.saldo || 0).toLocaleString("es-AR")}</td>
+            <td><span class="badge ${item.estado}">${item.estado}</span></td>
+          </tr>
+        `).join("");
+      } catch (err) {
+        console.error(err);
+        ids.tablaClientes.innerHTML = "<tr><td colspan='6'>Error cargando panel financiero.</td></tr>";
+      }
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      console.log("Usuario autenticado:", user?.uid || null);
+      if (!user) {
+        ids.estadoGeneral.innerHTML = "<p>Debés iniciar sesión como productor.</p>";
+        ids.tablaClientes.innerHTML = "<tr><td colspan='6'>Sin sesión activa.</td></tr>";
+        return;
+      }
+      await render();
+    });
+  </script>
+</body>
+</html>

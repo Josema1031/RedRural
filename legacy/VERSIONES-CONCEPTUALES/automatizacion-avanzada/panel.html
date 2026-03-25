@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Automatización Avanzada - RED RURAL</title>
+  <link rel="stylesheet" href="../css/v41-automatizacion-avanzada.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <div>
+        <h1>Automatización Avanzada</h1>
+        <p>Centro de reglas automáticas para operación, cobertura, clientes y acciones preventivas.</p>
+      </div>
+      <div class="hero-badge">V41</div>
+    </header>
+
+    <section class="grid-kpis">
+      <article class="kpi"><strong>14</strong><span>Reglas activas</span></article>
+      <article class="kpi"><strong>8</strong><span>Acciones sugeridas</span></article>
+      <article class="kpi"><strong>3</strong><span>Bloqueos preventivos</span></article>
+      <article class="kpi"><strong>92%</strong><span>Ejecución estimada</span></article>
+    </section>
+
+    <section class="dashboard">
+      <article class="card">
+        <h2>Motor de reglas</h2>
+        <div class="rule">Cobertura baja → sugerir refuerzo</div>
+        <div class="rule">Contrato vencido + mora → bloqueo</div>
+        <div class="rule">Urgencia alta + patrullero libre → despacho inmediato</div>
+        <div class="rule">Cliente por renovar → recordatorio comercial</div>
+      </article>
+
+      <article class="card">
+        <h2>Estados automáticos</h2>
+        <ul class="list">
+          <li>Servicio en observación</li>
+          <li>Zona crítica detectada</li>
+          <li>Cliente en seguimiento</li>
+          <li>Patrullero sobrecargado</li>
+        </ul>
+      </article>
+
+      <article class="card wide">
+        <h2>Acciones generadas</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Módulo</th>
+              <th>Evento</th>
+              <th>Regla aplicada</th>
+              <th>Acción</th>
+              <th>Prioridad</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Despacho</td>
+              <td>Urgencia abierta</td>
+              <td>Patrullero libre más cercano</td>
+              <td>Despacho inmediato</td>
+              <td><span class="badge danger">Crítica</span></td>
+            </tr>
+            <tr>
+              <td>Comercial</td>
+              <td>Contrato por vencer</td>
+              <td>Renovación automática sugerida</td>
+              <td>Notificar y contactar</td>
+              <td><span class="badge warn">Alta</span></td>
+            </tr>
+            <tr>
+              <td>Zona</td>
+              <td>Cobertura parcial</td>
+              <td>Refuerzo preventivo</td>
+              <td>Escalar móvil</td>
+              <td><span class="badge ok">Media</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+  </main>
+
+  <script src="../js/core/v41-automatizacion-avanzada.js"></script>
+</body>
+</html>

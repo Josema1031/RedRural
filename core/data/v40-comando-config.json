@@ -1,0 +1,10 @@
+{
+  "version": "V40",
+  "panel": "comando_maestro",
+  "metricas": {
+    "clientesActivos": 31,
+    "patrullerosEnLinea": 9,
+    "despachosCriticos": 6,
+    "coberturaOperativa": 93
+  }
+}

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Análisis de Patrones | SISG Rural</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+
+<body>
+  <header class="sisg-header">
+    <div class="sisg-header-top">
+      <div>
+        <p class="sisg-kicker">Red Rural / Seguridad Rural</p>
+        <h1>SISG Rural</h1>
+        <p class="sisg-subtitle">Plataforma operativa de seguridad rural</p>
+      </div>
+    </div>
+
+    <div class="topbar-mobile">
+      <button id="menuToggle" class="menu-toggle" aria-label="Abrir menú">☰</button>
+
+    </div>
+    <div id="menuOverlay" class="menu-overlay"></div>
+
+    <aside id="mobileMenu" class="mobile-menu">
+      <div class="mobile-menu-header">
+        <h3>Menú</h3>
+        <button id="menuClose" class="menu-close" aria-label="Cerrar menú">✕</button>
+      </div>
+
+      <nav class="mobile-menu-nav">
+        <a href="../../../core/productor/panel.html">Red Rural</a>
+        <a href="panel.html">Panel</a>
+        <a href="incidencias.html">Incidencias</a>
+        <a href="analisis.html" class="active">Análisis</a>
+        <a href="mapas-riesgo.html">Mapa de riesgo</a>
+        <a href="reportes.html">Reportes</a>
+      </nav>
+    </aside>
+
+    <nav class="sisg-nav">
+   <a href="../../../core/productor/panel.html">Red Rural</a>
+      <a href="panel.html">Panel</a>
+      <a href="incidencias.html">Incidencias</a>
+      <a href="analisis.html" class="active">Análisis</a>
+      <a href="mapas-riesgo.html">Mapa de riesgo</a>
+      <a href="reportes.html">Reportes</a>
+    </nav>
+
+  </header>
+
+  <main class="container">
+    <section class="card hero-analisis">
+      <span class="badge">Tablero de gestión</span>
+      <h2 style="margin-top: 12px;">Panel de análisis de incidencias rurales</h2>
+      <p class="subtexto">
+        Este panel resume automáticamente la información cargada en el registro
+        de incidencias para ayudarte a detectar patrones, identificar potreros
+        críticos y mejorar las decisiones preventivas del establecimiento.
+      </p>
+    </section>
+
+    <section class="kpi-grid">
+      <article class="card kpi-card">
+        <p class="kpi-label">Total de incidencias</p>
+        <h3 id="totalIncidencias" class="kpi-value">0</h3>
+        <span class="badge">Registro acumulado</span>
+      </article>
+
+      <article class="card kpi-card">
+        <p class="kpi-label">Potrero más afectado</p>
+        <h3 id="potreroMasAfectado" class="kpi-value">-</h3>
+        <span class="badge">Zona crítica</span>
+      </article>
+
+      <article class="card kpi-card">
+        <p class="kpi-label">Guardia más repetido</p>
+        <h3 id="guardiaFrecuente" class="kpi-value">-</h3>
+        <span class="badge">Dato de control</span>
+      </article>
+
+      <article class="card kpi-card">
+        <p class="kpi-label">Tipo más reportado</p>
+        <h3 id="tipoMasComun" class="kpi-value">-</h3>
+        <span class="badge">Patrón principal</span>
+      </article>
+    </section>
+
+    <section class="card bloque-destacado">
+      <h2>Resumen interpretativo</h2>
+      <p id="resumenInterpretativo" class="subtexto">
+        Todavía no hay datos suficientes para generar una interpretación.
+      </p>
+
+      <div class="sisg-form-actions" style="margin-top:16px;">
+        <a id="btnVerPotreroMapa" href="mapas-riesgo.html" class="btn-principal" style="display:none;">
+          Ver potrero crítico en mapa
+        </a>
+      </div>
+    </section>
+
+    <section class="card riesgo-card">
+      <h2>Estado de riesgo</h2>
+      <p id="estadoRiesgo" class="riesgo-valor">Sin datos</p>
+      <p id="detalleRiesgo" class="subtexto">
+        Cargá incidencias para obtener una lectura del nivel de riesgo.
+      </p>
+    </section>
+    </section>
+
+    <section class="card">
+      <h2>Detalle por incidencia</h2>
+      <p class="subtexto">
+        Listado completo de registros utilizados para el análisis actual.
+      </p>
+
+      <div class="table-wrap" style="margin-top: 12px;">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Establecimiento</th>
+              <th>Fecha</th>
+              <th>Potrero</th>
+              <th>Tipo</th>
+              <th>Guardia</th>
+              <th>Cantidad</th>
+              <th>Evidencia</th>
+            </tr>
+          </thead>
+          <tbody id="tablaAnalisis"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="../js/analisis.js"></script>
+
+  <script>
+    const menuToggle = document.getElementById("menuToggle");
+    const mobileMenu = document.getElementById("mobileMenu");
+    const menuClose = document.getElementById("menuClose");
+    const menuOverlay = document.getElementById("menuOverlay");
+
+    function abrirMenu() {
+      mobileMenu.classList.add("active");
+      menuOverlay.classList.add("active");
+      document.body.style.overflow = "hidden";
+    }
+
+    function cerrarMenu() {
+      mobileMenu.classList.remove("active");
+      menuOverlay.classList.remove("active");
+      document.body.style.overflow = "";
+    }
+
+    if (menuToggle) menuToggle.addEventListener("click", abrirMenu);
+    if (menuClose) menuClose.addEventListener("click", cerrarMenu);
+    if (menuOverlay) menuOverlay.addEventListener("click", cerrarMenu);
+  </script>
+
+</body>
+
+</html>

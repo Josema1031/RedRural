@@ -1,0 +1,18 @@
+{
+  "patrulla": {
+    "base": 0,
+    "nocturno": 0,
+    "urgencia": 0,
+    "porKm": 0
+  },
+  "mandado": {
+    "base": 0,
+    "urgencia": 0,
+    "porKm": 0
+  },
+  "traslado": {
+    "base": 0,
+    "urgencia": 0,
+    "porKm": 0
+  }
+}

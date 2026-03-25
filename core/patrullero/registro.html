@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro de Patrullero | Vigía Rural</title>
+    <link rel="stylesheet" href="../css/patrullero-registro.css" />
+</head>
+
+<body>
+    <main class="registro-wrap">
+        <section class="hero">
+            <div class="hero-badge">VIGÍA RURAL</div>
+            <h1>Registro de Patrullero Externo</h1>
+            <p>
+                Sumate a la red de seguridad rural. Completá tus datos, cargá la documentación
+                requerida y aguardá la aprobación del equipo administrador.
+            </p>
+        </section>
+
+        <section class="card">
+            <form id="formRegistroPatrullero" class="form-grid">
+                <div class="full">
+                    <h2>Datos personales</h2>
+                </div>
+
+                <div>
+                    <label for="nombre">Nombre</label>
+                    <input id="nombre" type="text" required />
+                </div>
+
+                <div>
+                    <label for="apellido">Apellido</label>
+                    <input id="apellido" type="text" required />
+                </div>
+
+                <div>
+                    <label for="dni">DNI</label>
+                    <input id="dni" type="text" inputmode="numeric" required />
+                </div>
+
+                <div>
+                    <label for="telefono">Teléfono</label>
+                    <input id="telefono" type="text" required />
+                </div>
+
+                <div>
+                    <label for="email">Email</label>
+                    <input id="email" type="email" required />
+                </div>
+
+                <div>
+                    <label for="password">Contraseña</label>
+                    <input id="password" type="password" minlength="6" required />
+                </div>
+
+                <div>
+                    <label for="password2">Repetir contraseña</label>
+                    <input id="password2" type="password" minlength="6" required />
+                </div>
+
+                <div>
+                    <label for="localidad">Localidad</label>
+                    <input id="localidad" type="text" value="Gualeguay" required />
+                </div>
+
+                <div class="full">
+                    <h2>Experiencia en seguridad</h2>
+                </div>
+
+                <div class="full">
+                    <label for="experiencia">Detalle su experiencia</label>
+                    <textarea id="experiencia" rows="4"
+                        placeholder="Ej: vigilancia privada, seguridad rural, fuerzas de seguridad, patrullaje, control de accesos..."
+                        required></textarea>
+                </div>
+
+                <div>
+                    <label for="aniosExperiencia">Años de experiencia</label>
+                    <input id="aniosExperiencia" type="number" min="0" max="50" required />
+                </div>
+
+                <div>
+                    <label for="disponibilidad">Disponibilidad principal</label>
+                    <select id="disponibilidad" required>
+                        <option value="">Seleccionar</option>
+                        <option value="24hs">24 horas</option>
+                        <option value="diurno">Diurno</option>
+                        <option value="nocturno">Nocturno</option>
+                        <option value="fines_de_semana">Fines de semana</option>
+                    </select>
+                </div>
+
+                <div class="full">
+                    <h2>Vehículo</h2>
+                </div>
+
+                <div>
+                    <label for="vehiculoMarca">Marca</label>
+                    <input id="vehiculoMarca" type="text" required />
+                </div>
+
+                <div>
+                    <label for="vehiculoModelo">Modelo</label>
+                    <input id="vehiculoModelo" type="text" required />
+                </div>
+
+                <div>
+                    <label for="vehiculoDominio">Dominio</label>
+                    <input id="vehiculoDominio" type="text" required />
+                </div>
+
+                <div>
+                    <label for="vehiculoAnio">Año</label>
+                    <input id="vehiculoAnio" type="number" min="1980" max="2100" required />
+                </div>
+
+                <div class="full">
+                    <h2>Documentación obligatoria</h2>
+                </div>
+
+                <div>
+                    <label for="dniFrente">DNI frente</label>
+                    <input id="dniFrente" type="file" accept="image/*,.pdf" required />
+                </div>
+
+                <div>
+                    <label for="dniDorso">DNI dorso</label>
+                    <input id="dniDorso" type="file" accept="image/*,.pdf" required />
+                </div>
+
+                <div>
+                    <label for="antecedentes">Antecedentes penales</label>
+                    <input id="antecedentes" type="file" accept="image/*,.pdf" required />
+                </div>
+
+                <div>
+                    <label for="licencia">Licencia de conducir</label>
+                    <input id="licencia" type="file" accept="image/*,.pdf" required />
+                </div>
+
+                <div class="full">
+                    <label for="fotoVehiculo">Foto del vehículo</label>
+                    <input id="fotoVehiculo" type="file" accept="image/*,.pdf" required />
+                </div>
+
+                <div class="full check-wrap">
+                    <label class="check">
+                        <input id="aceptaTerminos" type="checkbox" required />
+                        Declaro que la información es verdadera y acepto quedar sujeto a revisión y aprobación.
+                    </label>
+                </div>
+
+                <div class="full actions">
+                    <button type="submit" id="btnEnviar">Enviar solicitud</button>
+                </div>
+
+                <div class="full">
+                    <p id="estadoMsg" class="estado-msg"></p>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script type="module" src="../js/modules/patrullero/registro.js"></script>
+</body>
+
+</html>

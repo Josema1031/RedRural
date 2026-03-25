@@ -1,0 +1,19 @@
+{
+  "version": "v5",
+  "servicios": [
+    "patrulla",
+    "incidencia",
+    "tarea",
+    "mandado",
+    "traslado"
+  ],
+  "estados": [
+    "pendiente",
+    "asignado",
+    "en_camino",
+    "en_proceso",
+    "finalizado",
+    "cancelado"
+  ],
+  "nota": "Base de catálogo para futura monetización y motor único de solicitudes."
+}

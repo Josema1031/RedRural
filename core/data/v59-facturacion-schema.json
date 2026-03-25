@@ -1,0 +1,13 @@
+{
+  "collection": "facturas_clientes",
+  "fields": {
+    "clienteContratoId": "string",
+    "cliente": "string",
+    "campo": "string",
+    "monto": "number",
+    "fecha": "string",
+    "productorId": "string",
+    "createdAt": "timestamp",
+    "updatedAt": "timestamp"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "version": "V48",
+  "moneda": "ARS",
+  "criterios": {
+    "rentable": 15,
+    "bajo": 0,
+    "perdida": -1
+  },
+  "metricas": {
+    "margenTotal": 0,
+    "margenPromedio": 0,
+    "serviciosRentables": 0,
+    "serviciosARevisar": 0
+  }
+}

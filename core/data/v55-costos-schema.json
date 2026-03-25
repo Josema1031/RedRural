@@ -1,0 +1,10 @@
+{
+  "collection": "costos_operativos",
+  "fields": {
+    "cliente": "string",
+    "campo": "string",
+    "costo": "number",
+    "fecha": "string",
+    "createdAt": "timestamp"
+  }
+}

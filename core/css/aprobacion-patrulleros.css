@@ -1,0 +1,214 @@
+.admin-wrap{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:16px;
+  margin-bottom:18px;
+}
+
+.topbar h1{
+  margin:0 0 6px;
+}
+
+.topbar p{
+  margin:0;
+  color:#6b7280;
+}
+
+.btn-link{
+  text-decoration:none;
+  background:#0f766e;
+  color:#fff;
+  padding:10px 14px;
+  border-radius:10px;
+  font-weight:700;
+}
+
+.header-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:12px;
+}
+
+.actions-login{
+  margin-top:10px;
+}
+
+.filtros{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.lista-patrulleros{
+  display:grid;
+  gap:16px;
+  margin-top:16px;
+}
+
+.p-card{
+  border:1px solid #e5e7eb;
+  border-radius:16px;
+  background:#fff;
+  padding:16px;
+  box-shadow:0 8px 24px rgba(0,0,0,.06);
+}
+
+.p-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:16px;
+  flex-wrap:wrap;
+  margin-bottom:12px;
+}
+
+.p-nombre{
+  margin:0;
+  font-size:1.15rem;
+}
+
+.p-sub{
+  margin:6px 0 0;
+  color:#6b7280;
+  font-size:.95rem;
+}
+
+.estado-chip{
+  display:inline-block;
+  padding:7px 12px;
+  border-radius:999px;
+  font-size:.85rem;
+  font-weight:700;
+}
+
+.estado-chip.pendiente{
+  background:#fef3c7;
+  color:#92400e;
+}
+
+.estado-chip.aprobado{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.estado-chip.rechazado{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.p-grid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:12px;
+  margin-bottom:14px;
+}
+
+.p-box{
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  padding:12px;
+  background:#f9fafb;
+}
+
+.p-box h4{
+  margin:0 0 8px;
+  font-size:.95rem;
+}
+
+.p-box p{
+  margin:4px 0;
+  font-size:.94rem;
+}
+
+.docs{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+
+.doc-link{
+  display:inline-block;
+  text-decoration:none;
+  padding:8px 12px;
+  border-radius:10px;
+  background:#e0f2fe;
+  color:#075985;
+  font-weight:700;
+  font-size:.9rem;
+}
+
+.obs-wrap{
+  margin-top:14px;
+}
+
+.obs-wrap textarea{
+  width:100%;
+  min-height:84px;
+  border:1px solid #d1d5db;
+  border-radius:12px;
+  padding:12px;
+  font-size:15px;
+  resize:vertical;
+}
+
+.p-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+
+button.btn-aprobar{
+  background:#166534;
+}
+
+button.btn-rechazar{
+  background:#b91c1c;
+}
+
+button.btn-guardar{
+  background:#0f766e;
+}
+
+.empty-state{
+  border:1px dashed #cbd5e1;
+  border-radius:16px;
+  padding:30px;
+  text-align:center;
+  color:#64748b;
+  background:#fff;
+}
+
+.small{
+  font-size:.85rem;
+  color:#6b7280;
+}
+
+@media (max-width: 768px){
+  .topbar{
+    flex-direction:column;
+  }
+
+  .p-grid{
+    grid-template-columns:1fr;
+  }
+
+  .p-actions{
+    flex-direction:column;
+  }
+
+  .p-actions button{
+    width:100%;
+  }
+}

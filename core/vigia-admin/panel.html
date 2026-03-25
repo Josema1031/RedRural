@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel Operador — Vigia Rural</title>
+
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/executive-dashboard.css">
+    <link rel="stylesheet" href="../css/resumen-productor.css">
+    <link rel="stylesheet" href="../css/v25-tablero-comercial.css">
+    <link rel="stylesheet" href="../css/v26-cierre-profesional.css">
+    <link rel="stylesheet" href="../css/v27-visual-premium.css">
+</head>
+
+<body>
+    <header>
+        <h1>Panel Operador / Administración Vigia Rural</h1>
+    </header>
+
+    <nav class="nav-panel">
+       
+
+        <button data-target="sec-v25" class="nav-btn">
+            <span class="icono">📈</span>
+            <span class="texto">V25</span>
+            <div class="indicador"></div>
+        </button>
+
+        <button data-target="sec-v26" class="nav-btn">
+            <span class="icono">🧾</span>
+            <span class="texto">V26</span>
+            <div class="indicador"></div>
+        </button>
+
+        <button data-target="sec-v27" class="nav-btn">
+            <span class="icono">✨</span>
+            <span class="texto">V27</span>
+            <div class="indicador"></div>
+        </button>
+
+        <button data-target="sec-operacion" class="nav-btn">
+            <span class="icono">🚓</span>
+            <span class="texto">Operación</span>
+            <div class="indicador"></div>
+        </button>
+    </nav>
+
+    <div class="container">
+       
+
+        <section id="sec-v25" class="hidden">
+            <div id="contenedorV25"></div>
+        </section>
+
+        <section id="sec-v26" class="hidden">
+            <div id="contenedorV26"></div>
+        </section>
+
+        <section id="sec-v27" class="hidden">
+            <div id="contenedorV27"></div>
+        </section>
+
+        <section id="sec-operacion" class="hidden">
+            <div class="card">
+                <h2>🚓 Operación de patrullas</h2>
+                <p class="muted">Acá después vamos a poner métricas de servicios activos, pendientes, finalizados,
+                    tiempos de respuesta y patrulleros.</p>
+
+                <div id="contenedorAsignacionServicio"></div>
+            </div>
+        </section>
+    </div>
+
+  
+    <script type="module" src="index.js"></script>
+</body>
+
+</html>

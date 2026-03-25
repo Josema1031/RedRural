@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>V58 · Pagos reales por cliente</title>
+  <link rel="stylesheet" href="../css/v58-pagos-clientes.css">
+</head>
+<body>
+  <main class="wrap">
+    <h1>V58 · Pagos reales por cliente</h1>
+
+    <section class="card">
+      <h2>Registrar pago</h2>
+      <form id="formPago" class="grid">
+        <input id="clienteContratoId" placeholder="DNI/ cliente">
+        <input id="cliente" placeholder="Cliente">
+        <input id="campo" placeholder="Campo">
+        <input id="monto" type="number" placeholder="Monto pagado">
+        <select id="metodoPago">
+          <option value="transferencia">Transferencia</option>
+          <option value="efectivo">Efectivo</option>
+          <option value="mercadopago">Mercado Pago</option>
+        </select>
+        <input id="fechaPago" type="date">
+        <textarea id="observacion" placeholder="Observación"></textarea>
+        <button type="submit">Guardar pago</button>
+      </form>
+      <p id="status"></p>
+    </section>
+
+    <section class="card">
+      <h2>Pagos registrados</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Campo</th>
+            <th>Monto</th>
+            <th>Método</th>
+            <th>Fecha</th>
+            <th>Estado comercial</th>
+          </tr>
+        </thead>
+        <tbody id="tablaPagos"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script type="module">
+    import { auth } from "../firebase-init.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      registrarPagoCliente,
+      listarPagosCliente
+    } from "../js/core/v58-pagos-clientes.js";
+
+    const form = document.getElementById("formPago");
+    const tabla = document.getElementById("tablaPagos");
+    const status = document.getElementById("status");
+
+    async function render() {
+      tabla.innerHTML = "<tr><td colspan='6'>Cargando...</td></tr>";
+      try {
+        const items = await listarPagosCliente();
+        if (!items.length) {
+          tabla.innerHTML = "<tr><td colspan='6'>Sin pagos registrados.</td></tr>";
+          return;
+        }
+        tabla.innerHTML = items.map(item => `
+          <tr>
+            <td>${item.cliente || ""}</td>
+            <td>${item.campo || ""}</td>
+            <td>$ ${Number(item.monto || 0).toLocaleString("es-AR")}</td>
+            <td>${item.metodoPago || ""}</td>
+            <td>${item.fechaPago || "-"}</td>
+            <td><span class="badge ${item.estadoComercial || "al_dia"}">${item.estadoComercial || "al_dia"}</span></td>
+          </tr>
+        `).join("");
+      } catch (err) {
+        console.error(err);
+        tabla.innerHTML = "<tr><td colspan='6'>Error cargando pagos.</td></tr>";
+      }
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!auth.currentUser) {
+        status.textContent = "No hay sesión activa del productor.";
+        return;
+      }
+      status.textContent = "Guardando...";
+      try {
+        await registrarPagoCliente({
+          clienteContratoId: document.getElementById("clienteContratoId").value.trim(),
+          cliente: document.getElementById("cliente").value.trim(),
+          campo: document.getElementById("campo").value.trim(),
+          monto: document.getElementById("monto").value,
+          metodoPago: document.getElementById("metodoPago").value,
+          fechaPago: document.getElementById("fechaPago").value,
+          observacion: document.getElementById("observacion").value.trim()
+        });
+        form.reset();
+        status.textContent = "Pago guardado correctamente.";
+        await render();
+      } catch (err) {
+        console.error(err);
+        status.textContent = "No se pudo guardar el pago.";
+      }
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      console.log("Usuario autenticado:", user?.uid || null);
+      if (!user) {
+        status.textContent = "Debés iniciar sesión como productor.";
+        tabla.innerHTML = "<tr><td colspan='6'>Sin sesión activa.</td></tr>";
+        return;
+      }
+      await render();
+    });
+  </script>
+</body>
+</html>

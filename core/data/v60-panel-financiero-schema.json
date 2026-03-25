@@ -1,0 +1,19 @@
+{
+  "panel": "financiero",
+  "fuentes": [
+    "clientes_contratos",
+    "facturas_clientes",
+    "pagos_clientes",
+    "costos_operativos"
+  ],
+  "metricas": [
+    "clientes",
+    "totalFacturado",
+    "totalPagado",
+    "totalCostos",
+    "saldoPendiente",
+    "margen",
+    "rentabilidad",
+    "estadoGeneral"
+  ]
+}

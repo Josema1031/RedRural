@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>V61 · Integración final y validación operativa</title>
+  <link rel="stylesheet" href="../css/v61-validacion.css">
+</head>
+<body>
+  <main class="wrap">
+    <h1>V61 · Integración final y validación operativa</h1>
+
+    <section class="stats">
+      <article><strong id="okClientes">0</strong><span>Clientes</span></article>
+      <article><strong id="okPagos">0</strong><span>Pagos</span></article>
+      <article><strong id="okFacturas">0</strong><span>Facturas</span></article>
+      <article><strong id="okCostos">0</strong><span>Costos</span></article>
+      <article><strong id="okEstado">-</strong><span>Estado general</span></article>
+    </section>
+
+    <section class="card">
+      <h2>Checklist operativo</h2>
+      <div id="checklist" class="summary"></div>
+    </section>
+
+    <section class="card">
+      <h2>Validación por colección</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Colección</th>
+            <th>Registros</th>
+            <th>Resultado</th>
+            <th>Observación</th>
+          </tr>
+        </thead>
+        <tbody id="tablaValidacion"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script type="module">
+    import { auth } from "../firebase-init.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { ejecutarValidacionFinal } from "../js/core/v61-validacion-final.js";
+
+    const ids = {
+      okClientes: document.getElementById("okClientes"),
+      okPagos: document.getElementById("okPagos"),
+      okFacturas: document.getElementById("okFacturas"),
+      okCostos: document.getElementById("okCostos"),
+      okEstado: document.getElementById("okEstado"),
+      checklist: document.getElementById("checklist"),
+      tablaValidacion: document.getElementById("tablaValidacion")
+    };
+
+    async function render() {
+      ids.tablaValidacion.innerHTML = "<tr><td colspan='4'>Cargando...</td></tr>";
+      try {
+        const data = await ejecutarValidacionFinal();
+
+        ids.okClientes.textContent = data.resumen.clientes;
+        ids.okPagos.textContent = data.resumen.pagos;
+        ids.okFacturas.textContent = data.resumen.facturas;
+        ids.okCostos.textContent = data.resumen.costos;
+        ids.okEstado.textContent = data.resumen.estadoGeneral;
+
+        ids.checklist.innerHTML = `
+          <p><strong>Autenticación:</strong> ${data.checklist.auth}</p>
+          <p><strong>Clientes / contratos:</strong> ${data.checklist.clientes}</p>
+          <p><strong>Pagos:</strong> ${data.checklist.pagos}</p>
+          <p><strong>Facturación:</strong> ${data.checklist.facturas}</p>
+          <p><strong>Costos:</strong> ${data.checklist.costos}</p>
+          <p><strong>Panel financiero:</strong> ${data.checklist.finanzas}</p>
+        `;
+
+        ids.tablaValidacion.innerHTML = data.detalle.map(item => `
+          <tr>
+            <td>${item.coleccion}</td>
+            <td>${item.registros}</td>
+            <td><span class="badge ${item.resultadoClass}">${item.resultado}</span></td>
+            <td>${item.observacion}</td>
+          </tr>
+        `).join("");
+      } catch (err) {
+        console.error(err);
+        ids.tablaValidacion.innerHTML = "<tr><td colspan='4'>Error ejecutando validación final.</td></tr>";
+      }
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      console.log("Usuario autenticado:", user?.uid || null);
+      if (!user) {
+        ids.checklist.innerHTML = "<p>Debés iniciar sesión como productor.</p>";
+        ids.tablaValidacion.innerHTML = "<tr><td colspan='4'>Sin sesión activa.</td></tr>";
+        return;
+      }
+      await render();
+    });
+  </script>
+</body>
+</html>

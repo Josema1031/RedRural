@@ -1,0 +1,21 @@
+{
+  "version": "V41",
+  "rules": {
+    "coberturaMinima": 70,
+    "moraCriticaDias": 30,
+    "umbralUrgencia": 80,
+    "maxCargaPatrullero": 85
+  },
+  "accionesEjemplo": [
+    {
+      "modulo": "despacho",
+      "accion": "despacho_inmediato",
+      "prioridad": "critica"
+    },
+    {
+      "modulo": "comercial",
+      "accion": "bloqueo_sugerido",
+      "prioridad": "critica"
+    }
+  ]
+}

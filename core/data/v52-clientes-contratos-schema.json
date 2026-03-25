@@ -1,0 +1,15 @@
+{
+  "collection": "clientes_contratos",
+  "fields": {
+    "nombre": "string",
+    "campo": "string",
+    "localidad": "string",
+    "plan": "string",
+    "estado": "string",
+    "montoMensual": "number",
+    "fechaInicio": "string",
+    "fechaVencimiento": "string",
+    "createdAt": "timestamp",
+    "updatedAt": "timestamp"
+  }
+}

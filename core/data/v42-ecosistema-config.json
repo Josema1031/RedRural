@@ -1,0 +1,13 @@
+{
+  "version": "V42",
+  "modulos": [
+    "operacion",
+    "clientes",
+    "contratos",
+    "vencimientos",
+    "despacho",
+    "comando",
+    "automatizacion_avanzada"
+  ],
+  "estado": "listo_para_implementacion"
+}

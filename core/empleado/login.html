@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login Empleado — RuralControl</title>
+    <link rel="stylesheet" href="../css/app-base.css">
+  <link rel="stylesheet" href="../css/app-components.css">
+  <link rel="stylesheet" href="../css/app-theme.css">
+  <link rel="stylesheet" href="../css/auth-empleado.css">
+
+    <link rel="stylesheet" href="../css/app-layout.css">
+    <link rel="stylesheet" href="../css/app-utilities.css">
+</head>
+
+<body>
+  <div class="card">
+    <div class="row" style="justify-content:space-between">
+      <h1>👷 Login Empleado</h1>
+      <a href="../index.html">⬅ Volver</a>
+    </div>
+
+    <label for="dni">DNI</label>
+    <input id="dni" inputmode="numeric" placeholder="Ej: 30123456" />
+
+    <label for="pass">Contraseña</label>
+    <input id="pass" type="password" placeholder="Tu clave" />
+
+    <button id="btnLogin">Ingresar</button>
+
+    <div id="msg" class="muted">Ingresá con tu DNI y la clave asignada por el Productor.</div>
+    <div id="net" class="muted"></div>
+    <div id="err" class="err" style="display:none"></div>
+  </div>
+
+ <script type="module" src="../js/modules/auth/empleado-login.js"></script>
+
+</body>
+
+</html>

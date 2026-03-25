@@ -1,0 +1,10 @@
+{
+  "collection": "facturas_clientes",
+  "fields": {
+    "cliente": "string",
+    "campo": "string",
+    "monto": "number",
+    "fecha": "string",
+    "createdAt": "timestamp"
+  }
+}

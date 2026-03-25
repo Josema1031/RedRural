@@ -1,0 +1,11 @@
+{
+  "version": "V49",
+  "moneda": "ARS",
+  "metricas": {
+    "ingresos": 0,
+    "costos": 0,
+    "rentabilidadGlobal": 0,
+    "clientesActivos": 0,
+    "clientesMora": 0
+  }
+}

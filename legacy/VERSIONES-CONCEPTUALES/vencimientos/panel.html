@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Alertas y Vencimientos - RED RURAL</title>
+  <link rel="stylesheet" href="../css/v34-alertas-vencimientos.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <h1>Alertas y Vencimientos</h1>
+      <p>Control preventivo de contratos, mora y cartera activa.</p>
+    </header>
+
+    <section class="card grid-top">
+      <article class="kpi danger">
+        <strong>4</strong>
+        <span>Contratos vencidos</span>
+      </article>
+      <article class="kpi warn">
+        <strong>6</strong>
+        <span>Por vencer (7 días)</span>
+      </article>
+      <article class="kpi info">
+        <strong>3</strong>
+        <span>Clientes en mora</span>
+      </article>
+      <article class="kpi ok">
+        <strong>18</strong>
+        <span>Clientes activos</span>
+      </article>
+    </section>
+
+    <section class="card">
+      <h2>Centro de alertas</h2>
+      <div class="alert-list">
+        <div class="alert danger">
+          <strong>Contrato vencido</strong>
+          <p>Campo Los Ombúes venció el 2026-03-15.</p>
+        </div>
+        <div class="alert warn">
+          <strong>Próximo vencimiento</strong>
+          <p>Estancia La Paz vence en 5 días.</p>
+        </div>
+        <div class="alert info">
+          <strong>Mora detectada</strong>
+          <p>Cliente con pago pendiente superior a 30 días.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Clientes y estado operativo</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Contrato</th>
+            <th>Pago</th>
+            <th>Estado</th>
+            <th>Acción sugerida</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Campo La Esperanza</td>
+            <td>Vence 2026-03-22</td>
+            <td>Pendiente</td>
+            <td><span class="badge warn">Por vencer</span></td>
+            <td>Contactar y renovar</td>
+          </tr>
+          <tr>
+            <td>Estancia Don José</td>
+            <td>Vigente</td>
+            <td>Cobrado</td>
+            <td><span class="badge ok">Activo</span></td>
+            <td>Seguimiento normal</td>
+          </tr>
+          <tr>
+            <td>Campo Los Ombúes</td>
+            <td>Vencido</td>
+            <td>En mora</td>
+            <td><span class="badge danger">Suspendido</span></td>
+            <td>Bloqueo o reactivación</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="../js/core/v34-alertas-vencimientos.js"></script>
+</body>
+</html>

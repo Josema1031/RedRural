@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin - Clientes y Contratos</title>
+  <link rel="stylesheet" href="../../core/css/v52-clientes-contratos.css">
+</head>
+<body>
+  <main style="max-width:1200px;margin:0 auto;padding:24px">
+    <h1 style="margin:0 0 16px">V52 · Integración real de clientes y contratos</h1>
+
+    <section class="v52-card" style="margin-bottom:16px">
+      <h2>Alta de cliente / contrato</h2>
+      <form id="v52Form" class="v52-form">
+        <input id="nombre" placeholder="Nombre productor / cliente">
+        <input id="campo" placeholder="Nombre del campo">
+        <input id="localidad" placeholder="Localidad">
+        <select id="plan">
+          <option value="Basico">Básico</option>
+          <option value="Profesional">Profesional</option>
+          <option value="Premium">Premium</option>
+        </select>
+        <input id="montoMensual" type="number" placeholder="Monto mensual">
+        <input id="fechaInicio" type="date">
+        <input id="fechaVencimiento" type="date">
+        <button type="submit">Guardar cliente</button>
+      </form>
+      <p id="v52Status" style="margin-top:10px;color:#334155"></p>
+    </section>
+
+    <section class="v52-card">
+      <h2>Listado real desde Firestore</h2>
+      <div style="overflow:auto">
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb">Campo</th>
+              <th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb">Cliente</th>
+              <th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb">Plan</th>
+              <th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb">Monto</th>
+              <th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb">Vencimiento</th>
+              <th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb">Estado</th>
+            </tr>
+          </thead>
+          <tbody id="v52Body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+  import { auth } from "../firebase-init.js";
+  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    crearClienteContrato,
+    listarClientesContratos,
+    calcularEstadoContrato
+  } from "../js/core/v52-clientes-contratos.js";
+
+  const form = document.getElementById("v52Form");
+  const body = document.getElementById("v52Body");
+  const status = document.getElementById("v52Status");
+
+  let authReady = false;
+
+  async function render() {
+    body.innerHTML = "<tr><td colspan='6' style='padding:10px'>Cargando...</td></tr>";
+    try {
+      const items = await listarClientesContratos();
+      if (!items.length) {
+        body.innerHTML = "<tr><td colspan='6' style='padding:10px'>Sin clientes cargados.</td></tr>";
+        return;
+      }
+
+      body.innerHTML = items.map(item => {
+        const estadoCalc = calcularEstadoContrato(item.fechaVencimiento || "");
+        return `
+          <tr>
+            <td style="padding:10px;border-bottom:1px solid #e5e7eb">${item.campo || ""}</td>
+            <td style="padding:10px;border-bottom:1px solid #e5e7eb">${item.nombre || ""}</td>
+            <td style="padding:10px;border-bottom:1px solid #e5e7eb">${item.plan || ""}</td>
+            <td style="padding:10px;border-bottom:1px solid #e5e7eb">$ ${Number(item.montoMensual || 0).toLocaleString("es-AR")}</td>
+            <td style="padding:10px;border-bottom:1px solid #e5e7eb">${item.fechaVencimiento || "-"}</td>
+            <td style="padding:10px;border-bottom:1px solid #e5e7eb"><span class="v52-badge ${estadoCalc}">${estadoCalc}</span></td>
+          </tr>
+        `;
+      }).join("");
+    } catch (err) {
+      console.error(err);
+      body.innerHTML = "<tr><td colspan='6' style='padding:10px;color:#991b1b'>Error cargando datos.</td></tr>";
+    }
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (!authReady || !auth.currentUser) {
+      status.textContent = "No hay sesión activa del productor.";
+      return;
+    }
+
+    status.textContent = "Guardando...";
+
+    try {
+      await crearClienteContrato({
+        nombre: document.getElementById("nombre").value.trim(),
+        campo: document.getElementById("campo").value.trim(),
+        localidad: document.getElementById("localidad").value.trim(),
+        plan: document.getElementById("plan").value,
+        montoMensual: document.getElementById("montoMensual").value,
+        fechaInicio: document.getElementById("fechaInicio").value,
+        fechaVencimiento: document.getElementById("fechaVencimiento").value
+      });
+
+      form.reset();
+      status.textContent = "Cliente guardado correctamente.";
+      await render();
+    } catch (err) {
+      console.error(err);
+      status.textContent = "No se pudo guardar el cliente.";
+    }
+  });
+
+  onAuthStateChanged(auth, async (user) => {
+    console.log("Usuario autenticado:", user?.uid || null);
+
+    if (!user) {
+      authReady = false;
+      status.textContent = "Debés iniciar sesión como productor antes de usar este módulo.";
+      body.innerHTML = "<tr><td colspan='6' style='padding:10px;color:#991b1b'>Sin sesión activa.</td></tr>";
+      return;
+    }
+
+    authReady = true;
+    status.textContent = "Sesión activa correcta.";
+    await render();
+  });
+</script>
+</body>
+</html>

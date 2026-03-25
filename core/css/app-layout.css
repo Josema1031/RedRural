@@ -1,0 +1,33 @@
+
+/* V4 layout base */
+:root {
+  --app-max-width: 1200px;
+  --app-gap: 16px;
+  --app-radius: 16px;
+}
+
+.app-shell {
+  width: min(100%, var(--app-max-width));
+  margin-inline: auto;
+}
+
+.page-section {
+  margin-block: 16px;
+}
+
+.grid-auto-fit {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--app-gap);
+}
+
+.stack-sm > * + * { margin-top: 8px; }
+.stack-md > * + * { margin-top: 16px; }
+.stack-lg > * + * { margin-top: 24px; }
+
+@media (max-width: 768px) {
+  :root {
+    --app-gap: 12px;
+    --app-radius: 14px;
+  }
+}

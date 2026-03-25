@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Aprobación de Patrulleros | Red Rural</title>
+
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/aprobacion-patrulleros.css">
+</head>
+<body>
+  <main class="admin-wrap">
+    <section class="topbar">
+      <div>
+        <h1>Aprobación de Patrulleros Externos</h1>
+        <p>Revisión, validación y cambio de estado de postulantes de Vigía Rural.</p>
+      </div>
+
+      <a href="../../admin.html" class="btn-link">← Volver a Admin</a>
+    </section>
+
+    <section class="card">
+      <div class="header-row">
+        <div>
+          <h2>Acceso administrador</h2>
+          <p class="muted">Ingresá con tu cuenta admin para gestionar postulaciones.</p>
+        </div>
+        <span id="estado" class="badge">Estado: no logueado</span>
+      </div>
+
+      <div class="row">
+        <input id="email" type="email" placeholder="Email admin" autocomplete="email" />
+        <input id="pass" type="password" placeholder="Password" autocomplete="current-password" />
+      </div>
+
+      <div class="row actions-login">
+        <button id="btnLogin">Entrar</button>
+        <button id="btnLogout" class="sec hide">Salir</button>
+      </div>
+
+      <pre id="log">Listo. Iniciá sesión para revisar patrulleros.</pre>
+    </section>
+
+    <section class="card">
+      <div class="header-row">
+        <div>
+          <h2>Postulaciones</h2>
+          <p class="muted">Podés revisar pendientes, aprobados o rechazados.</p>
+        </div>
+
+        <div class="filtros">
+          <select id="filtroEstado">
+            <option value="pendiente">Pendientes</option>
+            <option value="aprobado">Aprobados</option>
+            <option value="rechazado">Rechazados</option>
+            <option value="todos">Todos</option>
+          </select>
+
+          <button id="btnRecargar" class="sec hide">Recargar</button>
+        </div>
+      </div>
+
+      <div id="listaPatrulleros" class="lista-patrulleros">
+        <div class="empty-state">
+          Iniciá sesión para ver las postulaciones.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="../js/modules/admin/aprobacion-patrulleros.js"></script>
+</body>
+</html>

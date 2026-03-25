@@ -1,0 +1,23 @@
+[
+  {
+    "key": "basico",
+    "label": "Plan Básico",
+    "precioMensual": 0,
+    "incluye": ["Panel productor", "Panel empleado", "Incidencias"],
+    "limites": { "empleados": 5, "serviciosMensuales": 20 }
+  },
+  {
+    "key": "pro",
+    "label": "Plan Pro",
+    "precioMensual": 0,
+    "incluye": ["Patrullaje", "Historial", "Reportes", "Mandados"],
+    "limites": { "empleados": 15, "serviciosMensuales": 100 }
+  },
+  {
+    "key": "premium",
+    "label": "Plan Premium",
+    "precioMensual": 0,
+    "incluye": ["Todo el ecosistema", "Prioridad", "Analítica", "Monetización avanzada"],
+    "limites": { "empleados": 999, "serviciosMensuales": 9999 }
+  }
+]

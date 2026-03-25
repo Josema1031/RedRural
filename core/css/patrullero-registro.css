@@ -1,0 +1,171 @@
+:root{
+  --bg:#f4f7fb;
+  --card:#ffffff;
+  --text:#1f2937;
+  --muted:#6b7280;
+  --line:#dbe3ee;
+  --primary:#0f766e;
+  --primary-dark:#0b5c56;
+  --danger:#b91c1c;
+  --ok:#166534;
+  --shadow:0 12px 30px rgba(15, 23, 42, .08);
+  --radius:18px;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:linear-gradient(180deg,#eef5f9 0%, #f7fafc 100%);
+  color:var(--text);
+}
+
+.registro-wrap{
+  max-width:980px;
+  margin:0 auto;
+  padding:24px 16px 40px;
+}
+
+.hero{
+  text-align:center;
+  margin-bottom:22px;
+}
+
+.hero-badge{
+  display:inline-block;
+  padding:8px 14px;
+  border-radius:999px;
+  background:#dff7f2;
+  color:var(--primary-dark);
+  font-weight:700;
+  font-size:.85rem;
+  margin-bottom:12px;
+}
+
+.hero h1{
+  margin:0 0 12px;
+  font-size:clamp(1.8rem, 4vw, 2.6rem);
+}
+
+.hero p{
+  max-width:760px;
+  margin:0 auto;
+  color:var(--muted);
+  line-height:1.6;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:22px;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:16px;
+}
+
+.full{
+  grid-column:1 / -1;
+}
+
+h2{
+  margin:10px 0 4px;
+  font-size:1.1rem;
+}
+
+label{
+  display:block;
+  margin-bottom:6px;
+  font-size:.92rem;
+  font-weight:600;
+}
+
+input, select, textarea{
+  width:100%;
+  padding:12px 14px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#fff;
+  font-size:1rem;
+  outline:none;
+}
+
+input:focus, select:focus, textarea:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(15,118,110,.12);
+}
+
+.check-wrap{
+  margin-top:4px;
+}
+
+.check{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  color:var(--muted);
+  font-weight:500;
+}
+
+.check input{
+  width:auto;
+  margin-top:3px;
+}
+
+.actions{
+  display:flex;
+  justify-content:flex-end;
+}
+
+button{
+  border:none;
+  background:var(--primary);
+  color:#fff;
+  padding:14px 18px;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:1rem;
+  font-weight:700;
+  min-width:220px;
+}
+
+button:hover{
+  background:var(--primary-dark);
+}
+
+button:disabled{
+  opacity:.7;
+  cursor:not-allowed;
+}
+
+.estado-msg{
+  margin:6px 0 0;
+  font-weight:700;
+  min-height:22px;
+}
+
+.estado-msg.ok{ color:var(--ok); }
+.estado-msg.error{ color:var(--danger); }
+
+@media (max-width: 768px){
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+
+  .card{
+    padding:16px;
+  }
+
+  .actions{
+    justify-content:stretch;
+  }
+
+  button{
+    width:100%;
+  }
+}

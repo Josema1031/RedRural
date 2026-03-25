@@ -1,0 +1,18 @@
+{
+  "clientes_contratos": {
+    "create": "request.auth != null && request.resource.data.productorId == request.auth.uid",
+    "read_update_delete": "request.auth != null && resource.data.productorId == request.auth.uid"
+  },
+  "pagos_clientes": {
+    "create": "request.auth != null && request.resource.data.productorId == request.auth.uid",
+    "read_update_delete": "request.auth != null && resource.data.productorId == request.auth.uid"
+  },
+  "facturas_clientes": {
+    "create": "request.auth != null && request.resource.data.productorId == request.auth.uid",
+    "read_update_delete": "request.auth != null && resource.data.productorId == request.auth.uid"
+  },
+  "costos_operativos": {
+    "create": "request.auth != null && request.resource.data.productorId == request.auth.uid",
+    "read_update_delete": "request.auth != null && resource.data.productorId == request.auth.uid"
+  }
+}

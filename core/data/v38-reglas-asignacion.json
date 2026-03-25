@@ -1,0 +1,26 @@
+{
+  "version": "V38",
+  "reglas": {
+    "urgencia": 40,
+    "distancia": 25,
+    "disponibilidad": 20,
+    "carga": 10,
+    "zonaCritica": 5
+  },
+  "ejemplos": [
+    {
+      "servicio": "Patrulla #1042",
+      "zona": "Ruta 12",
+      "prioridad": "Urgente",
+      "movil": "Móvil 02",
+      "score": 94
+    },
+    {
+      "servicio": "Patrulla #1043",
+      "zona": "Gualeguay Norte",
+      "prioridad": "Alta",
+      "movil": "Móvil 05",
+      "score": 88
+    }
+  ]
+}

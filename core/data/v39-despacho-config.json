@@ -1,0 +1,17 @@
+{
+  "version": "V39",
+  "umbralDespachoAutomatico": 90,
+  "umbralConfirmacionManual": 75,
+  "ejemplos": [
+    {
+      "servicio": "Patrulla #1051",
+      "score": 97,
+      "clasificacion": "automatico_sugerido"
+    },
+    {
+      "servicio": "Patrulla #1052",
+      "score": 89,
+      "clasificacion": "manual_asistido"
+    }
+  ]
+}

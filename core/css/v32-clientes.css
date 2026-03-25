@@ -1,0 +1,28 @@
+
+body {
+font-family: Arial, sans-serif;
+background: #f9fafb;
+margin: 0;
+padding: 20px;
+}
+
+h1 {
+color: #0f172a;
+}
+
+section {
+background: white;
+padding: 15px;
+margin-bottom: 15px;
+border-radius: 10px;
+box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+button {
+background: #22c55e;
+color: white;
+padding: 10px 15px;
+border: none;
+border-radius: 8px;
+cursor: pointer;
+}

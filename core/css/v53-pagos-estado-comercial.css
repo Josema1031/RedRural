@@ -1,0 +1,10 @@
+/* V53 - pagos y estado comercial */
+.v53-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.v53-card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px;box-shadow:0 8px 20px rgba(15,23,42,.06)}
+.v53-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.v53-form input,.v53-form select,.v53-form button,.v53-form textarea{padding:10px;border-radius:10px;border:1px solid #cbd5e1}
+.v53-form button{background:#0f172a;color:#fff;border:none;font-weight:700}
+.v53-badge{display:inline-block;padding:5px 10px;border-radius:999px;font-size:.82rem;font-weight:700}
+.v53-badge.pagado,.v53-badge.al_dia{background:#dcfce7;color:#166534}
+.v53-badge.pendiente{background:#fef3c7;color:#92400e}
+.v53-badge.moroso{background:#fee2e2;color:#991b1b}

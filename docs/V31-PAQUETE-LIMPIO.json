@@ -1,0 +1,9 @@
+{
+  "version": "V31 FULL",
+  "focus": "limpieza y consolidacion estructural",
+  "removed_items": [
+    ".git/",
+    "js/modules/js/",
+    "js/modules/seguridad-ganadera/"
+  ]
+}

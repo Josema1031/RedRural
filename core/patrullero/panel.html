@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Patrullero | Vigía Rural</title>
+  <link rel="stylesheet" href="../css/patrullero-panel.css" />
+</head>
+<body>
+  <main class="wrap">
+    <header class="top">
+      <div>
+        <h1>Panel del Patrullero</h1>
+        <p class="sub">Gestioná solicitudes disponibles, patrullas activas e historial.</p>
+      </div>
+
+      <div class="top-actions">
+        <span id="usuarioInfo" class="usuario-info">Cargando usuario...</span>
+        <button id="btnLogout">Cerrar sesión</button>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="section-head">
+        <h2>Solicitudes disponibles</h2>
+        <span class="badge" id="countDisponibles">0</span>
+      </div>
+      <div id="listaDisponibles" class="lista-solicitudes">
+        Cargando solicitudes...
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-head">
+        <h2>Mis patrullas activas</h2>
+        <span class="badge blue" id="countActivas">0</span>
+      </div>
+      <div id="listaActivas" class="lista-solicitudes">
+        Sin patrullas activas.
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-head">
+        <h2>Historial</h2>
+        <span class="badge green" id="countHistorial">0</span>
+      </div>
+      <div id="listaHistorial" class="lista-solicitudes">
+        Sin historial.
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="../js/modules/patrullero/panel.js"></script>
+</body>
+</html>

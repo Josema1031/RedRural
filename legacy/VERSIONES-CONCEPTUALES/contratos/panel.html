@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Contratos y Pagos - RED RURAL</title>
+  <link rel="stylesheet" href="../css/v33-contratos-pagos.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <h1>Contratos y Pagos</h1>
+      <p>Control de clientes, vigencia contractual y estado de cobro.</p>
+    </header>
+
+    <section class="card">
+      <h2>Nuevo contrato</h2>
+      <form class="grid">
+        <label>Cliente
+          <input type="text" placeholder="Ej: Estancia La Paz">
+        </label>
+        <label>Plan
+          <select>
+            <option>Básico</option>
+            <option>Profesional</option>
+            <option>Premium</option>
+          </select>
+        </label>
+        <label>Fecha de inicio
+          <input type="date">
+        </label>
+        <label>Fecha de vencimiento
+          <input type="date">
+        </label>
+        <label>Monto mensual
+          <input type="number" placeholder="0">
+        </label>
+        <label>Estado
+          <select>
+            <option>Activo</option>
+            <option>Pendiente</option>
+            <option>Vencido</option>
+            <option>Suspendido</option>
+          </select>
+        </label>
+        <button type="button">Guardar contrato</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Resumen mensual</h2>
+      <div class="stats">
+        <article><strong>12</strong><span>Contratos activos</span></article>
+        <article><strong>3</strong><span>Por vencer</span></article>
+        <article><strong>2</strong><span>Pagos pendientes</span></article>
+        <article><strong>$ 0</strong><span>Facturación mensual</span></article>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Listado de clientes</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Plan</th>
+            <th>Vencimiento</th>
+            <th>Pago</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Campo La Esperanza</td>
+            <td>Profesional</td>
+            <td>2026-04-10</td>
+            <td>Pendiente</td>
+            <td><span class="badge warn">Por vencer</span></td>
+          </tr>
+          <tr>
+            <td>Estancia Don José</td>
+            <td>Premium</td>
+            <td>2026-05-01</td>
+            <td>Cobrado</td>
+            <td><span class="badge ok">Activo</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="../js/core/v33-contratos-pagos.js"></script>
+</body>
+</html>

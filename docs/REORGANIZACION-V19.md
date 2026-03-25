@@ -1,0 +1,1 @@
+V19: cambio de estado en vivo por empleado

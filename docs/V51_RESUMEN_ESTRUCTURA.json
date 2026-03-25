@@ -1,0 +1,23 @@
+{
+  "version": "V51",
+  "tipo": "limpieza_y_estructura_definitiva",
+  "carpetas_eliminadas": [
+    ".git",
+    "js/modules/js",
+    "js/modules/scss",
+    "js/modules/seguridad-ganadera"
+  ],
+  "estructura_oficial": [
+    "index.html",
+    "firebase-init.js",
+    "productor/",
+    "empleado/",
+    "admin/",
+    "landing/",
+    "js/core/",
+    "js/modules/",
+    "css/",
+    "data/",
+    "docs/"
+  ]
+}

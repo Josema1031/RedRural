@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rentabilidad y margen</title>
+<link rel="stylesheet" href="../css/v55-rentabilidad.css">
+</head>
+<body>
+<main style="max-width:1200px;margin:0 auto;padding:24px">
+<h1>V55 · Rentabilidad y margen real</h1>
+
+<section class="card">
+<h2>Registrar costo operativo</h2>
+<form id="formCosto">
+<input id="cliente" placeholder="Cliente">
+<input id="campo" placeholder="Campo">
+<input id="costo" type="number" placeholder="Costo">
+<input id="fecha" type="date">
+<button type="submit">Guardar costo</button>
+</form>
+<p id="status"></p>
+</section>
+
+<section class="card">
+<h2>Resumen financiero</h2>
+<div id="resumen"></div>
+</section>
+
+</main>
+
+<script type="module">
+import { registrarCosto, calcularRentabilidad } from "../js/core/v55-rentabilidad.js";
+
+const form = document.getElementById("formCosto");
+const status = document.getElementById("status");
+const resumen = document.getElementById("resumen");
+
+form.addEventListener("submit", async (e)=>{
+e.preventDefault();
+status.textContent = "Guardando...";
+await registrarCosto({
+cliente: document.getElementById("cliente").value,
+campo: document.getElementById("campo").value,
+costo: document.getElementById("costo").value,
+fecha: document.getElementById("fecha").value
+});
+status.textContent = "Costo guardado";
+mostrar();
+});
+
+async function mostrar(){
+const data = await calcularRentabilidad();
+resumen.innerHTML = `
+<p><strong>Ingresos:</strong> $ ${Number(data.ingresos).toLocaleString()}</p>
+<p><strong>Costos:</strong> $ ${Number(data.costos).toLocaleString()}</p>
+<p><strong>Margen:</strong> $ ${Number(data.margen).toLocaleString()}</p>
+`;
+}
+
+mostrar();
+</script>
+
+</body>
+</html>

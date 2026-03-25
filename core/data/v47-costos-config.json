@@ -1,0 +1,14 @@
+{
+  "version": "V47",
+  "moneda": "ARS",
+  "parametros": {
+    "costoKm": 430,
+    "costoMinuto": 95
+  },
+  "metricas": {
+    "costoTotal": 0,
+    "combustibleTotal": 0,
+    "desgasteTotal": 0,
+    "tiempoOperativo": 0
+  }
+}

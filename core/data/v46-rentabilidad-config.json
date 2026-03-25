@@ -1,0 +1,14 @@
+{
+  "version": "V46",
+  "moneda": "ARS",
+  "criterios": {
+    "rentable": 30,
+    "baja": 10,
+    "revisar": 0
+  },
+  "metricas": {
+    "margenTotal": 0,
+    "costoTotal": 0,
+    "rentabilidadMedia": 0
+  }
+}

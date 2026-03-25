@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin - Pagos y Estado Comercial</title>
+  <link rel="stylesheet" href="../css/v53-pagos-estado-comercial.css">
+</head>
+<body>
+  <main style="max-width:1200px;margin:0 auto;padding:24px">
+    <h1 style="margin:0 0 16px">V53 · Pagos y estado comercial real</h1>
+
+    <section class="v53-card" style="margin-bottom:16px">
+      <h2>Registrar pago</h2>
+      <form id="v53Form" class="v53-form">
+        <input id="clienteContratoId" placeholder="ID cliente_contrato">
+        <input id="cliente" placeholder="Nombre cliente">
+        <input id="campo" placeholder="Campo">
+        <input id="monto" type="number" placeholder="Monto">
+        <select id="metodoPago">
+          <option value="transferencia">Transferencia</option>
+          <option value="efectivo">Efectivo</option>
+          <option value="mercadopago">Mercado Pago</option>
+        </select>
+        <select id="estado">
+          <option value="pagado">Pagado</option>
+          <option value="pendiente">Pendiente</option>
+        </select>
+        <input id="fechaPago" type="date">
+        <textarea id="observacion" placeholder="Observación"></textarea>
+        <button type="submit">Guardar pago</button>
+      </form>
+      <p id="v53Status" style="margin-top:10px;color:#334155"></p>
+    </section>
+
+    <section class="v53-card">
+      <h2>Listado de pagos</h2>
+      <div style="overflow:auto">
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb">Cliente</th>
+              <th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb">Campo</th>
+              <th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb">Monto</th>
+              <th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb">Método</th>
+              <th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb">Fecha</th>
+              <th style="text-align:left;padding:10px;border-bottom:1px solid #e5e7eb">Estado</th>
+            </tr>
+          </thead>
+          <tbody id="v53Body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { registrarPagoCliente, listarPagosCliente } from "../js/core/v53-pagos-estado-comercial.js";
+
+    const form = document.getElementById("v53Form");
+    const body = document.getElementById("v53Body");
+    const status = document.getElementById("v53Status");
+
+    async function render() {
+      body.innerHTML = "<tr><td colspan='6' style='padding:10px'>Cargando...</td></tr>";
+      try {
+        const items = await listarPagosCliente();
+        if (!items.length) {
+          body.innerHTML = "<tr><td colspan='6' style='padding:10px'>Sin pagos cargados.</td></tr>";
+          return;
+        }
+        body.innerHTML = items.map(item => `
+          <tr>
+            <td style="padding:10px;border-bottom:1px solid #e5e7eb">${item.cliente || ""}</td>
+            <td style="padding:10px;border-bottom:1px solid #e5e7eb">${item.campo || ""}</td>
+            <td style="padding:10px;border-bottom:1px solid #e5e7eb">$ ${Number(item.monto || 0).toLocaleString("es-AR")}</td>
+            <td style="padding:10px;border-bottom:1px solid #e5e7eb">${item.metodoPago || ""}</td>
+            <td style="padding:10px;border-bottom:1px solid #e5e7eb">${item.fechaPago || "-"}</td>
+            <td style="padding:10px;border-bottom:1px solid #e5e7eb"><span class="v53-badge ${(item.estado || '').toLowerCase()}">${item.estado || ""}</span></td>
+          </tr>
+        `).join("");
+      } catch (err) {
+        console.error(err);
+        body.innerHTML = "<tr><td colspan='6' style='padding:10px;color:#991b1b'>Error cargando pagos.</td></tr>";
+      }
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      status.textContent = "Guardando...";
+      try {
+        await registrarPagoCliente({
+          clienteContratoId: document.getElementById("clienteContratoId").value.trim(),
+          cliente: document.getElementById("cliente").value.trim(),
+          campo: document.getElementById("campo").value.trim(),
+          monto: document.getElementById("monto").value,
+          metodoPago: document.getElementById("metodoPago").value,
+          estado: document.getElementById("estado").value,
+          fechaPago: document.getElementById("fechaPago").value,
+          observacion: document.getElementById("observacion").value.trim()
+        });
+        form.reset();
+        status.textContent = "Pago guardado correctamente.";
+        await render();
+      } catch (err) {
+        console.error(err);
+        status.textContent = "No se pudo guardar el pago.";
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>

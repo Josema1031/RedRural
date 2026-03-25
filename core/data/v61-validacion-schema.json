@@ -1,0 +1,17 @@
+{
+  "panel": "validacion_final",
+  "colecciones_verificadas": [
+    "clientes_contratos",
+    "pagos_clientes",
+    "facturas_clientes",
+    "costos_operativos"
+  ],
+  "resultado": [
+    "OK",
+    "REVISAR"
+  ],
+  "estadoGeneral": [
+    "completo",
+    "parcial"
+  ]
+}

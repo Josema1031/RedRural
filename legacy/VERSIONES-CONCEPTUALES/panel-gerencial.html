@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Panel Gerencial</title>
+<link rel="stylesheet" href="../css/v56-panel-gerencial.css">
+</head>
+<body>
+<main class="wrap">
+
+<h1>V56 · Panel Gerencial Unificado</h1>
+
+<section class="stats">
+
+<article>
+<strong id="clientes">0</strong>
+<span>Clientes</span>
+</article>
+
+<article>
+<strong id="ingresos">0</strong>
+<span>Ingresos</span>
+</article>
+
+<article>
+<strong id="costos">0</strong>
+<span>Costos</span>
+</article>
+
+<article>
+<strong id="margen">0</strong>
+<span>Margen</span>
+</article>
+
+</section>
+
+</main>
+
+<script type="module">
+
+import { calcularPanelGerencial } from "../js/core/v56-panel-gerencial.js";
+
+async function cargar(){
+
+const data = await calcularPanelGerencial();
+
+document.getElementById("clientes").textContent =
+data.clientes;
+
+document.getElementById("ingresos").textContent =
+"$ " + Number(data.ingresos).toLocaleString();
+
+document.getElementById("costos").textContent =
+"$ " + Number(data.costos).toLocaleString();
+
+document.getElementById("margen").textContent =
+"$ " + Number(data.margen).toLocaleString();
+
+}
+
+cargar();
+
+</script>
+
+</body>
+</html>

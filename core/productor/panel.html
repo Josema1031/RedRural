@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <title>Panel del Productor — RuralControl</title>
+
+  <link rel="stylesheet" href="../css/main.css">
+ <!--<link rel="stylesheet" href="../css/app-theme.css">
+  <link rel="stylesheet" href="../css/app-layout.css">
+  <link rel="stylesheet" href="../css/app-utilities.css">
+  <link rel="stylesheet" href="../css/executive-dashboard.css">
+  <link rel="stylesheet" href="../css/resumen-productor.css">
+  <link rel="stylesheet" href="../css/v25-tablero-comercial.css">
+  <link rel="stylesheet" href="../css/v26-cierre-profesional.css">
+  <link rel="stylesheet" href="../css/v27-visual-premium.css"> -->
+</head>
+
+<body>
+  <header>
+    <h1>Panel del Productor</h1>
+  </header>
+  <!-- ✅ BANNER DE PLAN (monetización) -->
+
+  <div
+    style="max-width:1000px;margin:auto;padding:12px 16px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;">
+    <div>
+      <strong id="planTitulo">Plan: —</strong>
+      <div id="planSub" style="font-size:13px;color:#6b7280;margin-top:2px;">—</div>
+    </div>
+    <button id="btnProWhats" class="btn-pro">Plan PRO</button>
+
+  </div>
+  
+  <div id="adminProBox" style="display:none; width:100%; margin-top:10px;">
+    <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+      <input id="adminUidInput" placeholder="UID del productor (del WhatsApp)"
+        style="flex:1; min-width:240px; padding:10px; border-radius:8px; border:1px solid #ccc;">
+      <button id="adminActivarPro" class="btn-primario" type="button">✅ Plan PRO</button>
+      <button id="adminPonerFree" class="btn-secundario" type="button">↩ Volver a FREE</button>
+    </div>
+    <small style="display:block; margin-top:6px; color:#6b7280;">
+      (Visible solo para admin)
+    </small>
+  </div>
+
+  <!-- NAV -->
+  <nav class="nav-panel">
+
+    <button data-target="sec-hoy" class="nav-btn activo">
+      <span class="icono">📌</span>
+      <span class="texto">HOY</span>
+      <div class="indicador"></div>
+    </button>
+
+    <a href="../../sisg-rural/seguridad-ganadera/operativo/panel.html" class="nav-btn">
+      <span class="icono">🛡️</span>
+      <span class="texto">Seguridad</span>
+      <div class="indicador"></div>
+    </a>
+
+    <button data-target="sec-uber-rural" class="nav-btn">
+      <span class="icono">🚓</span>
+      <span class="texto">Vigia Rural</span>
+      <div class="indicador"></div>
+    </button>
+
+    <button data-target="sec-gestion" class="nav-btn">
+      <span class="icono">📊</span>
+      <span class="texto">Gestión</span>
+      <div class="indicador"></div>
+    </button>
+
+
+    <button data-target="sec-empleados" class="nav-btn">
+      <span class="icono">👷</span>
+      <span class="texto">Empleados</span>
+      <div class="indicador"></div>
+    </button>
+
+
+    <button data-target="sec-clima" class="nav-btn">
+      <span class="icono">🌦️</span>
+      <span class="texto">Clima</span>
+      <div class="indicador"></div>
+    </button>
+
+
+    <button data-target="sec-camiones" class="nav-btn">
+      <span class="icono">🚚</span>
+      <span class="texto">Camiones</span>
+      <div class="indicador"></div>
+    </button>
+
+    <button data-target="sec-caminos" class="nav-btn">
+      <span class="icono">🛣️</span>
+      <span class="texto">Caminos</span>
+      <div class="indicador"></div>
+    </button>
+
+    <button data-target="sec-vecinos" class="nav-btn">
+      <span class="icono">🤝</span>
+      <span class="texto">Vecinos</span>
+      <div class="indicador"></div>
+    </button>
+
+    <button data-target="sec-alertas" class="nav-btn">
+      <span class="icono">🚨</span>
+      <span class="texto">Alertas</span>
+      <div class="indicador"></div>
+    </button>
+
+    <button data-target="sec-tareas" class="nav-btn">
+      <span class="icono">📝</span>
+      <span class="texto">Tareas</span>
+      <div class="indicador"></div>
+    </button>
+
+    <button data-target="sec-calculadora" class="nav-btn">
+      <span class="icono">🧮</span>
+      <span class="texto">Calculadora</span>
+      <div class="indicador"></div>
+    </button>
+
+  </nav>
+
+  <div class="container">
+
+    <!-- ============================= -->
+    <!-- SECCIÓN: GESTION -->
+    <!-- ============================= -->
+
+    <section id="sec-gestion" class="hidden">
+      <h2>Gestión del campo</h2>
+      <small>(cargan productor o empleados).</small>
+
+      <div class="card" style="margin-top:14px;">
+        <h3 style="margin:0 0 8px; color:#14532d;">📌 Ficha del campo</h3>
+        <div class="fila">
+          <input id="gHectareas" type="number" step="0.01" placeholder="Hectáreas (ej: 120.5)">
+          <input id="gCabezas" type="number" step="1" placeholder="Cabezas de ganado (ej: 230)">
+          <button class="btn-primario" id="btnGuardarFicha">💾 Guardar</button>
+          <button class="btn-secundario" id="btnRefrescarFicha" type="button">🔄 Refrescar</button>
+        </div>
+        <p class="status-msg" id="msgFicha"></p>
+      </div>
+
+      <div class="card" style="margin-top:14px;">
+        <h3 style="margin:0 0 8px; color:#14532d;">🚜 Vehículos</h3>
+        <div class="fila">
+          <input id="vPatente" placeholder="Patente/ID (ej: ABC123 o Tractor-1)">
+          <select id="vTipo">
+            <option value="camioneta">Camioneta</option>
+            <option value="camion">Camión</option>
+            <option value="tractor">Tractor</option>
+            <option value="maquina">Máquina</option>
+            <option value="Auto">Auto</option>
+          </select>
+          <button class="btn-primario" id="btnAgregarVehiculo">➕ Agregar</button>
+        </div>
+        <p class="status-msg" id="msgVehiculos"></p>
+        <div id="listaVehiculos" class="lista-simple"></div>
+      </div>
+
+      <div class="card" style="margin-top:14px;">
+        <h3 style="margin:0 0 8px; color:#14532d;">⛽ Combustible</h3>
+        <small class="muted">Entradas registradas por productor o empleados.</small>
+
+        <div class="fila" style="margin-top:10px;">
+          <select id="cVehiculo">
+            <option value="">Elegir vehículo…</option>
+          </select>
+          <input id="cLitros" type="number" step="0.01" placeholder="Litros (ej: 45)">
+          <input id="cCosto" type="number" step="1" placeholder="$ Total (ej: 35000)">
+          <input id="cOdom" type="number" step="1" placeholder="kilometraje">
+          <button class="btn-primario" id="btnCargarCombustible">➕ Cargar</button>
+        </div>
+
+        <p class="status-msg" id="msgCombustible"></p>
+        <div id="listaCombustible" class="lista-simple"></div>
+      </div>
+
+
+      <div class="card" style="margin-top:14px;">
+        <strong>🐄 Control de Ganado</strong>
+        <small class="muted">Registrá nacimientos, muertes, ventas y movimientos.</small>
+
+        <div class="fila" style="margin-top:10px; gap:8px; flex-wrap:wrap;">
+          <select id="gTipo">
+            <option value="nacimiento">🐄 Nacimiento</option>
+            <option value="muerte">✖️ Muerte</option>
+            <option value="venta">💰 Venta</option>
+            <option value="movimiento">🔁 Movimiento</option>
+          </select>
+
+          <select id="gCategoria">
+            <option value="terneros">Terneros</option>
+            <option value="vacas">Vacas</option>
+            <option value="novillos">Novillos</option>
+            <option value="toros">Toros</option>
+            <option value="vaquillonas">Vaquillonas</option>
+          </select>
+
+          <input id="gCantidad" type="number" min="1" step="1" placeholder="Cantidad" style="max-width:140px;">
+        </div>
+
+        <div class="fila" style="margin-top:10px; gap:8px; flex-wrap:wrap;">
+          <input id="gOrigen" type="text" placeholder="Origen (lote/potrero)" style="flex:1; min-width:200px;">
+          <input id="gDestino" type="text" placeholder="Destino (solo movimiento)" style="flex:1; min-width:200px;">
+        </div>
+
+        <input id="gNota" type="text" placeholder="Nota (opcional)" style="width:100%; margin-top:10px;">
+
+        <div class="fila" style="margin-top:10px; gap:8px; flex-wrap:wrap;">
+          <button class="btn-primario" id="btnGuardarGanado">✅ Registrar evento</button>
+          <button class="btn-secundario" id="btnRefrescarStock">🔄 Ver stock</button>
+        </div>
+
+        <p class="status-msg" id="gMsg"></p>
+
+        <div class="card" style="margin-top:10px;">
+          <strong>📊 Stock actual</strong>
+          <div id="gStock" class="muted" style="margin-top:8px;">—</div>
+        </div>
+
+        <div class="card" style="margin-top:10px;">
+          <strong>🧾 Últimos eventos</strong>
+          <div id="gEventos" class="muted" style="margin-top:8px;">—</div>
+        </div>
+      </div>
+    </section>
+
+
+
+    <!-- ============================= -->
+    <!-- SECCIÓN: EMPLEADOS -->
+    <!-- ============================= -->
+    <section id="sec-empleados" class="hidden">
+      <h2>Gestión de empleados</h2>
+      <small>Registrá los empleados que trabajan en tu establecimiento.</small>
+
+      <div class="fila" style="margin-top:15px;">
+        <input type="text" id="empNombre" placeholder="Nombre del empleado">
+        <input type="text" id="empDni" placeholder="DNI">
+        <input type="text" id="empTelefono" placeholder="Teléfono (WhatsApp)">
+        <input type="text" id="empClave" placeholder="Clave de acceso">
+        <button class="btn-primario" id="btnAgregarEmpleado">➕ Agregar</button>
+      </div>
+
+      <p class="status-msg" id="msgEmpleado"></p>
+      <div id="listaEmpleados" class="lista-simple"></div>
+    </section>
+
+    <!-- ============================= -->
+    <!-- SECCIÓN: HOY (DASHBOARD) -->
+    <!-- ============================= -->
+    <section id="sec-hoy" class="visible">
+      <h2>📌 HOY</h2>
+      <small>Resumen rápido y tareas críticas del día.</small>
+
+      <div class="card" style="margin-top:14px;">
+        <div class="fila hoy-cards" style="align-items:stretch;">
+          <div class="card hoy-card">
+            <strong>👷 Empleados</strong>
+            <div id="hoyEmpleados" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
+            <div class="muted" style="margin-top:6px;">Registrados</div>
+          </div>
+
+          <div class="card hoy-card">
+            <strong>📝 Pendientes</strong>
+            <div id="hoyPendientes" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
+            <div class="muted" style="margin-top:6px;">Tareas sin completar</div>
+          </div>
+
+          <div class="card hoy-card">
+            <strong>🚨 Alertas (24h)</strong>
+            <div id="hoyAlertas24" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
+            <div class="muted" style="margin-top:6px;">Generadas en las últimas 24h</div>
+          </div>
+          <div class="card hoy-card">
+            <strong>🛣️ Caminos mal</strong>
+            <div id="hoyCaminosMalos" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
+            <div class="muted" style="margin-top:6px;">Complicados/Intransitables hoy</div>
+          </div>
+
+          <div class="card hoy-card">
+            <strong>🚚 Camiones</strong>
+            <div id="hoyCamionesOff" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
+            <div class="muted" style="margin-top:6px;">Disponible ahora</div>
+          </div>
+        </div>
+
+        <div class="filaHoy" style="margin-top:12px;">
+          <button class="btn-primario" id="btnHoyRefrescar">🔄 Actualizar HOY</button>
+          <button class="btn-secundario" id="btnHoyIrTareas" type="button">📝 Ir a Tareas</button>
+          <button class="btn-secundario" id="btnHoyIrCaminos" type="button">🛣️ Ir a Caminos</button>
+          <button class="btn-secundario" id="btnHoyIrAlertas" type="button">🚨 Ir a Alertas</button>
+          <button class="btn-secundario" id="btnHoyIrCamiones" type="button">🚚 Ir a Camiones</button>
+        </div>
+
+
+        <div class="card" style="margin-top:14px;">
+          <strong>⚡ Tareas Pendientes</strong>
+          <div id="hoyListaPendientes" class="lista-simple" style="margin-top:10px;">
+            <small class="muted">Cargando...</small>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <strong>📣 Últimas alertas</strong>
+          <div id="hoyListaAlertas" class="lista-simple" style="margin-top:10px;">
+            <small class="muted">Cargando...</small>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <strong>🗓️ Parte diario (30 segundos)</strong>
+          <small class="muted">Completalo una vez por día. Queda guardado como historial del campo.</small>
+
+          <div class="fila" style="margin-top:10px; flex-wrap:wrap; gap:8px;">
+            <input id="pdLluvia" type="number" step="0.1" placeholder="🌧️ Lluvia (mm) ej: 12.5"
+              style="min-width:180px;">
+            <select id="pdEstado">
+              <option value="normal">✅ Normal</option>
+              <option value="atencion">🟡 Atención</option>
+              <option value="urgente">🔴 Urgente</option>
+            </select>
+            <input id="pdNota" type="text" placeholder="📝 Novedad breve (ej: faltó personal / se rompió bomba)"
+              style="flex:1; min-width:240px;">
+            <button class="btn-primario" id="btnGuardarParte">💾 Guardar parte de hoy</button>
+          </div>
+
+          <div class="fila" style="margin-top:10px; gap:8px; flex-wrap:wrap;">
+            <div class="card" style="flex:1; min-width:220px;">
+              <strong>🔥 Racha</strong>
+              <div id="pdRacha" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
+              <div class="muted" style="margin-top:6px;">Días seguidos completando</div>
+            </div>
+
+            <div class="card" style="flex:1; min-width:220px;">
+              <strong>📚 Último parte</strong>
+              <div id="pdUltimo" class="muted" style="margin-top:8px;">—</div>
+            </div>
+          </div>
+
+          <p class="status-msg" id="pdMsg"></p>
+        </div>
+
+
+        <p id="hoyMsg" class="status-msg"></p>
+      </div>
+    </section>
+
+    <!-- ============================= -->
+    <!-- SECCIÓN: UBER RURAL -->
+    <!-- ============================= -->
+    <section id="sec-uber-rural" class="hidden">
+      <h2>🚓 Vigia Rural</h2>
+
+      <div class="card" style="margin-top:14px;">
+        <div class="header-seguridad">
+          <strong>🚓 Seguridad física</strong>
+
+          <button id="btnPatrulla" class="btn-patrulla" type="button">
+            🚓 Solicitar patrulla
+          </button>
+        </div>
+
+        <div id="formPatrulla" class="form-patrulla hidden-block" style="margin-top:12px;">
+          <div class="fila">
+            <select id="motivoPatrulla">
+              <option value="movimiento_sospechoso">Movimiento sospechoso</option>
+              <option value="control_preventivo">Control preventivo</option>
+              <option value="recorrida_nocturna">Recorrida nocturna</option>
+              <option value="robo_o_intrusion">Posible robo o intrusión</option>
+
+            </select>
+
+            <select id="prioridadPatrulla">
+              <option value="baja">Prioridad baja</option>
+              <option value="media">Prioridad media</option>
+              <option value="alta">🚨 Prioridad alta</option>
+            </select>
+
+            <select id="duracionPatrulla">
+              <option value="1">1 hora</option>
+              <option value="2">2 horas</option>
+              <option value="4">4 horas</option>
+              <option value="8">8 horas</option>
+            </select>
+          </div>
+
+          <div class="fila">
+            <input id="nombreCampoPatrulla" type="text" placeholder="Nombre del campo o referencia">
+            <button id="btnUbicacionPatrulla" class="btn-secundario" type="button">📍 Usar ubicación actual</button>
+          </div>
+
+          <div class="fila">
+            <input id="latPatrulla" type="number" step="any" placeholder="Latitud">
+            <input id="lngPatrulla" type="number" step="any" placeholder="Longitud">
+          </div>
+
+          <div style="margin-top:10px;">
+            <small class="muted">🗺️ Tocá el mapa para marcar el lugar donde debe patrullar.</small>
+            <div id="mapSelectorPatrulla" style="height:280px;border-radius:12px;margin-top:8px;background:#e5e7eb;">
+            </div>
+          </div>
+
+          <div class="fila">
+            <input id="detallePatrulla" type="text" placeholder="Detalle breve (opcional)">
+            <button id="enviarPatrulla" class="btn-primario" type="button">✅ Enviar solicitud</button>
+          </div>
+        </div>
+
+        <p class="status-msg" id="msgPatrulla"></p>
+
+        <div class="card" style="margin-top:14px;">
+          <strong>📋 Mis solicitudes de patrulla</strong>
+          <small class="muted">Acá vas a ver el estado de los pedidos enviados.</small>
+
+          <div id="listaSolicitudesPatrulla" class="lista-simple" style="margin-top:10px;">
+            <small class="muted">Todavía no hay solicitudes cargadas.</small>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <strong>🧭 Patrullero más cercano</strong>
+          <small class="muted">Calcula qué empleado está más cerca de la solicitud seleccionada.</small>
+
+          <div id="patrulleroCercanoBox" class="lista-simple" style="margin-top:10px;">
+            <small class="muted">Seleccioná una solicitud para calcular la cercanía.</small>
+          </div>
+
+          <div class="botones-patrulla-dos">
+            <button id="btnCalcularPatrulleroCercano" class="btn-secundario" type="button">
+              📍 Calcular más cercano
+            </button>
+            <button id="btnSugerirAsignacionPatrulla" class="btn-primario" type="button">
+              🤖 Sugerir asignación
+            </button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <strong>🛰️ Patrulla en vivo</strong>
+          <small class="muted">Seguimiento en tiempo real de la solicitud seleccionada.</small>
+
+          <div id="estadoPatrullaVivo" class="status-msg" style="margin-top:10px;">
+            Sin patrulla seleccionada.
+          </div>
+
+          <div id="datosPatrullaVivo" class="muted" style="margin-top:8px;">
+            Esperando datos...
+          </div>
+
+          <div class="botones-patrulla">
+            <button id="btnCancelarPatrulla" class="btn-secundario" type="button">
+              ❌ Cancelar
+            </button>
+
+            <a id="btnWhatsappPatrullero" class="btn-primario" href="#" target="_blank" rel="noopener noreferrer"
+              style="text-decoration:none; pointer-events:none; opacity:.6;">
+              💬 WhatsApp
+            </a>
+
+            <button id="btnPdfPatrulla" class="btn-primario" type="button">
+              📄 informe PDF
+            </button>
+          </div>
+
+          <div id="mapPatrullaVivo" style="height:320px;border-radius:12px;margin-top:10px;background:#e5e7eb;"></div>
+        </div>
+      </div>
+
+
+      <div class="card" style="margin-top:14px;">
+        <strong>📚 Historial de patrullas</strong>
+        <small class="muted">Servicios finalizados y cancelados del campo.</small>
+
+        <div class="fila" style="margin-top:10px;">
+          <input id="filtroPatrullaCampo" type="text" placeholder="Filtrar por campo">
+          <select id="filtroPatrullaEstado">
+            <option value="">Todos los estados</option>
+            <option value="finalizada">Finalizada</option>
+            <option value="cancelada">Cancelada</option>
+            <option value="aceptada">Aceptada</option>
+            <option value="en_curso">En curso</option>
+            <option value="pendiente">Pendiente</option>
+          </select>
+          <button id="btnFiltrarHistorialPatrullas" class="btn-secundario" type="button">🔎 Filtrar</button>
+          <button id="btnLimpiarHistorialPatrullas" class="btn-secundario" type="button">🧹 Limpiar</button>
+        </div>
+
+        <div id="listaHistorialPatrullas" class="lista-simple" style="margin-top:10px;">
+          <small class="muted">Cargando historial...</small>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px;">
+        <strong>🎯 Tablero operativo de patrullas</strong>
+        <small class="muted">Resumen rápido del estado actual del servicio.</small>
+
+        <div class="fila hoy-cards" style="align-items:stretch; margin-top:10px;">
+          <div class="card hoy-card">
+            <strong>⏳ Pendientes</strong>
+            <div id="patrullasPendientesCount" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
+          </div>
+
+          <div class="card hoy-card">
+            <strong>✅ Aceptadas</strong>
+            <div id="patrullasAceptadasCount" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
+          </div>
+
+          <div class="card hoy-card">
+            <strong>🚓 En curso</strong>
+            <div id="patrullasEnCursoCount" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
+          </div>
+
+          <div class="card hoy-card">
+            <strong>🏁 Finalizadas</strong>
+            <div id="patrullasFinalizadasCount" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
+          </div>
+        </div>
+
+        <div class="card hoy-card">
+          <strong>🚨 Urgentes</strong>
+          <div id="patrullasUrgentesCount" style="font-size:22px;font-weight:900;margin-top:6px;">—</div>
+        </div>
+
+        <div class="card" style="margin-top:12px;">
+          <strong>📍 Patrullas activas ahora</strong>
+          <div id="listaPatrullasActivas" class="lista-simple" style="margin-top:10px;">
+            <small class="muted">Cargando...</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px;">
+        <strong>🚨 Patrullas críticas</strong>
+        <div id="listaPatrullasCriticas" class="lista-simple" style="margin-top:10px;">
+          <small class="muted">Sin urgencias activas.</small>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================= -->
+    <!-- SECCIÓN: CAMIONES (TRACKING) -->
+    <!-- ============================= -->
+    <section id="sec-camiones" class="hidden">
+      <h2>Monitoreo de camiones</h2>
+      <small>Ubicación en tiempo real del chofer (celular) con GPS.</small>
+
+      <div id="mapCamiones" style="width:100%; height:330px; margin-top:15px; background:#ddd; border-radius:10px;">
+      </div>
+
+      <p class="status-msg" id="msgCamiones"></p>
+      <div id="listaCamiones" class="lista-simple"></div>
+      <hr style="margin:14px 0; border:none; border-top:1px solid #e5e7eb;">
+
+      <h3 style="margin:10px 0 6px; color:#14532d;">📒 Registro de recorridos</h3>
+      <small class="muted">Guardados cuando el chofer toca “Detener”.</small>
+
+      <!-- 🔎 Filtros de recorridos -->
+      <div class="fila" style="margin-top:10px; gap:8px; flex-wrap:wrap;">
+        <select id="filtroPatente">
+          <option value="">🚚 Todas las patentes</option>
+        </select>
+
+        <input type="date" id="filtroDesde" />
+        <input type="date" id="filtroHasta" />
+
+        <button class="btn-secundario" id="btnAplicarFiltrosViajes">🔎 Aplicar</button>
+        <button class="btn-mini" id="btnLimpiarFiltrosViajes">🧽 Limpiar</button>
+      </div>
+
+      <!-- 📊 Resumen -->
+      <div id="resumenViajes" class="status-msg" style="margin-top:8px; color:#374151;"></div>
+
+
+      <p class="status-msg" id="msgViajes"></p>
+      <div id="listaViajes" class="lista-simple"></div>
+
+      <div class="fila" style="margin-top:10px;">
+        <button class="btn-secundario" id="btnLimpiarRuta">🧹 Limpiar ruta del mapa</button>
+
+      </div>
+
+    </section>
+
+
+    <!-- ============================= -->
+    <!-- SECCIÓN: VECINOS -->
+    <!-- ============================= -->
+    <section id="sec-vecinos" class="hidden">
+      <h2>Vecinos de la zona</h2>
+      <small>Agregá contactos de confianza cerca de tu campo.</small>
+
+      <div class="fila">
+        <input type="text" id="vecinoNombre" placeholder="Nombre del vecino">
+        <input type="text" id="vecinoTelefono" placeholder="Teléfono">
+        <button class="btn-primario" id="btnAgregarVecino">➕ Agregar</button>
+      </div>
+
+      <p class="status-msg" id="msgVecinos"></p>
+      <div id="listaVecinos" class="lista-simple"></div>
+    </section>
+
+    <!-- ============================= -->
+    <!-- SECCIÓN: ALERTAS -->
+    <!-- ============================= -->
+    <section id="sec-alertas" class="hidden">
+      <h2>Alertas rurales</h2>
+      <small>Enviá alertas rápidas a tus empleados.</small>
+
+      <div class="fila">
+        <select id="alertaTipo">
+          <option value="Vehiculo Sospechoso">🚨Vehiculo Sospechoso</option>
+          <option value="Animal perdido">🐄 Animales perdido</option>
+          <option value="Incendio">🔥 Incendio</option>
+          <option value="Avería">🛠 Avería</option>
+          <option value="Otro">📦 Otro</option>
+        </select>
+
+        <input type="text" id="alertaDescripcion" placeholder="Descripción">
+        <button class="btn-primario" id="btnEnviarAlerta">📢 Enviar</button>
+      </div>
+
+      <p class="status-msg" id="msgAlertas"></p>
+      <div id="listaAlertas" class="lista-simple"></div>
+
+      <!-- ✅ Selección visual de vecinos para enviar alerta -->
+      <div style="margin-top:14px;">
+        <h3 style="margin:10px 0 6px; color:#14532d;">📲 Enviar a vecinos</h3>
+
+        <div class="fila" style="margin-top:6px;">
+          <button class="btn-secundario" id="btnSelTodosVecinos" type="button">Seleccionar todos</button>
+          <button class="btn-secundario" id="btnSelNingunoVecinos" type="button">Ninguno</button>
+        </div>
+
+        <div id="listaVecinosAlertas" class="lista-simple"></div>
+
+        <small style="display:block;margin-top:8px;color:#6b7280;">
+
+        </small>
+      </div>
+
+    </section>
+
+    <!-- ============================= -->
+    <!-- SECCIÓN: CAMINOS -->
+    <!-- ============================= -->
+    <section id="sec-caminos" style="position:relative;" class="hidden">
+      <h2>Estado de caminos</h2>
+      <small>Podés marcar puntos o tramos completos en el mapa.</small>
+
+      <div class="fila" style="margin-top:10px;">
+        <select id="caminoEstado">
+          <option value="transitable">🟢 Transitable</option>
+          <option value="complicado">🟡 Complicado</option>
+          <option value="intransitable">🔴 Intransitable</option>
+        </select>
+
+        <span id="estadoPreview" style="
+          padding:6px 10px;
+          border-radius:10px;
+          font-weight:bold;
+          background:#e5e7eb;
+          color:#111;
+        "></span>
+
+        <button class="btn-primario" id="btnModoPunto">Marcar punto</button>
+        <button class="btn-secundario" id="btnModoTramo">Marcar tramo</button>
+        <button class="btn-primario" id="btnGuardarTramo" style="display:none;">Guardar tramo</button>
+        <button class="btn-secundario" id="btnCentrarUbicacion">📍 Centrar en mi ubicación</button>
+
+      </div>
+
+      <div class="fila" style="margin-top:10px; gap:8px;">
+        <div class="filtro-chip" id="filtroTodos">Todos</div>
+        <div class="filtro-chip" id="filtroTransitable">🟢 Transitable</div>
+        <div class="filtro-chip" id="filtroComplicado">🟡 Complicado</div>
+        <div class="filtro-chip" id="filtroIntransitable">🔴 Intransitable</div>
+
+        <button class="btn-mini" id="btnBorrarMisCaminosHoy">🗑 Mis caminos de hoy</button>
+      </div>
+
+      <div id="mapCaminos" style="width:100%; height:330px; margin-top:15px; background:#ddd; border-radius:10px;">
+      </div>
+
+      <div id="leyendaCaminos" style="
+        position:absolute;
+        bottom:25px; right:10px;
+        background:white;
+        padding:8px 12px;
+        border-radius:10px;
+        border:1px solid #d1d5db;
+        font-size:13px;
+        box-shadow:0px 2px 6px rgba(0,0,0,0.15);
+        line-height:18px;
+      ">
+        <div>🟢 Transitable</div>
+        <div>🟡 Complicado</div>
+        <div>🔴 Intransitable</div>
+      </div>
+
+      <p id="msgCaminos" class="status-msg"></p>
+    </section>
+
+    <!-- ============================= -->
+    <!-- SECCIÓN: TAREAS -->
+    <!-- ============================= -->
+    <section id="sec-tareas" class="hidden">
+      <h2>Registro de tareas diarias</h2>
+      <small>Cargá las tareas del día y marcá cuáles se completaron.</small>
+
+      <div class="fila">
+        <input type="text" id="nuevaTareaTexto" placeholder="Ej: Revisar bebederos del potrero 3" />
+
+        <select id="tareaCategoria">
+          <option value="Ganadería">🐄 Ganadería</option>
+          <option value="Cultivos">🌽 Cultivos</option>
+          <option value="Maquinaria">🚜 Maquinaria</option>
+          <option value="Mantenimiento">🛠 Mantenimiento</option>
+          <option value="Seguridad">🚨 Seguridad</option>
+          <option value="Limpieza">🧹 Limpieza</option>
+          <option value="Otros">📦 Otros</option>
+        </select>
+
+        <select id="tareaPrioridad">
+          <option value="Alta">🔴 Alta</option>
+          <option value="Media">🟡 Media</option>
+          <option value="Baja">🟢 Baja</option>
+        </select>
+
+        <select id="tareaEmpleado">
+          <option value="">(sin asignar)</option>
+        </select>
+
+        <button class="btn-primario" id="btnAgregarTarea">➕ Agregar</button>
+      </div>
+
+      <p class="status-msg" id="msgTareas"></p>
+      <div id="listaTareas" class="lista-simple"></div>
+
+    </section>
+    <!-- ============================= -->
+    <!-- SECCIÓN: CLIMA -->
+    <!-- ============================= -->
+
+    <section id="sec-clima" class="hidden">
+      <h2>Clima</h2>
+      <small>Pronóstico y alertas para el campo.</small>
+
+      <div class="card" style="margin-top:14px;">
+        <div class="fila">
+          <input id="climaLugar" type="text" placeholder="Buscar lugar (ej: Gualeguay, Entre Ríos)">
+          <button class="btn-secundario" id="btnClimaBuscar" type="button">Buscar</button>
+          <button class="btn-secundario" id="btnClimaGPS" type="button">📍 Mi ubicación</button>
+        </div>
+
+        <p class="status-msg" id="msgClima"></p>
+
+        <div id="climaActual" class="card" style="margin-top:12px;">
+          <strong>Ahora</strong>
+          <div id="climaActualBody" style="margin-top:8px; color:#374151;"></div>
+        </div>
+
+        <div id="climaAlertas" class="card" style="margin-top:12px;">
+          <strong>Alertas</strong>
+          <div id="climaAlertasBody" style="margin-top:8px; color:#374151;"></div>
+        </div>
+
+        <div id="clima7dias" class="card" style="margin-top:12px;">
+          <strong>7 días</strong>
+          <div id="clima7diasBody" style="margin-top:10px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================= -->
+    <!-- SECCIÓN: CALCULADORA -->
+    <!-- ============================= -->
+    <section id="sec-calculadora" class="hidden">
+      <h2>Calculadora agropecuaria</h2>
+      <small>Herramientas rápidas para campo (fertilización y más).</small>
+
+      <!-- 1) kg/ha → total -->
+      <div class="card" style="margin-top:14px;">
+        <h3 id="agroTitulo" style="margin:0 0 8px; color:#14532d;">🧪 Fertilizante total (por ha → total)</h3>
+
+
+        <div class="fila">
+          <input id="calcHa" type="number" step="0.01" placeholder="Hectáreas (ej: 25.5)">
+          <input id="calcKgHa" type="number" step="0.1" placeholder="Dosis por ha (ej: 120)">
+
+          <select id="agroUnidad">
+            <option value="kg">Kg/ha</option>
+            <option value="l">L/ha</option>
+          </select>
+
+          <button class="btn-primario" id="btnCalcTotal">Calcular</button>
+          <button class="btn-secundario" id="btnCalcTotalClear" type="button">Limpiar</button>
+          <p class="status-msg" id="resCalcTotal"></p>
+        </div>
+
+
+        <!-- 2) N requerido → Urea -->
+        <div class="card" style="margin-top:14px;">
+          <h3 style="margin:0 0 8px; color:#14532d;">🌿 Nitrógeno → Urea (46% N)</h3>
+          <div class="fila">
+            <input id="calcNkg" type="number" step="0.1" placeholder="N requerido (kg de N total)">
+            <button class="btn-primario" id="btnCalcUrea">Calcular</button>
+            <button class="btn-secundario" id="btnCalcUreaClear" type="button">Limpiar</button>
+          </div>
+          <p class="status-msg" id="resCalcUrea"></p>
+
+          <small style="display:block;color:#6b7280;margin-top:6px;">
+            Fórmula: Urea (kg) = N (kg) / 0.46
+          </small>
+        </div>
+
+        <!-- 3) GANADERÍA: Consumo Materia Seca -->
+        <div class="card" style="margin-top:14px;">
+          <h3 style="margin:0 0 8px; color:#14532d;">🐄 Ganadería: Consumo de Materia Seca</h3>
+          <div class="fila">
+            <input id="ganPeso" type="number" step="0.1" placeholder="Peso vivo (kg) ej: 380">
+            <input id="ganPorcMS" type="number" step="0.1" placeholder="% MS del PV ej: 2.5">
+            <input id="ganCabezas" type="number" step="1" placeholder="Cantidad de animales ej: 120">
+          </div>
+
+          <div class="fila">
+            <button class="btn-primario" id="btnCalcMS">Calcular</button>
+            <button class="btn-secundario" id="btnCalcMSClear" type="button">Limpiar</button>
+          </div>
+
+          <p class="status-msg" id="resCalcMS"></p>
+
+          <small style="display:block;color:#6b7280;margin-top:6px;">
+            Fórmulas: MS/día/cab = PV * (%MS/100) • Total/día = MS/cab * cabezas • Mes = Total/día * 30
+          </small>
+        </div>
+
+    </section>
+
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+
+
+  <!-- Firebase -->
+  <script type="module" src="../js/modules/productor/index.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,15 @@
+{
+  "version": "V45",
+  "moneda": "ARS",
+  "estados": [
+    "facturado",
+    "pendiente",
+    "vencido",
+    "cobrado"
+  ],
+  "metricas": {
+    "facturacionMensual": 0,
+    "cobrado": 0,
+    "pendiente": 0
+  }
+}

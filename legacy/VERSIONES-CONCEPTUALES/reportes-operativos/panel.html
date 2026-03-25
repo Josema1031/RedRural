@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Reportes Operativos y Evidencia - RED RURAL</title>
+  <link rel="stylesheet" href="../css/v44-reportes-operativos.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <div>
+        <h1>Reportes Operativos y Evidencia</h1>
+        <p>Generación automática de informes de patrullaje y registro de evidencia del servicio.</p>
+      </div>
+      <div class="hero-badge">V44</div>
+    </header>
+
+    <section class="grid-kpis">
+      <article class="kpi"><strong>15</strong><span>Servicios realizados</span></article>
+      <article class="kpi"><strong>14</strong><span>Reportes generados</span></article>
+      <article class="kpi"><strong>1</strong><span>Incidentes documentados</span></article>
+      <article class="kpi"><strong>100%</strong><span>Servicios registrados</span></article>
+    </section>
+
+    <section class="dashboard">
+      <article class="card">
+        <h2>Tipos de evidencia</h2>
+        <ul class="list">
+          <li>Fotografías del patrullaje</li>
+          <li>Ubicación GPS registrada</li>
+          <li>Hora de inicio y finalización</li>
+          <li>Observaciones del patrullero</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>Estado del servicio</h2>
+        <div class="status ok">Servicio completado</div>
+        <div class="status warn">Observación registrada</div>
+        <div class="status info">Reporte enviado al productor</div>
+      </article>
+
+      <article class="card wide">
+        <h2>Registro de reportes</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Campo</th>
+              <th>Servicio</th>
+              <th>Fecha</th>
+              <th>Resultado</th>
+              <th>Evidencia</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Los Ombúes</td>
+              <td>Patrulla nocturna</td>
+              <td>2026-03-20</td>
+              <td><span class="badge ok">Correcto</span></td>
+              <td>Foto + GPS</td>
+            </tr>
+            <tr>
+              <td>La Esperanza</td>
+              <td>Control perimetral</td>
+              <td>2026-03-20</td>
+              <td><span class="badge warn">Observado</span></td>
+              <td>Foto + Nota</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+    </section>
+  </main>
+
+  <script src="../js/core/v44-reportes-operativos.js"></script>
+</body>
+</html>

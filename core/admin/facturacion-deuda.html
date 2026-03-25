@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>V59 · Facturación y deuda real</title>
+  <link rel="stylesheet" href="../css/v59-facturacion-deuda.css">
+</head>
+<body>
+  <main class="wrap">
+    <h1>V59 · Facturación y deuda real conectada</h1>
+
+    <section class="card">
+      <h2>Registrar factura</h2>
+      <form id="formFactura" class="grid">
+        <input id="clienteContratoId" placeholder="DNI / cliente">
+        <input id="cliente" placeholder="Cliente">
+        <input id="campo" placeholder="Campo">
+        <input id="monto" type="number" placeholder="Monto facturado">
+        <input id="fecha" type="date">
+        <button type="submit">Guardar factura</button>
+      </form>
+      <p id="status"></p>
+    </section>
+
+    <section class="card">
+      <h2>Resumen por cliente</h2>
+      <form id="formResumen" class="grid">
+        <input id="resumenClienteContratoId" placeholder="DNI / cliente">
+        <input id="montoMensual" type="number" placeholder="Monto mensual / facturado esperado">
+        <button type="submit">Calcular deuda</button>
+      </form>
+      <div id="resumenBox" class="summary"></div>
+    </section>
+
+    <section class="card">
+      <h2>Facturas registradas</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Campo</th>
+            <th>Monto</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody id="tablaFacturas"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script type="module">
+    import { auth } from "../firebase-init.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      registrarFacturaCliente,
+      listarFacturasCliente,
+      obtenerResumenDeudaCliente
+    } from "../js/core/v59-facturacion-deuda.js";
+
+    const formFactura = document.getElementById("formFactura");
+    const formResumen = document.getElementById("formResumen");
+    const tabla = document.getElementById("tablaFacturas");
+    const status = document.getElementById("status");
+    const resumenBox = document.getElementById("resumenBox");
+
+    async function renderFacturas() {
+      tabla.innerHTML = "<tr><td colspan='4'>Cargando...</td></tr>";
+      try {
+        const items = await listarFacturasCliente();
+        if (!items.length) {
+          tabla.innerHTML = "<tr><td colspan='4'>Sin facturas registradas.</td></tr>";
+          return;
+        }
+        tabla.innerHTML = items.map(item => `
+          <tr>
+            <td>${item.cliente || ""}</td>
+            <td>${item.campo || ""}</td>
+            <td>$ ${Number(item.monto || 0).toLocaleString("es-AR")}</td>
+            <td>${item.fecha || "-"}</td>
+          </tr>
+        `).join("");
+      } catch (err) {
+        console.error(err);
+        tabla.innerHTML = "<tr><td colspan='4'>Error cargando facturas.</td></tr>";
+      }
+    }
+
+    formFactura.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!auth.currentUser) {
+        status.textContent = "No hay sesión activa del productor.";
+        return;
+      }
+      status.textContent = "Guardando factura...";
+      try {
+        await registrarFacturaCliente({
+          clienteContratoId: document.getElementById("clienteContratoId").value.trim(),
+          cliente: document.getElementById("cliente").value.trim(),
+          campo: document.getElementById("campo").value.trim(),
+          monto: document.getElementById("monto").value,
+          fecha: document.getElementById("fecha").value
+        });
+        formFactura.reset();
+        status.textContent = "Factura guardada correctamente.";
+        await renderFacturas();
+      } catch (err) {
+        console.error(err);
+        status.textContent = "No se pudo guardar la factura.";
+      }
+    });
+
+    formResumen.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!auth.currentUser) {
+        resumenBox.innerHTML = "<p>Sin sesión activa.</p>";
+        return;
+      }
+
+      try {
+        const clienteContratoId = document.getElementById("resumenClienteContratoId").value.trim();
+        const montoMensual = Number(document.getElementById("montoMensual").value || 0);
+        const resumen = await obtenerResumenDeudaCliente(clienteContratoId, montoMensual);
+
+        resumenBox.innerHTML = `
+          <p><strong>Facturado:</strong> $ ${Number(resumen.totalFacturado).toLocaleString("es-AR")}</p>
+          <p><strong>Pagado:</strong> $ ${Number(resumen.totalPagado).toLocaleString("es-AR")}</p>
+          <p><strong>Saldo pendiente:</strong> $ ${Number(resumen.saldoPendiente).toLocaleString("es-AR")}</p>
+          <p><strong>Estado:</strong> <span class="badge ${resumen.estadoComercial}">${resumen.estadoComercial}</span></p>
+        `;
+      } catch (err) {
+        console.error(err);
+        resumenBox.innerHTML = "<p>Error calculando resumen.</p>";
+      }
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      console.log("Usuario autenticado:", user?.uid || null);
+      if (!user) {
+        status.textContent = "Debés iniciar sesión como productor.";
+        tabla.innerHTML = "<tr><td colspan='4'>Sin sesión activa.</td></tr>";
+        return;
+      }
+      await renderFacturas();
+    });
+  </script>
+</body>
+</html>

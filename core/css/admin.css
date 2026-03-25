@@ -1,0 +1,83 @@
+        body {
+            font-family: system-ui, Arial;
+            background: #f3f4f6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .card {
+            max-width: 720px;
+            margin: auto;
+            background: white;
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .08);
+        }
+
+        h1 {
+            margin: 0 0 8px;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        input,
+        select,
+        button {
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #d1d5db;
+            font-size: 16px;
+        }
+
+        input,
+        select {
+            flex: 1;
+            min-width: 240px;
+        }
+
+        button {
+            cursor: pointer;
+            border: 0;
+            background: #14532d;
+            color: white;
+        }
+
+        button.sec {
+            background: #334155;
+        }
+
+        button.danger {
+            background: #b91c1c;
+        }
+
+        .muted {
+            color: #6b7280;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #e5e7eb;
+            font-size: 12px;
+        }
+
+        pre {
+            background: #0b1020;
+            color: #e5e7eb;
+            padding: 12px;
+            border-radius: 12px;
+            overflow: auto;
+            white-space: pre-wrap;
+        }
+
+        .hide {
+            display: none;
+        }
+    

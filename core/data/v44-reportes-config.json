@@ -1,0 +1,10 @@
+{
+  "version": "V44",
+  "reportesGenerados": 14,
+  "estado": "operativo",
+  "evidenciaRequerida": [
+    "foto",
+    "gps",
+    "hora"
+  ]
+}

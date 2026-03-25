@@ -1,0 +1,2035 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Mapa de Riesgo Rural</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+    <style>
+        :root {
+            --brand-bg: linear-gradient(135deg, rgba(15, 23, 42, 0.97), rgba(20, 83, 45, 0.96));
+            --brand-dark: #0f172a;
+            --brand-accent: #166534;
+            --brand-accent-hover: #14532d;
+            --brand-soft: rgba(255, 255, 255, 0.10);
+            --brand-soft-border: rgba(255, 255, 255, 0.15);
+            --brand-radius: 14px;
+            --brand-shadow: 0 14px 34px rgba(15, 23, 42, 0.16);
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        header {
+            background: var(--brand-bg);
+            color: white;
+            padding: 18px 14px 14px;
+            text-align: center;
+            box-shadow: var(--brand-shadow);
+        }
+
+        header h2 {
+            margin: 0 0 14px;
+            font-size: 30px;
+            line-height: 1.15;
+        }
+
+        .sisg-nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .sisg-nav a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 11px 16px;
+            border-radius: var(--brand-radius);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            background: var(--brand-soft);
+            border: 1px solid var(--brand-soft-border);
+            transition: all 0.2s ease;
+        }
+
+        .sisg-nav a:hover {
+            background: rgba(255, 255, 255, 0.18);
+            transform: translateY(-1px);
+        }
+
+        .sisg-nav a.active {
+            background: #fff;
+            color: var(--brand-dark);
+            border-color: #fff;
+        }
+
+        .barra-filtros {
+            background: white;
+            padding: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .barra-filtros label {
+            font-weight: 600;
+        }
+
+        .barra-filtros select {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        .resumen-potreros {
+            background: #ffffff;
+            padding: 14px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .resumen-potreros h3 {
+            margin: 0 0 10px 0;
+            color: #14532d;
+            font-size: 16px;
+        }
+
+        .resumen-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+        }
+
+        .potrero-card {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .potrero-card strong {
+            display: block;
+            margin-bottom: 4px;
+            color: #111827;
+        }
+
+        .potrero-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+        }
+
+        .potrero-card.activo {
+            border: 2px solid #dc2626;
+            background: #fff5f5;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.10);
+        }
+
+        .potrero-card.activo strong {
+            color: #7f1d1d;
+        }
+
+        .potrero-card {
+            user-select: none;
+        }
+
+        #map {
+            height: calc(100vh - 240px);
+            width: 100%;
+        }
+
+        .potrero-card.riesgo-bajo {
+            border-left: 6px solid #16a34a;
+        }
+
+        .potrero-card.riesgo-medio {
+            border-left: 6px solid #f59e0b;
+        }
+
+        .potrero-card.riesgo-alto {
+            border-left: 6px solid #dc2626;
+        }
+
+        .riesgo-texto {
+            margin-top: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .riesgo-texto.bajo {
+            color: #15803d;
+        }
+
+        .riesgo-texto.medio {
+            color: #b45309;
+        }
+
+        .riesgo-texto.alto {
+            color: #b91c1c;
+        }
+
+        .resumen-general-mapa {
+            background: #ffffff;
+            padding: 14px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .resumen-general-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+        }
+
+        .resumen-general-card {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .resumen-general-card strong {
+            font-size: 13px;
+            color: #374151;
+        }
+
+        .resumen-general-card span {
+            font-size: 18px;
+            font-weight: 700;
+            color: #14532d;
+        }
+
+        .detalle-potrero-panel {
+            background: #ffffff;
+            padding: 14px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .detalle-potrero-panel h3 {
+            margin: 0 0 10px 0;
+            color: #14532d;
+            font-size: 16px;
+        }
+
+        .detalle-potrero-vacio {
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 14px;
+            color: #475569;
+            font-size: 14px;
+        }
+
+        .detalle-potrero-contenido {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .detalle-potrero-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+        }
+
+        .detalle-potrero-card {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .detalle-potrero-card strong {
+            font-size: 13px;
+            color: #374151;
+        }
+
+        .detalle-potrero-card span {
+            font-size: 17px;
+            font-weight: 700;
+            color: #14532d;
+        }
+
+        .detalle-ultimas-incidencias {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .detalle-ultimas-incidencias strong {
+            display: block;
+            margin-bottom: 10px;
+            color: #111827;
+        }
+
+        .detalle-lista-incidencias {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .detalle-item-incidencia {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-left: 5px solid #14532d;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 13px;
+            line-height: 1.5;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .detalle-item-incidencia .fila-tipo {
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+
+        .detalle-item-incidencia .fila-meta {
+            color: #475569;
+            font-size: 12px;
+        }
+
+        .detalle-item-incidencia .fila-observacion {
+            margin-top: 6px;
+            color: #334155;
+        }
+
+        .detalle-item-incidencia:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+        }
+
+        .detalle-item-incidencia.activo {
+            border: 2px solid #2563eb;
+            border-left: 6px solid #2563eb;
+            background: #eff6ff;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+        }
+
+        .detalle-item-incidencia .fila-accion {
+            margin-top: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #2563eb;
+        }
+
+        .acciones-potrero {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-potrero {
+            background: var(--brand-accent);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .btn-potrero:hover {
+            background: var(--brand-accent-hover);
+        }
+
+        .btn-potrero-sec {
+            background: #e5e7eb;
+            color: #111827;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .btn-potrero-sec:hover {
+            background: #d1d5db;
+        }
+
+
+        .btn-exportar-pdf,
+        .btn-operativo,
+        .btn-operativo-sec {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 42px;
+            padding: 10px 16px;
+            border-radius: var(--brand-radius);
+            border: 1px solid transparent;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-exportar-pdf,
+        .btn-operativo {
+            background: var(--brand-accent);
+            color: #fff;
+        }
+
+        .btn-exportar-pdf:hover,
+        .btn-operativo:hover {
+            background: var(--brand-accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-operativo-sec {
+            background: #ffffff;
+            color: var(--brand-dark);
+            border-color: #dbe2ea;
+        }
+
+        .btn-operativo-sec:hover {
+            background: #f8fafc;
+            transform: translateY(-1px);
+        }
+
+        .marker-cluster-small {
+            background: rgba(20, 83, 45, 0.6);
+        }
+
+        .marker-cluster-small div {
+            background: rgba(22, 101, 52, 0.9);
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .marker-cluster-medium {
+            background: rgba(180, 83, 9, 0.6);
+        }
+
+        .marker-cluster-medium div {
+            background: rgba(217, 119, 6, 0.9);
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .marker-cluster-large {
+            background: rgba(153, 27, 27, 0.6);
+        }
+
+        .marker-cluster-large div {
+            background: rgba(220, 38, 38, 0.9);
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .historial-temporal-panel {
+            background: #ffffff;
+            padding: 14px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .historial-temporal-panel h3 {
+            margin: 0 0 10px 0;
+            color: #14532d;
+            font-size: 16px;
+        }
+
+        .historial-temporal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .historial-temporal-card {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .historial-temporal-card strong {
+            font-size: 13px;
+            color: #374151;
+        }
+
+        .historial-temporal-card span {
+            font-size: 17px;
+            font-weight: 700;
+            color: #14532d;
+        }
+
+        .historial-listado {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .historial-listado strong {
+            display: block;
+            margin-bottom: 10px;
+            color: #111827;
+        }
+
+        .historial-lista-fechas {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .historial-fecha-item {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-left: 5px solid #14532d;
+            border-radius: 8px;
+            padding: 10px;
+            line-height: 1.5;
+        }
+
+        .historial-fecha-item .historial-fecha-titulo {
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+
+        .historial-fecha-item .historial-fecha-meta {
+            color: #475569;
+            font-size: 13px;
+        }
+
+        .btn-exportar-pdf {
+            background: #7c2d12;
+            color: #ffffff;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .btn-exportar-pdf:hover {
+            background: #9a3412;
+        }
+
+        .monitoreo-operativo-panel {
+            background: #ffffff;
+            padding: 14px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .monitoreo-operativo-panel h3 {
+            margin: 0 0 10px 0;
+            color: #14532d;
+            font-size: 16px;
+        }
+
+        .monitoreo-acciones {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .monitoreo-acciones button {
+            width: 100%;
+        }
+
+        .btn-operativo,
+        .btn-operativo-sec {
+            border: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .btn-operativo {
+            background: #14532d;
+            color: #fff;
+        }
+
+        .btn-operativo:hover {
+            background: #166534;
+        }
+
+        .btn-operativo-sec {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .btn-operativo-sec:hover {
+            background: #d1d5db;
+        }
+
+        .monitoreo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .monitoreo-card {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .monitoreo-card strong {
+            font-size: 13px;
+            color: #374151;
+        }
+
+        .monitoreo-card span {
+            font-size: 17px;
+            font-weight: 700;
+            color: #14532d;
+        }
+
+        .monitoreo-listado {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .monitoreo-listado strong {
+            display: block;
+            margin-bottom: 10px;
+            color: #111827;
+        }
+
+        .monitoreo-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .monitoreo-item {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-left: 5px solid #14532d;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .monitoreo-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+        }
+
+        .monitoreo-item.activo {
+            border: 2px solid #2563eb;
+            border-left: 6px solid #2563eb;
+            background: #eff6ff;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+        }
+
+        .monitoreo-item .titulo {
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+
+        .monitoreo-item .meta {
+            color: #475569;
+            font-size: 13px;
+        }
+
+        .monitoreo-item .nivel {
+            margin-top: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #7c2d12;
+        }
+
+        @media (max-width: 700px) {
+
+            .sisg-nav {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+                width: 100%;
+            }
+
+            .sisg-nav a {
+                width: 100%;
+                min-width: 0;
+                padding: 10px 12px;
+                font-size: 13px;
+                text-align: center;
+            }
+
+            .btn-exportar-pdf,
+            .btn-potrero,
+            .btn-potrero-sec,
+            .btn-operativo,
+            .btn-operativo-sec {
+                width: 100%;
+            }
+
+            header h2 {
+                font-size: 24px;
+            }
+        }
+
+        /* =========================
+   MEJORA VISUAL PROFESIONAL
+   ========================= */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at top left, rgba(22, 101, 52, 0.06), transparent 28%),
+                linear-gradient(180deg, #eef2f7 0%, #f8fafc 100%);
+            color: #1f2937;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1200;
+            backdrop-filter: blur(10px);
+        }
+
+        header h2 {
+            letter-spacing: 0.3px;
+        }
+
+        .sisg-nav a {
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+
+        .barra-filtros-pro {
+            max-width: 1500px;
+            margin: 18px auto 0;
+            padding: 16px 18px;
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: none;
+            justify-content: space-between;
+        }
+
+        .filtro-grupo {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 220px;
+        }
+
+        .filtro-grupo label {
+            font-size: 13px;
+            color: #334155;
+            font-weight: 700;
+        }
+
+        .filtro-grupo select {
+            min-height: 46px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            font-size: 14px;
+            font-weight: 600;
+            color: #0f172a;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .filtro-grupo select:focus {
+            border-color: #166534;
+            box-shadow: 0 0 0 4px rgba(22, 101, 52, 0.10);
+            background: #ffffff;
+        }
+
+        .filtro-grupo-btn {
+            min-width: 190px;
+        }
+
+        .filtro-grupo-btn .btn-exportar-pdf {
+            min-height: 46px;
+            font-size: 12px;
+            width: 100%;
+        }
+
+        .layout-mapa-profesional {
+            max-width: 1500px;
+            margin: 18px auto 28px;
+            padding: 0 18px 20px;
+            display: grid;
+            grid-template-columns: minmax(0, 1.55fr) minmax(340px, 460px);
+            gap: 18px;
+            align-items: start;
+        }
+
+        .columna-principal,
+        .columna-lateral {
+            min-width: 0;
+        }
+
+        .columna-principal {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .columna-lateral {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .resumen-general-mapa,
+        .resumen-potreros,
+        .detalle-potrero-panel,
+        .historial-temporal-panel,
+        .monitoreo-operativo-panel,
+        .mapa-shell {
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+            overflow: hidden;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .resumen-general-mapa,
+        .resumen-potreros,
+        .detalle-potrero-panel,
+        .historial-temporal-panel,
+        .monitoreo-operativo-panel {
+            padding: 18px;
+        }
+
+        .bloque-titulo {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .bloque-titulo h3 {
+            margin: 0;
+            font-size: 17px;
+            color: #0f172a;
+        }
+
+        .bloque-titulo p {
+            margin: 4px 0 0;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .resumen-general-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .resumen-general-card,
+        .detalle-potrero-card,
+        .historial-temporal-card,
+        .monitoreo-card {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 14px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .resumen-general-card span {
+            font-size: 24px;
+            color: #14532d;
+        }
+
+        .detalle-potrero-card span,
+        .historial-temporal-card span,
+        .monitoreo-card span {
+            font-size: 18px;
+        }
+
+        .mapa-shell {
+            position: sticky;
+            top: 128px;
+        }
+
+        .mapa-shell-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 18px;
+            border-bottom: 1px solid #e5e7eb;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+        }
+
+        .mapa-header-texto h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #0f172a;
+        }
+
+        .mapa-header-texto p {
+            margin: 4px 0 0;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        #map {
+            width: 100%;
+            height: calc(100vh - 220px);
+            min-height: 650px;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .resumen-grid,
+        .detalle-lista-incidencias,
+        .historial-lista-fechas,
+        .monitoreo-lista {
+            max-height: 300px;
+            overflow: auto;
+            padding-right: 4px;
+        }
+
+        .resumen-grid::-webkit-scrollbar,
+        .detalle-lista-incidencias::-webkit-scrollbar,
+        .historial-lista-fechas::-webkit-scrollbar,
+        .monitoreo-lista::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .resumen-grid::-webkit-scrollbar-thumb,
+        .detalle-lista-incidencias::-webkit-scrollbar-thumb,
+        .historial-lista-fechas::-webkit-scrollbar-thumb,
+        .monitoreo-lista::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 999px;
+        }
+
+        .potrero-card,
+        .detalle-item-incidencia,
+        .historial-fecha-item,
+        .monitoreo-item {
+            border-radius: 14px;
+        }
+
+        .potrero-card {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            padding: 12px 14px;
+        }
+
+        .potrero-card:hover,
+        .detalle-item-incidencia:hover,
+        .monitoreo-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .detalle-potrero-vacio {
+            border-radius: 14px;
+            background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+            color: #475569;
+        }
+
+        .detalle-ultimas-incidencias,
+        .historial-listado,
+        .monitoreo-listado {
+            border-radius: 16px;
+            background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+        }
+
+        .acciones-potrero,
+        .monitoreo-acciones {
+            gap: 10px;
+        }
+
+        .btn-potrero,
+        .btn-potrero-sec,
+        .btn-operativo,
+        .btn-operativo-sec,
+        .btn-exportar-pdf {
+            min-height: 44px;
+            border-radius: 12px;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+
+        .btn-potrero:hover,
+        .btn-potrero-sec:hover,
+        .btn-operativo:hover,
+        .btn-operativo-sec:hover,
+        .btn-exportar-pdf:hover {
+            transform: translateY(-1px);
+        }
+
+        .info.legend {
+            border-radius: 14px !important;
+            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.14) !important;
+            border: 1px solid #e5e7eb;
+        }
+
+        .leaflet-control-layers {
+            border-radius: 14px !important;
+            overflow: hidden;
+            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.14) !important;
+            border: 1px solid #e5e7eb !important;
+        }
+
+        .leaflet-popup-content-wrapper {
+            border-radius: 14px;
+        }
+
+        @media (max-width: 1200px) {
+            .layout-mapa-profesional {
+                grid-template-columns: 1fr;
+            }
+
+            .mapa-shell {
+                position: relative;
+                top: 0;
+            }
+
+            #map {
+                height: 62vh;
+                min-height: 500px;
+            }
+
+            .resumen-general-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 760px) {
+
+            .barra-filtros-pro {
+                margin: 14px 12px 0;
+                padding: 14px;
+
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                /* 3 columnas */
+                gap: 8px;
+                align-items: end;
+            }
+
+            .filtro-grupo {
+                min-width: unset;
+            }
+
+            .filtro-grupo select {
+                width: 100%;
+                min-height: 40px;
+                font-size: 13px;
+            }
+
+            .btn-exportar-pdf {
+                width: 100%;
+                min-height: 40px;
+                font-size: 13px;
+            }
+
+
+
+            .layout-mapa-profesional {
+                margin-top: 14px;
+                padding: 0 12px 16px;
+            }
+
+            .filtro-grupo,
+            .filtro-grupo-btn {
+                min-width: 100%;
+            }
+
+            .resumen-general-grid,
+            .detalle-potrero-grid,
+            .historial-temporal-grid,
+            .monitoreo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            @media (max-width:760px) {
+
+                .historial-temporal-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 10px;
+                }
+
+            }
+
+            @media (max-width:760px) {
+
+                .monitoreo-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 10px;
+                }
+
+            }
+
+            .detalle-potrero-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+            }
+
+            @media (max-width: 760px) {
+                .detalle-potrero-card {
+                    padding: 10px;
+                }
+
+                .detalle-potrero-card strong {
+                    font-size: 12px;
+                }
+
+                .detalle-potrero-card span {
+                    font-size: 14px;
+                    line-height: 1.2;
+                }
+            }
+
+
+            #map {
+                height: 56vh;
+                min-height: 380px;
+            }
+
+            .mapa-shell-header,
+            .resumen-general-mapa,
+            .resumen-potreros,
+            .detalle-potrero-panel,
+            .historial-temporal-panel,
+            .monitoreo-operativo-panel {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+        }
+
+        /* ===== BOTON MAPA ===== */
+        .mapa-header-acciones {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-mapa-ui {
+            min-height: 40px;
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            color: #0f172a;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-mapa-ui:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.10);
+            background: #f8fafc;
+        }
+
+        .mapa-wrap {
+            position: relative;
+        }
+
+        @media (max-width:760px) {
+
+            .resumen-grid {
+                grid-template-columns: repeat(2, 1fr);
+                /* 👈 dos columnas */
+                gap: 10px;
+            }
+
+        }
+
+        @media (max-width:760px) {
+
+            .acciones-potrero {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                margin-top: 10px;
+            }
+
+            .detalle-potrero-acciones button {
+                width: 100%;
+                min-height: 44px;
+                font-size: 13px;
+            }
+
+        }
+
+        /* ===== PANTALLA COMPLETA REAL ===== */
+        .mapa-shell:fullscreen {
+            background: #ffffff;
+            padding: 0;
+            margin: 0;
+            border-radius: 0;
+            width: 100%;
+            height: 100%;
+            max-width: none;
+        }
+
+        .mapa-shell:fullscreen .mapa-shell-header {
+            padding: 14px 18px;
+            border-radius: 0;
+        }
+
+        .mapa-shell:fullscreen .mapa-wrap {
+            height: calc(100vh - 76px);
+        }
+
+        .mapa-shell:fullscreen #map {
+            width: 100%;
+            height: calc(100vh - 76px) !important;
+            min-height: auto !important;
+            border-radius: 0;
+        }
+
+        /* Compatibilidad WebKit */
+        .mapa-shell:-webkit-full-screen {
+            background: #ffffff;
+            padding: 0;
+            margin: 0;
+            border-radius: 0;
+            width: 100%;
+            height: 100%;
+            max-width: none;
+        }
+
+        .mapa-shell:-webkit-full-screen .mapa-shell-header {
+            padding: 14px 18px;
+            border-radius: 0;
+        }
+
+        .mapa-shell:-webkit-full-screen .mapa-wrap {
+            height: calc(100vh - 76px);
+        }
+
+        .mapa-shell:-webkit-full-screen #map {
+            width: 100%;
+            height: calc(100vh - 76px) !important;
+            min-height: auto !important;
+            border-radius: 0;
+        }
+
+        @media (max-width: 760px) {
+
+            .mapa-shell-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+
+            /* 🔥 BOTONES DEL MAPA EN GRID */
+            .mapa-header-acciones {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+                width: 100%;
+            }
+
+            .btn-mapa-ui {
+                width: 100%;
+                font-size: 10px;
+                padding: 10px;
+            }
+
+        }
+
+        @media (max-width: 700px) {
+            .barra-filtros-pro {
+                margin: 12px;
+                padding: 14px;
+                border-radius: 14px;
+            }
+
+            .filtro-grupo {
+                width: 100%;
+                min-width: unset;
+            }
+
+            .barra-filtros select,
+            .barra-filtros button {
+                width: 100%;
+            }
+
+            #map {
+                height: calc(100vh - 320px);
+            }
+        }
+
+        .topbar-mobile {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .menu-toggle {
+            background: rgba(255, 255, 255, .14);
+            border: 1px solid rgba(255, 255, 255, .18);
+            color: #fff;
+            font-size: 22px;
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        .topbar-title {
+            flex: 1;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .45);
+            opacity: 0;
+            visibility: hidden;
+            transition: .25s ease;
+            z-index: 999;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            max-width: 82%;
+            height: 100vh;
+            background: #0f172a;
+            color: #fff;
+            transform: translateX(-100%);
+            transition: transform .25s ease;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+            padding: 18px 16px;
+        }
+
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, .14);
+        }
+
+        .mobile-menu-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .menu-close {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .mobile-menu-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .mobile-menu-nav a {
+            display: block;
+            text-decoration: none;
+            color: #fff;
+            background: rgba(255, 255, 255, .08);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-weight: 600;
+        }
+
+        .mobile-menu-nav a:hover {
+            background: rgba(255, 255, 255, .14);
+        }
+
+        @media (max-width: 768px) {
+            .topbar-mobile {
+                display: flex;
+            }
+
+            .sisg-nav {
+                display: none !important;
+            }
+
+            header h2 {
+                font-size: 24px;
+                margin-top: 0;
+            }
+        }
+
+        /* =========================
+   PATRULLAJE PROFESIONAL
+========================= */
+        .icono-patrullero-custom {
+            background: transparent;
+            border: none;
+        }
+
+        .patrullero-wrap {
+            position: relative;
+            width: 38px;
+            height: 38px;
+        }
+
+        .patrullero-pulso {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: rgba(37, 99, 235, 0.22);
+            animation: pulsoPatrullero 1.8s infinite;
+        }
+
+        .patrullero-icono {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            background: #ffffff;
+            border: 2px solid #2563eb;
+            border-radius: 50%;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.18);
+        }
+
+        @keyframes pulsoPatrullero {
+            0% {
+                transform: scale(0.88);
+                opacity: 0.9;
+            }
+
+            70% {
+                transform: scale(1.7);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1.7);
+                opacity: 0;
+            }
+        }
+
+        .objetivo-patrullaje-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-left: 5px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .objetivo-patrullaje-item.activo {
+            background: #eff6ff;
+            border-left-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.10);
+        }
+
+        .objetivo-patrullaje-item.completado {
+            background: #f0fdf4;
+            border-left-color: #16a34a;
+            opacity: 0.9;
+        }
+
+        .objetivo-patrullaje-item .meta {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .objetivo-patrullaje-item .estado {
+            font-size: 12px;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .badge-riesgo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 72px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .badge-riesgo.alto {
+            background: #dc2626;
+        }
+
+        .badge-riesgo.medio {
+            background: #f59e0b;
+        }
+
+        .badge-riesgo.bajo {
+            background: #16a34a;
+        }
+
+        /* =========================
+   PATRULLAJE PROFESIONAL
+========================= */
+        .icono-patrullero-custom {
+            background: transparent;
+            border: none;
+        }
+
+        .patrullero-wrap {
+            position: relative;
+            width: 38px;
+            height: 38px;
+        }
+
+        .patrullero-pulso {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: rgba(37, 99, 235, 0.22);
+            animation: pulsoPatrullero 1.8s infinite;
+        }
+
+        .patrullero-icono {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            background: #ffffff;
+            border: 2px solid #2563eb;
+            border-radius: 50%;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.18);
+        }
+
+        @keyframes pulsoPatrullero {
+            0% {
+                transform: scale(0.88);
+                opacity: 0.9;
+            }
+
+            70% {
+                transform: scale(1.7);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1.7);
+                opacity: 0;
+            }
+        }
+
+        .objetivo-patrullaje-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-left: 5px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .objetivo-patrullaje-item.activo {
+            background: #eff6ff;
+            border-left-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.10);
+        }
+
+        .objetivo-patrullaje-item.completado {
+            background: #f0fdf4;
+            border-left-color: #16a34a;
+            opacity: 0.9;
+        }
+
+        .objetivo-patrullaje-item .meta {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .objetivo-patrullaje-item .estado {
+            font-size: 12px;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .badge-riesgo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 72px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .badge-riesgo.alto {
+            background: #dc2626;
+        }
+
+        .badge-riesgo.medio {
+            background: #f59e0b;
+        }
+
+        .badge-riesgo.bajo {
+            background: #16a34a;
+        }
+
+
+
+        /* ===== LEYENDA MOVIL ===== */
+
+        /* =========================
+   LEYENDA FLOTANTE MÓVIL
+   ========================= */
+
+        @media (max-width: 760px) {
+            .leaflet-bottom.leaflet-right {
+                right: 12px !important;
+                bottom: 12px !important;
+                left: 12px !important;
+                display: flex;
+                justify-content: center;
+                pointer-events: none;
+            }
+
+            .info.legend {
+                width: min(92vw, 320px);
+                max-width: 320px;
+                background: rgba(255, 255, 255, 0.96) !important;
+                backdrop-filter: blur(10px);
+                border: 1px solid #e5e7eb !important;
+                border-radius: 18px !important;
+                box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18) !important;
+                padding: 0 !important;
+                overflow: hidden;
+                pointer-events: auto;
+                transition: max-height 0.28s ease, box-shadow 0.28s ease;
+                max-height: 54px;
+            }
+
+            .info.legend.legend-expandida {
+                max-height: 260px;
+            }
+
+            .info.legend .legend-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                padding: 14px 16px;
+                cursor: pointer;
+                font-weight: 700;
+                font-size: 14px;
+                color: #0f172a;
+                background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            }
+
+            .info.legend .legend-toggle::after {
+                content: "▴";
+                font-size: 14px;
+                color: #475569;
+                transition: transform 0.25s ease;
+            }
+
+            .info.legend:not(.legend-expandida) .legend-toggle::after {
+                transform: rotate(180deg);
+            }
+
+            .info.legend .legend-body {
+                padding: 0 16px 14px;
+                opacity: 1;
+                transition: opacity 0.22s ease;
+            }
+
+            .info.legend:not(.legend-expandida) .legend-body {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .info.legend .legend-body div {
+                font-size: 13px !important;
+                line-height: 1.45;
+                margin-bottom: 6px;
+            }
+        }
+
+        .info.legend {
+            border-radius: 14px !important;
+            box-shadow: 0 14px 30px rgba(15, 23, 42, 0.14) !important;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            padding: 12px 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h2>Mapa de Riesgo Rural</h2>
+        <div class="topbar-mobile">
+            <button id="menuToggle" class="menu-toggle" aria-label="Abrir menú">☰</button>
+            <div class="topbar-title">SISG Rural</div>
+        </div>
+        <div id="menuOverlay" class="menu-overlay"></div>
+
+        <aside id="mobileMenu" class="mobile-menu">
+            <div class="mobile-menu-header">
+                <h3>Menú</h3>
+                <button id="menuClose" class="menu-close" aria-label="Cerrar menú">✕</button>
+            </div>
+
+            <nav class="mobile-menu-nav">
+                <a href="../../../core/productor/panel.html">Red Rural</a>
+                <a href="panel.html">Panel operativo</a>
+                <a href="incidencias.html">Incidencias</a>
+                <a href="analisis.html">Análisis</a>
+                <a href="mapas-riesgo.html">Mapa</a>
+                <a href="reportes.html">Reportes</a>
+            </nav>
+        </aside>
+        <nav class="sisg-nav">
+            <a href="../../../core/productor/panel.html">Red Rural</a>
+            <a href="panel.html">Panel</a>
+            <a href="incidencias.html">Incidencias</a>
+            <a href="analisis.html">Análisis</a>
+            <a href="mapas-riesgo.html" class="active">Mapa de riesgo</a>
+            <a href="reportes.html">Reportes</a>
+        </nav>
+    </header>
+
+    <div class="barra-filtros barra-filtros-pro">
+        <div class="filtro-grupo">
+            <label for="filtroTipo">Filtrar por tipo</label>
+            <select id="filtroTipo" style="font-size: 12px;">
+                <option value="todos">Todos</option>
+                <option value="Faltante de ganado">Faltante de ganado</option>
+                <option value="Huellas de vehículo">Huellas de vehículo</option>
+                <option value="Alambrado manipulado">Alambrado manipulado</option>
+                <option value="Tranquera abierta">Tranquera abierta</option>
+                <option value="Movimiento nocturno">Movimiento nocturno</option>
+                <option value="Rastros de arreo">Rastros de arreo</option>
+            </select>
+        </div>
+
+        <div class="filtro-grupo">
+            <label for="modoVisualizacion">Visualización</label>
+            <select id="modoVisualizacion" style="font-size: 12px;">
+                <option value="marcadores">Marcadores</option>
+                <option value="heatmap">Mapa de calor</option>
+                <option value="mixto">Mixto</option>
+            </select>
+        </div>
+
+        <div class="filtro-grupo filtro-grupo-btn">
+            <label>&nbsp;</label>
+            <button id="btnExportarPDF" class="btn-exportar-pdf">Exportar PDF</button>
+        </div>
+    </div>
+
+    <main class="layout-mapa-profesional">
+
+        <section class="columna-principal">
+
+            <section class="resumen-general-mapa resumen-general-pro">
+                <div class="bloque-titulo">
+                    <div>
+                        <h3>Resumen general</h3>
+                        <p>Vista rápida del estado operativo</p>
+                    </div>
+                </div>
+
+                <div class="resumen-general-grid">
+                    <div class="resumen-general-card">
+                        <strong>Total de incidencias</strong>
+                        <span id="totalIncidenciasMapa">0</span>
+                    </div>
+
+                    <div class="resumen-general-card">
+                        <strong>Potreros con incidencias</strong>
+                        <span id="totalPotrerosMapa">0</span>
+                    </div>
+
+                    <div class="resumen-general-card">
+                        <strong>Potrero más afectado</strong>
+                        <span id="potreroMasAfectadoMapa">-</span>
+                    </div>
+
+                    <div class="resumen-general-card">
+                        <strong>Riesgo general</strong>
+                        <span id="riesgoGeneralMapa">-</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mapa-shell" id="mapaShell">
+                <div class="mapa-shell-header">
+                    <div class="mapa-header-texto">
+                        <h3>Mapa interactivo</h3>
+                        <p>Centro visual principal para análisis y navegación</p>
+                    </div>
+
+                    <div class="mapa-header-acciones">
+                        <button id="btnModoPotreros" class="btn-mapa-ui" type="button">Gestionar potreros</button>
+                        <button id="btnGuardarPotreros" class="btn-mapa-ui" type="button" style="display:none;">Guardar
+                            cambios</button>
+                        <button id="btnEditarPotreros" class="btn-mapa-ui" type="button">Editar potreros</button>
+                        <button id="btnEliminarPotrero" class="btn-mapa-ui" type="button">Eliminar potrero</button>
+                        <button id="btnPantallaCompletaMapa" class="btn-mapa-ui" type="button">Pantalla
+                            completa</button>
+                    </div>
+                </div>
+
+                <div class="mapa-wrap">
+                    <div id="map"></div>
+                </div>
+            </section>
+
+        </section>
+
+        <aside class="columna-lateral">
+
+            <section class="resumen-potreros">
+                <div class="bloque-titulo">
+                    <div>
+                        <h3>Ranking de potreros</h3>
+                        <p>Seleccioná uno para enfocarlo en el mapa</p>
+                    </div>
+                </div>
+                <div id="resumenPotreros" class="resumen-grid"></div>
+            </section>
+
+            <section class="detalle-potrero-panel">
+                <div class="bloque-titulo">
+                    <div>
+                        <h3>Detalle del potrero</h3>
+                        <p>Información del sector seleccionado</p>
+                    </div>
+                </div>
+
+                <div id="detallePotreroVacio" class="detalle-potrero-vacio">
+                    Seleccioná un potrero para ver su información detallada.
+                </div>
+
+                <div id="detallePotreroContenido" class="detalle-potrero-contenido" style="display:none;">
+                    <div class="detalle-potrero-grid">
+                        <div class="detalle-potrero-card">
+                            <strong>Potrero</strong>
+                            <span id="detalleNombrePotrero">-</span>
+                        </div>
+
+                        <div class="detalle-potrero-card">
+                            <strong>Total incidencias</strong>
+                            <span id="detalleTotalIncidencias">0</span>
+                        </div>
+
+                        <div class="detalle-potrero-card">
+                            <strong>Nivel de riesgo</strong>
+                            <span id="detalleNivelRiesgo">Sin datos</span>
+                        </div>
+
+                        <div class="detalle-potrero-card">
+                            <strong>Tipo más frecuente</strong>
+                            <span id="detalleTipoFrecuente">-</span>
+                        </div>
+
+                        <div class="detalle-potrero-card">
+                            <strong>Fecha más reciente</strong>
+                            <span id="detalleFechaReciente">-</span>
+                        </div>
+                    </div>
+
+                    <div class="acciones-potrero">
+                        <button id="btnFiltrarPotrero" class="btn-potrero">Ver solo este potrero</button>
+                        <button id="btnRestablecerVista" class="btn-potrero-sec">Restablecer vista</button>
+                    </div>
+
+                    <div class="detalle-ultimas-incidencias">
+                        <strong>Últimas incidencias</strong>
+                        <div id="detalleListaIncidencias" class="detalle-lista-incidencias"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="historial-temporal-panel">
+                <div class="bloque-titulo">
+                    <div>
+                        <h3>Historial temporal</h3>
+                        <p>Comportamiento reciente de incidencias</p>
+                    </div>
+                </div>
+
+                <div class="historial-temporal-grid">
+                    <div class="historial-temporal-card">
+                        <strong>Fechas con actividad</strong>
+                        <span id="historialTotalFechas">0</span>
+                    </div>
+
+                    <div class="historial-temporal-card">
+                        <strong>Fecha más reciente</strong>
+                        <span id="historialFechaReciente">-</span>
+                    </div>
+
+                    <div class="historial-temporal-card">
+                        <strong>Fecha más crítica</strong>
+                        <span id="historialFechaCritica">-</span>
+                    </div>
+                </div>
+
+                <div class="historial-listado">
+                    <strong>Últimas fechas registradas</strong>
+                    <div id="historialListaFechas" class="historial-lista-fechas"></div>
+                </div>
+            </section>
+
+            <section class="monitoreo-operativo-panel">
+                <div class="bloque-titulo">
+                    <div>
+                        <h3>Modo patrullaje</h3>
+                        <p>Seguimiento operativo y prioridades</p>
+                    </div>
+                </div>
+
+                <div class="monitoreo-acciones">
+                    <button id="btnActivarPatrullaje" class="btn-operativo">Activar patrullaje</button>
+                    <button id="btnSiguienteObjetivo" class="btn-operativo-sec">Siguiente objetivo</button>
+                    <button id="btnSalirPatrullaje" class="btn-operativo-sec">Salir patrullaje</button>
+                </div>
+
+                <div class="monitoreo-grid">
+                    <div class="monitoreo-card">
+                        <strong>Estado</strong>
+                        <span id="estadoPatrullaje">Inactivo</span>
+                    </div>
+
+                    <div class="monitoreo-card">
+                        <strong>Objetivo actual</strong>
+                        <span id="objetivoActualPatrullaje">-</span>
+                    </div>
+
+                    <div class="monitoreo-card">
+                        <strong>Prioridades activas</strong>
+                        <span id="totalObjetivosPatrullaje">0</span>
+                    </div>
+
+                    <div class="monitoreo-card">
+                        <strong>Última actualización</strong>
+                        <span id="ultimaActualizacionPatrullaje">-</span>
+                    </div>
+                </div>
+
+                <div class="monitoreo-listado">
+                    <strong>Cola operativa</strong>
+                    <div id="listaObjetivosPatrullaje" class="monitoreo-lista"></div>
+                </div>
+            </section>
+
+        </aside>
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+    <script type="module" src="../js/mapas-riesgo.js"></script>
+
+    <script>
+        const menuToggle = document.getElementById("menuToggle");
+        const mobileMenu = document.getElementById("mobileMenu");
+        const menuClose = document.getElementById("menuClose");
+        const menuOverlay = document.getElementById("menuOverlay");
+
+        function abrirMenu() {
+            mobileMenu.classList.add("active");
+            menuOverlay.classList.add("active");
+            document.body.style.overflow = "hidden";
+        }
+
+        function cerrarMenu() {
+            mobileMenu.classList.remove("active");
+            menuOverlay.classList.remove("active");
+            document.body.style.overflow = "";
+        }
+
+        if (menuToggle) menuToggle.addEventListener("click", abrirMenu);
+        if (menuClose) menuClose.addEventListener("click", cerrarMenu);
+        if (menuOverlay) menuOverlay.addEventListener("click", cerrarMenu);
+
+
+
+
+       
+
+    </script>
+</body>
+
+</html>

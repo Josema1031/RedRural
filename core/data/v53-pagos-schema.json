@@ -1,0 +1,15 @@
+{
+  "collection": "pagos_clientes",
+  "fields": {
+    "clienteContratoId": "string",
+    "cliente": "string",
+    "campo": "string",
+    "monto": "number",
+    "metodoPago": "string",
+    "estado": "string",
+    "fechaPago": "string",
+    "observacion": "string",
+    "createdAt": "timestamp",
+    "updatedAt": "timestamp"
+  }
+}

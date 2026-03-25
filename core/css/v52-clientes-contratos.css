@@ -1,0 +1,58 @@
+/* V52 - integración real clientes y contratos */
+.v52-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px
+}
+
+.v52-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, .06)
+}
+
+.v52-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px
+}
+
+.v52-form input,
+.v52-form select,
+.v52-form button {
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #cbd5e1
+}
+
+.v52-form button {
+    background: #0f172a;
+    color: #fff;
+    border: none;
+    font-weight: 700
+}
+
+.v52-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: .82rem;
+    font-weight: 700
+}
+
+.v52-badge.activo {
+    background: #dcfce7;
+    color: #166534
+}
+
+.v52-badge.por_vencer {
+    background: #fef3c7;
+    color: #92400e
+}
+
+.v52-badge.vencido {
+    background: #fee2e2;
+    color: #991b1b
+}

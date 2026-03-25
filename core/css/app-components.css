@@ -1,0 +1,43 @@
+.rr-auth-shell {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background: var(--rr-bg);
+}
+
+.rr-auth-card {
+  background: #fff;
+  border-radius: 14px;
+}
+
+.rr-auth-title {
+  color: var(--rr-primary);
+}
+
+.rr-btn-primary {
+  background: var(--rr-primary);
+  color: #fff;
+}
+
+.rr-btn-primary:hover {
+  background: var(--rr-primary-dark);
+}
+
+.rr-btn-danger {
+  background: var(--rr-danger);
+  color: #fff;
+}
+
+.rr-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.rr-badge-success { background: #dcfce7; color: #166534; }
+.rr-badge-warning { background: #fef3c7; color: #92400e; }
+.rr-badge-danger  { background: #fee2e2; color: #991b1b; }

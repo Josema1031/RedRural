@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reportes y Resultados | SISG Rural</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+</head>
+
+<body>
+    <header class="sisg-header">
+        <div class="sisg-header-top">
+            <div>
+                <p class="sisg-kicker">Red Rural / Seguridad Rural</p>
+                <h1>SISG Rural</h1>
+                <p class="sisg-subtitle">Plataforma operativa de seguridad rural</p>
+            </div>
+        </div>
+
+        <div class="topbar-mobile">
+            <button id="menuToggle" class="menu-toggle" aria-label="Abrir menú">☰</button>
+
+        </div>
+        <div id="menuOverlay" class="menu-overlay"></div>
+
+        <aside id="mobileMenu" class="mobile-menu">
+            <div class="mobile-menu-header">
+                <h3>Menú</h3>
+                <button id="menuClose" class="menu-close" aria-label="Cerrar menú">✕</button>
+            </div>
+
+            <nav class="mobile-menu-nav">
+               <a href="../../../core/productor/panel.html">Red Rural</a>
+                <a href="panel.html">Panel</a>
+                <a href="incidencias.html">Incidencias</a>
+                <a href="analisis.html">Análisis</a>
+                <a href="mapas-riesgo.html">Mapa de riesgo</a>
+                <a href="reportes.html" class="active">Reportes</a>
+            </nav>
+        </aside>
+
+        <nav class="sisg-nav">
+            <a href="../../../core/productor/panel.html">Red Rural</a>
+            <a href="panel.html">Panel</a>
+            <a href="incidencias.html">Incidencias</a>
+            <a href="analisis.html">Análisis</a>
+            <a href="mapas-riesgo.html">Mapa de riesgo</a>
+            <a href="reportes.html" class="active">Reportes</a>
+        </nav>
+
+    </header>
+
+    <main class="container">
+        <section class="card hero">
+            <span class="badge">Resultado del servicio</span>
+            <h2 style="margin-top: 12px;">Reportes y resultados obtenidos</h2>
+            <p>
+                Esta sección muestra cómo SISG Rural puede presentar los principales
+                hallazgos del establecimiento a partir del diagnóstico territorial,
+                el registro de incidencias y el análisis de patrones.
+            </p>
+        </section>
+
+        <section class="kpi-grid">
+            <article class="card kpi-card">
+                <p class="kpi-label">Potreros analizados</p>
+                <h3 class="kpi-value">3</h3>
+                <span class="badge">Cobertura inicial</span>
+            </article>
+
+            <article class="card kpi-card">
+                <p class="kpi-label">Incidencias registradas</p>
+                <h3 class="kpi-value">12</h3>
+                <span class="badge">Base de análisis</span>
+            </article>
+
+            <article class="card kpi-card">
+                <p class="kpi-label">Zona más sensible</p>
+                <h3 class="kpi-value">Potrero 3</h3>
+                <span class="badge">Riesgo alto</span>
+            </article>
+
+            <article class="card kpi-card">
+                <p class="kpi-label">Modalidad predominante</p>
+                <h3 class="kpi-value">Rastros / faltantes</h3>
+                <span class="badge">Patrón detectado</span>
+            </article>
+        </section>
+
+        <section class="grid-doble">
+            <section class="card bloque-destacado">
+                <h2>Conclusión operativa</h2>
+                <p>
+                    Del análisis preliminar surge que la mayor recurrencia de incidencias
+                    se concentra en sectores alejados del casco, con exposición a linderos,
+                    menor visibilidad y menor frecuencia de control.
+                </p>
+                <p>
+                    Se recomienda reforzar recorridas, registrar más sistemáticamente las
+                    guardias y mantener un seguimiento específico sobre los sectores de mayor riesgo.
+                </p>
+            </section>
+
+            <section class="card estado-card">
+                <h2>Resultado del sistema</h2>
+                <ul>
+                    <li><strong>Diagnóstico:</strong> realizado</li>
+                    <li><strong>Mapa de riesgo:</strong> definido</li>
+                    <li><strong>Incidencias:</strong> registradas</li>
+                    <li><strong>Patrones:</strong> detectables</li>
+                    <li><strong>Prevención:</strong> orientada por datos</li>
+                </ul>
+            </section>
+        </section>
+
+        <section class="card">
+            <h2>Ejemplo de hallazgos principales</h2>
+            <div class="table-wrap">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Hallazgo</th>
+                            <th>Descripción</th>
+                            <th>Impacto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Potrero crítico</td>
+                            <td>Mayor concentración de incidencias en sector lindero</td>
+                            <td>Alto</td>
+                        </tr>
+                        <tr>
+                            <td>Patrón temporal</td>
+                            <td>Mayor recurrencia en días de menor control</td>
+                            <td>Medio / Alto</td>
+                        </tr>
+                        <tr>
+                            <td>Debilidad territorial</td>
+                            <td>Accesos laterales y baja visibilidad</td>
+                            <td>Alto</td>
+                        </tr>
+                        <tr>
+                            <td>Registro operativo</td>
+                            <td>Necesidad de fortalecer carga de novedades</td>
+                            <td>Medio</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Recomendaciones del informe</h2>
+            <ul>
+                <li>Reforzar recorridas en sectores de riesgo alto</li>
+                <li>Registrar sistemáticamente novedades por potrero</li>
+                <li>Consolidar control de guardias y turnos</li>
+                <li>Comparar incidencias por semana o quincena</li>
+                <li>Escalar el sistema a una versión integrada en Red Rural</li>
+            </ul>
+        </section>
+
+        <section class="card">
+            <h2>Proyección futura del reporte</h2>
+            <p>
+                Más adelante, esta sección podrá generar reportes automáticos por productor,
+                establecimiento o período, incluyendo exportación PDF y estadísticas conectadas
+                a Firebase o Google Sheets.
+            </p>
+        </section>
+    </main>
+
+    <script>
+        const menuToggle = document.getElementById("menuToggle");
+        const mobileMenu = document.getElementById("mobileMenu");
+        const menuClose = document.getElementById("menuClose");
+        const menuOverlay = document.getElementById("menuOverlay");
+
+        function abrirMenu() {
+            mobileMenu.classList.add("active");
+            menuOverlay.classList.add("active");
+            document.body.style.overflow = "hidden";
+        }
+
+        function cerrarMenu() {
+            mobileMenu.classList.remove("active");
+            menuOverlay.classList.remove("active");
+            document.body.style.overflow = "";
+        }
+
+        if (menuToggle) menuToggle.addEventListener("click", abrirMenu);
+        if (menuClose) menuClose.addEventListener("click", cerrarMenu);
+        if (menuOverlay) menuOverlay.addEventListener("click", cerrarMenu);
+    </script>
+</body>
+
+</html>
