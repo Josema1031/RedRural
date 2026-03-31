@@ -875,7 +875,7 @@ function renderPatrullajeOperativo() {
             div.classList.add("activo");
         }
 
-       div.innerHTML = `
+        div.innerHTML = `
     <div class="titulo">
         ${item.tipo || "Sin tipo"} - ${item.potrero || "Sin dato"}
     </div>
@@ -1971,6 +1971,51 @@ function renderResumenGeneral(incidencias) {
     }
 }
 
+function actualizarBadgesMapaUI() {
+    if (!totalIncidenciasMapa || !totalPotrerosMapa || !potreroMasAfectadoMapa || !riesgoGeneralMapa) return;
+
+    const incidencias = Array.isArray(incidenciasFiltradasActuales)
+        ? incidenciasFiltradasActuales
+        : [];
+
+    if (incidencias.length === 0) {
+        totalIncidenciasMapa.textContent = "0";
+        totalPotrerosMapa.textContent = "0";
+        potreroMasAfectadoMapa.textContent = "-";
+        riesgoGeneralMapa.textContent = "Sin datos";
+        return;
+    }
+
+    const conteo = {};
+
+    incidencias.forEach((item) => {
+        const potrero = item.potrero && item.potrero.trim() !== "" ? item.potrero : "Sin dato";
+        conteo[potrero] = (conteo[potrero] || 0) + 1;
+    });
+
+    let potreroMayor = "-";
+    let cantidadMayor = 0;
+
+    Object.entries(conteo).forEach(([potrero, cantidad]) => {
+        if (cantidad > cantidadMayor) {
+            cantidadMayor = cantidad;
+            potreroMayor = potrero;
+        }
+    });
+
+    totalIncidenciasMapa.textContent = String(incidencias.length);
+    totalPotrerosMapa.textContent = String(Object.keys(conteo).length);
+    potreroMasAfectadoMapa.textContent = potreroMayor;
+
+    if (incidencias.length <= 3) {
+        riesgoGeneralMapa.textContent = "Bajo";
+    } else if (incidencias.length <= 6) {
+        riesgoGeneralMapa.textContent = "Medio";
+    } else {
+        riesgoGeneralMapa.textContent = "Alto";
+    }
+}
+
 
 function renderizarMarcadores() {
     limpiarMarcadores();
@@ -2046,6 +2091,7 @@ function renderizarMarcadores() {
         limpiarHistorialTemporal();
         limpiarPatrullajeOperativo();
         actualizarBadgesMapaUI();
+        return;
     }
 }
 
@@ -2163,9 +2209,7 @@ if (btnSiguienteObjetivo) {
     btnSiguienteObjetivo.addEventListener("click", irAlSiguienteObjetivoPatrullaje);
 }
 
-if (btnSalirPatrullaje) {
-    btnSalirPatrullaje.addEventListener("click", limpiarPatrullajeOperativo);
-}
+
 if (btnRestablecerVista) {
 
     btnRestablecerVista.addEventListener("click", () => {
@@ -2253,6 +2297,9 @@ function actualizarEstadoPantallaCompleta() {
     }, 250);
 }
 
+
+
+
 document.addEventListener("fullscreenchange", actualizarEstadoPantallaCompleta);
 document.addEventListener("webkitfullscreenchange", actualizarEstadoPantallaCompleta);
 
@@ -2264,13 +2311,7 @@ btnSalirPatrullaje?.addEventListener("click", () => {
     }
 });
 
-btnSalirPatrullaje?.addEventListener("click", () => {
-    limpiarPatrullajeOperativo();
 
-    if (grupoMarcadores && grupoMarcadores.getBounds && grupoMarcadores.getLayers().length) {
-        map.fitBounds(grupoMarcadores.getBounds(), { padding: [30, 30] });
-    }
-});
 
 function abrirMapaEnPantallaCompleta() {
 
@@ -2288,3 +2329,4 @@ function abrirMapaEnPantallaCompleta() {
     }
 
 }
+

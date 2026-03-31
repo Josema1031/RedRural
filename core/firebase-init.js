@@ -9,6 +9,7 @@ import {
   persistentLocalCache,
   persistentMultipleTabManager
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 // --- CONFIG ---
 export const firebaseConfig = {
@@ -30,3 +31,5 @@ export const db = initializeFirestore(app, {
     tabManager: persistentMultipleTabManager()
   })
 });
+
+export const storage = getStorage(app);

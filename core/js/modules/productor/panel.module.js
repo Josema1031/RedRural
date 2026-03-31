@@ -3535,7 +3535,7 @@
           div.innerHTML = `
         <div class="item-info">
           <strong>⛽ ${c.vehiculo || ""} • ${Number(c.litros || 0)} L</strong><br>
-          <small>$${Number(c.costo || 0)} ${c.odometro ? "• Odo: " + c.odometro : ""} • ${f} • Por: ${c.cargadoPor || "-"}</small>
+          <small>$${Number(c.costo || 0)} ${c.odometro ? "• KM: " + c.odometro : ""} • ${f} • Cargado Por: ${c.cargadoPor || "-"}</small>
         </div>
         <span class="chip-categoria">OK</span>
       `;

@@ -1,0 +1,475 @@
+:root{
+  --verde:#14532d;
+  --verde-2:#166534;
+  --verde-3:#22c55e;
+  --oscuro:#0f172a;
+  --gris-1:#f8fafc;
+  --gris-2:#eef2f7;
+  --gris-3:#cbd5e1;
+  --texto:#111827;
+  --muted:#64748b;
+  --blanco:#ffffff;
+  --rojo:#7f1d1d;
+  --rojo-2:#b91c1c;
+  --amarillo:#f59e0b;
+  --borde:#e5e7eb;
+  --sombra:0 12px 30px rgba(15, 23, 42, .08);
+  --sombra-soft:0 8px 20px rgba(15, 23, 42, .06);
+  --radio-xl:20px;
+  --radio-lg:16px;
+  --radio-md:12px;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  padding:18px;
+  font-family:Arial, sans-serif;
+  color:var(--texto);
+  background:
+    radial-gradient(circle at top left, rgba(20,83,45,.10), transparent 22%),
+    linear-gradient(180deg, #f3f6f8 0%, #eef2f4 100%);
+}
+
+.wrap{
+  max-width:1100px;
+  margin:0 auto;
+}
+
+/* =========================
+   HEADER
+========================= */
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  padding:18px;
+  border-radius:24px;
+  background:linear-gradient(135deg, #0f172a 0%, #14532d 100%);
+  box-shadow:var(--sombra);
+  color:var(--blanco);
+}
+
+.top h1{
+  margin:0;
+  font-size:1.35rem;
+  line-height:1.2;
+  font-weight:900;
+  letter-spacing:.2px;
+}
+
+#sub{
+  margin:12px 4px 0;
+  color:var(--muted);
+  font-size:.92rem;
+}
+
+/* =========================
+   BLOQUE DE CONEXIÓN
+========================= */
+#estadoConexion{
+  margin-top:12px;
+  padding:12px 14px !important;
+  border-radius:16px !important;
+  border:1px solid rgba(20,83,45,.10);
+  background:linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow:var(--sombra-soft);
+  font-size:14px !important;
+}
+
+/* =========================
+   BOTONES
+========================= */
+.btn,
+.btn-ok,
+.btn-secundario,
+.switch-btn{
+  border:none;
+  border-radius:14px;
+  min-height:44px;
+  padding:11px 14px;
+  font-weight:800;
+  cursor:pointer;
+  transition:transform .18s ease, box-shadow .18s ease, opacity .18s ease, background .18s ease;
+}
+
+.btn:hover,
+.btn-ok:hover,
+.btn-secundario:hover,
+.switch-btn:hover{
+  transform:translateY(-1px);
+}
+
+.btn{
+  background:#e5e7eb;
+  color:var(--texto);
+}
+
+.btn-out{
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.18);
+  text-decoration:none;
+  display:inline-flex !important;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 8px 18px rgba(0,0,0,.15);
+}
+
+.btn-ok{
+  background:linear-gradient(135deg, var(--verde) 0%, var(--verde-2) 100%);
+  color:#fff;
+  box-shadow:0 8px 18px rgba(20,83,45,.20);
+}
+
+.btn-secundario{
+  background:#dbeafe;
+  color:#1e3a8a;
+  box-shadow:0 8px 18px rgba(30,58,138,.12);
+}
+
+.btn[disabled],
+.btn-ok[disabled],
+.btn-secundario[disabled]{
+  opacity:.55;
+  cursor:not-allowed;
+  transform:none;
+  box-shadow:none;
+}
+
+/* =========================
+   SWITCH DE MÓDULOS
+========================= */
+.panel-switch{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin:16px 0 14px;
+}
+
+.switch-btn{
+  background:#e5e7eb;
+  color:#111827;
+  box-shadow:var(--sombra-soft);
+}
+
+.switch-btn.activo{
+  background:linear-gradient(135deg, var(--verde) 0%, var(--verde-2) 100%);
+  color:white;
+  box-shadow:0 8px 20px rgba(20,83,45,.22);
+}
+
+/* =========================
+   GRIDS
+========================= */
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:16px;
+  margin-top:14px;
+}
+
+.grid-operativo,
+.grid-diario{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:16px;
+}
+
+/* =========================
+   CARDS
+========================= */
+.card{
+  background:linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  border:1px solid rgba(226,232,240,.95);
+  border-radius:var(--radio-xl);
+  padding:18px;
+  box-shadow:var(--sombra);
+}
+
+.card h2{
+  margin:0 0 8px !important;
+  font-size:1.05rem;
+  line-height:1.25;
+  color:#0f172a;
+}
+
+.item{
+  background:var(--gris-1);
+  border:1px solid var(--borde);
+  border-radius:14px;
+  padding:12px;
+  margin-top:10px;
+}
+
+.muted{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.45;
+}
+
+/* =========================
+   FORMULARIOS
+========================= */
+label{
+  color:#334155;
+  font-weight:700;
+}
+
+input,
+select,
+textarea{
+  width:100%;
+  min-width:0;
+  padding:11px 12px;
+  border-radius:14px;
+  border:1px solid var(--borde);
+  background:#fff;
+  color:var(--texto);
+  outline:none;
+  transition:border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+  border-color:#86efac;
+  box-shadow:0 0 0 4px rgba(34,197,94,.14);
+  background:#fff;
+}
+
+textarea{
+  resize:vertical;
+  min-height:110px;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:10px;
+}
+
+.campo{
+  display:flex;
+  flex-direction:column;
+}
+
+.campo label{
+  font-size:.85rem;
+  margin-bottom:6px;
+}
+
+.actions{
+  margin-top:10px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.actions-incidencia{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:10px;
+}
+
+.label-incidencia{
+  display:block;
+  font-size:.85rem;
+  margin-top:10px;
+  margin-bottom:6px;
+  color:#374151;
+  font-weight:700;
+}
+
+.input-incidencia,
+.input-incidencia-full{
+  width:100%;
+  min-width:0;
+}
+
+/* =========================
+   LISTAS CON SCROLL
+========================= */
+.scroll-lista{
+  max-height:320px;
+  overflow-y:auto;
+  padding-right:6px;
+  margin-top:10px;
+}
+
+.scroll-lista::-webkit-scrollbar{
+  width:8px;
+}
+
+.scroll-lista::-webkit-scrollbar-thumb{
+  background:#cbd5e1;
+  border-radius:10px;
+}
+
+.scroll-lista::-webkit-scrollbar-track{
+  background:transparent;
+}
+
+/* =========================
+   URGENCIAS
+========================= */
+.urgencias-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:12px;
+}
+
+.mini-card-urgencia{
+  min-width:0;
+  padding:14px;
+  border-radius:16px;
+  background:linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border:1px solid #e2e8f0;
+  box-shadow:var(--sombra-soft);
+}
+
+#countUrgentesEmpleado,
+#countAsignadasEmpleado{
+  font-size:28px !important;
+  font-weight:900 !important;
+  line-height:1;
+}
+
+#alertaUrgenteEmpleado{
+  border:1px solid #fecaca;
+  box-shadow:0 8px 16px rgba(185,28,28,.08);
+}
+
+/* =========================
+   MAPA Y MENSAJES OPERATIVOS
+========================= */
+#mapPatrulla{
+  height:340px !important;
+  border-radius:18px !important;
+  margin-top:12px !important;
+  background:#e5e7eb !important;
+  overflow:hidden;
+  border:1px solid #dbe2ea;
+}
+
+#msgTrack,
+#msgPatrullaGps,
+#msgIncEmpleado,
+#msgEmpleadoComb,
+#estadoUbicacionInc{
+  padding:10px 12px;
+  border-radius:12px;
+  background:#f8fafc;
+  border:1px solid #e5e7eb;
+}
+
+/* =========================
+   UTILIDADES
+========================= */
+.modulo-empleado.hidden-mod{
+  display:none;
+}
+
+.modulo-empleado.visible-mod{
+  display:block;
+}
+
+/* =========================
+   DESKTOP
+========================= */
+@media (min-width: 900px){
+  .grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .grid-operativo,
+  .grid-diario{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+@media (max-width: 700px){
+  body{
+    padding:12px;
+  }
+
+  .top{
+    padding:16px;
+    border-radius:20px;
+  }
+
+  .top h1{
+    font-size:1.12rem;
+  }
+
+  .panel-switch{
+    grid-template-columns:1fr;
+  }
+
+  .card{
+    padding:14px;
+    border-radius:18px;
+  }
+
+  .form-grid,
+  .actions-incidencia{
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+
+  .actions{
+    gap:8px;
+  }
+
+  .btn,
+  .btn-ok,
+  .btn-secundario,
+  .switch-btn{
+    width:100%;
+  }
+
+  #mapPatrulla{
+    height:280px !important;
+  }
+}
+
+@media (max-width: 480px){
+  .muted{
+    font-size:12px;
+  }
+
+  .campo label,
+  .label-incidencia{
+    font-size:12px;
+  }
+
+  input,
+  select,
+  textarea{
+    padding:10px;
+    font-size:14px;
+  }
+
+  .mini-card-urgencia{
+    padding:12px;
+  }
+
+  .urgencias-grid{
+    gap:8px;
+  }
+}

@@ -7,36 +7,23 @@
   <title>Panel Empleado — RuralControl</title>
   <link rel="manifest" href="../manifest.json">
   <meta name="theme-color" content="#14532d">
-  <link rel="apple-touch-icon" href="../img/logo.png">
+  <link rel="icon" href="../../img/logo.png">
+  <link rel="apple-touch-icon" href="../../img/logo.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
-
-
-
-  <link rel="stylesheet" href="../css/app-base.css">
-  <link rel="stylesheet" href="../css/app-components.css">
-  <link rel="stylesheet" href="../css/app-theme.css">
   <link rel="stylesheet" href="../css/empleado-panel.css">
-
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="../css/app-layout.css">
-  <link rel="stylesheet" href="../css/app-utilities.css">
-  <link rel="stylesheet" href="../css/executive-dashboard.css">
-  <link rel="stylesheet" href="../css/servicios-empleado.css">
-  <link rel="stylesheet" href="../css/estado-servicio.css">
-  <link rel="stylesheet" href="../css/v25-tablero-comercial.css">
-  <link rel="stylesheet" href="../css/v26-cierre-profesional.css">
-  <link rel="stylesheet" href="../css/v27-visual-premium.css">
+
 </head>
 
 <body>
   <div class="wrap">
-   
+
 
     <div class="top">
       <h1>📋 Panel del Empleado</h1>
       <div style="display:flex;gap:10px;align-items:center">
-        <a class="btn btn-out" href="../index.html" id="btnSalir" style="text-decoration:none;display:inline-block">⬅
+        <a class="btn btn-out" href="../../index.html" id="btnSalir" style="text-decoration:none;display:inline-block">⬅
           Salir</a>
       </div>
     </div>
@@ -79,7 +66,7 @@
             </div>
 
             <div class="campo">
-              <label>Odómetro</label>
+              <label>Kilometraje</label>
               <input id="eOdom" type="number" step="1">
             </div>
 
@@ -148,6 +135,16 @@
 
           <div id="estadoUbicacionInc" class="muted" style="margin-top:8px"></div>
 
+          <label class="label-incidencia">Foto de evidencia</label>
+          <input id="incFotoEvidencia" type="file" accept="image/*" capture="environment"
+            class="input-incidencia-full" />
+
+          <div id="incPreviewEvidencia" style="display:none;margin-top:10px;">
+            <div class="muted" style="margin-bottom:6px;">Vista previa</div>
+            <img id="incImgPreviewEvidencia" src="" alt="Vista previa de evidencia"
+              style="width:100%;max-width:220px;border-radius:12px;border:1px solid #e5e7eb;display:block;" />
+          </div>
+
           <label class="label-incidencia">Observaciones</label>
 
           <textarea id="incObservaciones" rows="4" placeholder="Describí lo ocurrido"
@@ -189,12 +186,17 @@
     </section>
 
     <section id="mod-operativo" class="modulo-empleado hidden-mod">
+      <div id="estadoOperativo" class="estado-operativo">
+        ● Sin patrulla activa
+      </div>
       <div class="grid grid-operativo">
         <div class="card">
           <h2 style="margin:0 0 8px">🚓 Solicitudes de patrulla</h2>
           <div class="muted">Acá vas a ver los pedidos del productor y podrás aceptarlos.</div>
           <div id="listaPatrullas" class="scroll-lista" style="margin-top:10px;">Cargando...</div>
         </div>
+
+
 
         <div class="card" style="margin-top:10px;">
           <strong>🚨 Estado de urgencias</strong>
@@ -223,7 +225,7 @@
           <div id="mapPatrulla" style="height:320px;border-radius:12px;margin-top:10px;background:#e5e7eb;"></div>
         </div>
 
-        <div class="card">
+        <div class="card card-operativa">
           <h2 style="margin:0 0 8px">🎮 Control de patrulla</h2>
           <div class="muted">Desde acá vas a iniciar y finalizar el servicio seleccionado.</div>
 
@@ -277,8 +279,8 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <script type="module" src="../js/modules/empleado/index.js"></script>
-  <script src="../js/modules/empleado/panel.sw.js"></script>
+
+  <script type="module" src="../../core/js/modules/empleado/panel.module.js"></script>
 
 
 

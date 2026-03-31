@@ -4,7 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Panel Patrullero | Vigía Rural</title>
-  <link rel="stylesheet" href="../css/patrullero-panel.css" />
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="../css/patrullero-panel-pro.css" />
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 <body>
   <main class="wrap">
@@ -19,6 +23,8 @@
         <button id="btnLogout">Cerrar sesión</button>
       </div>
     </header>
+
+    <div id="panelPatrullaStatus"></div>
 
     <section class="card">
       <div class="section-head">

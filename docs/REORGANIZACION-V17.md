@@ -1,1 +1,0 @@
-V17: asignación de servicios al empleado (demo, base para Firestore).
