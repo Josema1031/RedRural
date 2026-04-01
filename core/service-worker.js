@@ -1,9 +1,9 @@
 const CACHE_NAME = "red-rural-v5";
-const OFFLINE_URL = "../index.html";
+const OFFLINE_URL = "../login-red-rural.html";
 
 const APP_SHELL = [
   "./",
-  "../index.html",
+  "../login-red-rural.html",
   "./manifest.json",
   "./firebase-init.js",
   "./css/main.css",

@@ -1,67 +1,1443 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Red Rural "Gualeguay"</title>
-  <!-- =========================
-     Open Graph / Social Share
-========================= -->
-<meta property="og:type" content="website" />
-<meta property="og:locale" content="es_AR" />
+  <!-- SEO básico -->
+  <meta name="description"
+    content="Red Rural integra gestión del establecimiento, prevención ganadera y patrullaje rural en una sola propuesta profesional. Conocé Red Rural, SISG Rural y Vigía Rural.">
+  <meta name="keywords"
+    content="Red Rural, SISG Rural, Vigía Rural, gestión rural, seguridad ganadera, patrullaje rural, prevención rural, campo, productores, vigilancia rural">
+  <meta name="author" content="Red Rural">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#1d6b52">
 
-<!-- ✅ URL CANÓNICA (cambiá por tu URL real) -->
-<meta property="og:url" content="https://josema1031.github.io/RedRural/" />
+  <!-- Open Graph / Facebook / LinkedIn / WhatsApp -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Red Rural">
+  <meta property="og:title" content="Red Rural | Gestión, prevención y patrullaje rural">
+  <meta property="og:description"
+    content="Una solución profesional para ordenar el campo, prevenir riesgos y coordinar patrullajes. Descubrí Red Rural, SISG Rural y Vigía Rural.">
+  <meta property="og:url" content="https://josema1031.github.io/lading-red-rural/">
+  <meta property="og:image" content="https://josema1031.github.io/lading-red-rural/img/logo-landing">
+  <meta property="og:image:secure_url" content="https://josema1031.github.io/lading-red-rural/img/logo-landing">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Red Rural, SISG Rural y Vigía Rural: gestión, prevención y patrullaje rural">
+  <meta property="og:locale" content="es_AR">
 
-<!-- ✅ TÍTULO (lo que se ve al compartir) -->
-<meta property="og:title" content="Red Rural — Gestión de empleados, tareas y caminos" />
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Red Rural | Gestión, prevención y patrullaje rural">
+  <meta name="twitter:description"
+    content="Gestión del establecimiento, seguridad ganadera y patrullaje rural en una sola propuesta profesional.">
+  <meta name="twitter:image" content="https://josema1031.github.io/lading-red-rural/img/logo-landing">
 
-<!-- ✅ DESCRIPCIÓN -->
-<meta property="og:description" content="Sistema rural para control y gestion de empleados, marcaciones, tareas, alertas y estado de caminos con mapa y GPS." />
+  <!-- Canonical -->
+  <link rel="canonical" href="https://josema1031.github.io/lading-red-rural/">
+  <title>Red Rural | Gestión, prevención y patrullaje rural</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="./img/logo-landing.png">
+  <link rel="apple-touch-icon" href="./img/logo-landing.png">
+  <style>
+    /* =========================
+       VARIABLES
+    ========================= */
+    :root {
+      --bg: #f4f7f5;
+      --surface: #ffffff;
+      --surface-soft: #f8fbf9;
+      --text: #14221b;
+      --muted: #5f6f66;
+      --primary: #1d6b52;
+      --primary-2: #0f4f3b;
+      --accent: #dff3ea;
+      --line: #dfe8e2;
+      --shadow: 0 18px 50px rgba(18, 54, 41, 0.10);
+      --shadow-soft: 0 12px 24px rgba(18, 54, 41, 0.08);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+    }
 
-<!-- ✅ IMAGEN OG (recomendado 1200x630) -->
-<meta property="og:image" content="https://josema1031.github.io/RedRural/icons/icon-192.png" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta property="og:image:alt" content="Red Rural - Panel con mapa, tareas y caminos" />
+    /* =========================
+       RESET / BASE
+    ========================= */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-<!-- ✅ Nombre del sitio -->
-<meta property="og:site_name" content="Red Rural" />
+    html {
+      scroll-behavior: smooth;
+    }
 
-<!-- =========================
-     Twitter Cards
-========================= -->
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Red Rural — Gestión de empleados, tareas y caminos" />
-<meta name="twitter:description" content="Control rural con mapa y GPS: empleados, marcaciones, tareas, alertas y caminos." />
-<meta name="twitter:image" content="https://josema1031.github.io/RedRural/icons/icon-512.png" />
+    body {
+      font-family: 'Inter', sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(29, 107, 82, .12), transparent 28%),
+        linear-gradient(180deg, #f7faf8 0%, #f3f6f4 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
 
-<link rel="manifest" href="./core/manifest.json">
-<meta name="theme-color" content="#14532d">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
+    img {
+      max-width: 100%;
+      display: block;
+    }
 
-<link rel="icon" href="icons/icon-512.png" />
-  <link rel="stylesheet" href="core/css/app-theme.css" />
-  <link rel="stylesheet" href="core/css/landing.css" />
-    <link rel="stylesheet" href="core/css/app-layout.css">
-    <link rel="stylesheet" href="core/css/app-utilities.css">
+    /* =========================
+       UTILIDADES
+    ========================= */
+    .container {
+      width: min(1160px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: var(--primary-2);
+      border: 1px solid #cfe7dc;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: .84rem;
+      font-weight: 700;
+      letter-spacing: .01em;
+    }
+
+    .section-title {
+      font-size: clamp(1.7rem, 3vw, 2.5rem);
+      line-height: 1.15;
+      margin-bottom: 12px;
+      color: var(--primary-2);
+    }
+
+    .section-subtitle {
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 1rem;
+      margin-bottom: 34px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 13px 20px;
+      border-radius: 14px;
+      font-weight: 700;
+      transition: .2s ease;
+      border: 1px solid transparent;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: white;
+      box-shadow: 0 16px 30px rgba(29, 107, 82, .22);
+      padding: 14px 24px;
+      border-radius: 16px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, .7);
+      color: var(--primary-2);
+      border-color: #d7e3dd;
+    }
+
+    /* =========================
+       HEADER
+    ========================= */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      backdrop-filter: blur(16px);
+      background: rgba(247, 250, 248, 0.88);
+      border-bottom: 1px solid rgba(223, 232, 226, 0.95);
+      box-shadow: 0 8px 24px rgba(18, 54, 41, 0.06);
+    }
+
+    .header-inner {
+      min-height: 86px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--primary-2);
+      flex-shrink: 0;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: white;
+      box-shadow: 0 10px 24px rgba(29, 107, 82, 0.22);
+      font-size: 1.15rem;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .nav a {
+      color: #355145;
+      font-weight: 600;
+      font-size: .95rem;
+    }
+
+    .nav a:hover {
+      color: var(--primary);
+    }
+
+    .menu-toggle {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, .86);
+      color: var(--primary-2);
+      font-size: 1.35rem;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(18, 54, 41, 0.08);
+      transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+
+    .menu-toggle:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(18, 54, 41, 0.12);
+    }
+
+    /* =========================
+       HERO
+    ========================= */
+    .hero {
+      padding: 70px 0 34px;
+    }
+
+    .hero-card {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, .98), rgba(244, 250, 247, .96)),
+        radial-gradient(circle at top right, rgba(29, 107, 82, .10), transparent 30%);
+      border: 1px solid rgba(223, 232, 226, .95);
+      box-shadow: 0 24px 60px rgba(18, 54, 41, 0.12);
+      border-radius: 34px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -80px -80px auto;
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, rgba(29, 107, 82, .18), transparent 68%);
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.3fr .7fr;
+      gap: 28px;
+      padding: 44px;
+      align-items: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.3rem, 5vw, 4.4rem);
+      line-height: 1.02;
+      margin: 18px 0 20px;
+      max-width: 780px;
+      color: #0d1d16;
+      letter-spacing: -.02em;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 720px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .hero-panel {
+      background: linear-gradient(180deg, #16382d 0%, #0f4f3b 100%);
+      color: white;
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 22px 40px rgba(15, 79, 59, .24);
+    }
+
+    .hero-panel p.small {
+      color: rgba(255, 255, 255, .78);
+      font-size: .88rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 10px;
+    }
+
+    .hero-panel h3 {
+      font-size: 1.45rem;
+      margin-bottom: 14px;
+    }
+
+    .hero-list {
+      list-style: none;
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .hero-list li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      color: rgba(255, 255, 255, .92);
+      font-size: .96rem;
+    }
+
+    .hero-list li span {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: inline-grid;
+      place-items: center;
+      background: rgba(255, 255, 255, .14);
+      flex: 0 0 auto;
+      font-size: .8rem;
+    }
+
+    /* =========================
+       STATS
+    ========================= */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin: 26px 0 8px;
+    }
+
+    .stat-card,
+    .card,
+    .step {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card {
+      position: relative;
+      overflow: hidden;
+      padding: 24px;
+    }
+
+    .stat-card::after {
+      content: "";
+      position: absolute;
+      right: -20px;
+      top: -20px;
+      width: 90px;
+      height: 90px;
+      background: radial-gradient(circle, rgba(29, 107, 82, .10), transparent 70%);
+    }
+
+    .stat-card p {
+      color: var(--muted);
+      font-size: .9rem;
+      margin-bottom: 8px;
+    }
+
+    .stat-card h3 {
+      color: var(--primary-2);
+      font-size: 1.45rem;
+      margin-bottom: 8px;
+    }
+
+    /* =========================
+       SECCIONES / GRIDS
+    ========================= */
+    section.block {
+      padding: 42px 0;
+    }
+
+    .three-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .two-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+    }
+
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .logos-band {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    /* =========================
+       CARDS
+    ========================= */
+    .card {
+      padding: 30px;
+      transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 46px rgba(18, 54, 41, 0.12);
+      border-color: #cfe0d7;
+    }
+
+    .card h3 {
+      color: var(--primary-2);
+      margin: 14px 0 10px;
+      font-size: 1.28rem;
+    }
+
+    .card p {
+      color: var(--muted);
+    }
+
+    .icon-box {
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #e7f5ef, #d9eee4);
+      color: var(--primary-2);
+      font-size: 1.4rem;
+      border: 1px solid #d0e7dc;
+    }
+
+    .list {
+      list-style: none;
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .list li {
+      padding-left: 18px;
+      position: relative;
+      color: var(--muted);
+    }
+
+    .list li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--primary);
+      font-weight: 800;
+    }
+
+    /* =========================
+       MODELOS / CARRUSEL
+    ========================= */
+    .modelos-carousel-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .modelos-carousel {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: calc(33.333% - 15px);
+      gap: 22px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-behavior: smooth;
+      scroll-snap-type: x mandatory;
+      width: 100%;
+      scrollbar-width: none;
+    }
+
+    .modelos-carousel::-webkit-scrollbar {
+      display: none;
+    }
+
+    .modelo-slide {
+      position: relative;
+      overflow: hidden;
+      min-height: 100%;
+      scroll-snap-align: center;
+      opacity: .6;
+      transform: scale(.96);
+      transition: all .25s ease;
+    }
+
+    .modelo-slide.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .modelo-slide::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary), var(--primary-2));
+      opacity: .9;
+    }
+
+    .modelo-slide:nth-child(2)::before {
+      background: linear-gradient(90deg, #0f766e, #115e59);
+    }
+
+    .modelo-slide:nth-child(3)::before {
+      background: linear-gradient(90deg, #1d4ed8, #1e3a8a);
+    }
+
+    .carousel-btn {
+      width: 48px;
+      height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .95);
+      color: var(--primary-2);
+      font-size: 1.8rem;
+      cursor: pointer;
+      flex: 0 0 auto;
+      box-shadow: 0 10px 20px rgba(18, 54, 41, 0.08);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    .carousel-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 26px rgba(18, 54, 41, 0.12);
+    }
+
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #cbd5cf;
+      transition: all .2s ease;
+    }
+
+    .dot.active {
+      width: 28px;
+      background: var(--primary);
+    }
+
+    .btn-modelo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-top: 20px;
+      padding: 13px 16px;
+      border-radius: 14px;
+      font-weight: 800;
+      text-decoration: none;
+      transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+      min-height: 46px;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, .10);
+    }
+
+    .btn-modelo:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.03);
+    }
+
+    .btn-red {
+      background: #166534;
+      color: #fff;
+    }
+
+    .btn-sisg {
+      background: #0f766e;
+      color: #fff;
+    }
+
+    .btn-vigia {
+      background: #1d4ed8;
+      color: #fff;
+    }
+
+    /* =========================
+       TIMELINE / PLANES / BANDAS
+    ========================= */
+    .step {
+      padding: 26px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .step-number {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: white;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .benefit-band {
+      padding: 30px;
+      border-radius: 26px;
+      background: linear-gradient(135deg, #16382d 0%, #0f4f3b 100%);
+      color: white;
+      box-shadow: 0 20px 40px rgba(15, 79, 59, .24);
+    }
+
+    .benefit-band p {
+      color: rgba(255, 255, 255, .84);
+      max-width: 720px;
+      margin-top: 10px;
+    }
+
+    .coverage-card {
+      background: linear-gradient(180deg, #fcfffd, #f7fbf8);
+    }
+
+    .plan-card.featured {
+      border: 2px solid #1d6b52;
+      transform: translateY(-6px);
+    }
+
+    .price {
+      font-size: 1.5rem;
+      color: var(--primary-2);
+      font-weight: 800;
+      margin-top: 14px;
+    }
+
+    /* =========================
+       TESTIMONIOS / FAQ / LOGOS
+    ========================= */
+    .testimonial {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .testimonial::after {
+      content: "“";
+      position: absolute;
+      right: 20px;
+      top: 10px;
+      font-size: 4rem;
+      line-height: 1;
+      color: rgba(29, 107, 82, .08);
+      font-weight: 800;
+    }
+
+    .mini-tag {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #eef7f2;
+      border: 1px solid #d8e9df;
+      color: var(--primary-2);
+      font-size: .8rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .faq {
+      display: grid;
+      gap: 16px;
+    }
+
+    .faq details {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .faq summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--primary-2);
+      list-style: none;
+    }
+
+    .faq summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq details p {
+      margin-top: 10px;
+      color: var(--muted);
+    }
+
+    .logo-box {
+      background: rgba(255, 255, 255, .72);
+      border: 1px dashed #cfe0d7;
+      color: #6b7d73;
+      min-height: 78px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      text-align: center;
+      padding: 12px;
+    }
+
+    .shine {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .shine::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      transform: translateX(-120%);
+      background: linear-gradient(120deg, transparent, rgba(255, 255, 255, .4), transparent);
+      animation: shineMove 7s infinite;
+      pointer-events: none;
+    }
+
+    @keyframes shineMove {
+      0% {
+        transform: translateX(-120%);
+      }
+
+      18% {
+        transform: translateX(120%);
+      }
+
+      100% {
+        transform: translateX(120%);
+      }
+    }
+
+    /* =========================
+       CONTACTO / FOOTER / FLOAT
+    ========================= */
+    .contact-cta {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, .98), rgba(241, 248, 244, .98)),
+        radial-gradient(circle at top right, rgba(29, 107, 82, .10), transparent 30%);
+      padding: 38px;
+      border-radius: 30px;
+      border: 1px solid var(--line);
+      box-shadow: 0 24px 50px rgba(18, 54, 41, 0.12);
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .contact-box {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 24px;
+    }
+
+    .footer {
+      margin-top: 20px;
+      padding: 38px 0 50px;
+      color: #5f6f66;
+    }
+
+    .footer-inner {
+      border-top: 1px solid var(--line);
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .whatsapp-float {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 50;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #25d366, #1faa52);
+      color: white;
+      padding: 14px 18px;
+      border-radius: 999px;
+      box-shadow: 0 18px 30px rgba(37, 211, 102, .28);
+      font-weight: 800;
+      font-size: .95rem;
+      border: 1px solid rgba(255, 255, 255, .2);
+    }
+
+    .whatsapp-float:hover {
+      transform: translateY(-2px);
+    }
+
+    .whatsapp-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, .18);
+      font-size: 1.1rem;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+    @media (max-width: 1050px) {
+
+      .hero-grid,
+      .contact-cta,
+      .two-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .three-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .timeline,
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .modelos-carousel {
+        grid-auto-columns: calc(50% - 11px);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .menu-toggle {
+        display: inline-flex;
+      }
+
+      .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        border-bottom: 1px solid var(--line);
+        padding: 80px 20px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        transform: translateY(-120%);
+        transition: transform .25s ease;
+        z-index: 40;
+      }
+
+      .nav.open {
+        transform: translateY(0);
+      }
+
+      .hero {
+        padding-top: 28px;
+      }
+
+      .hero-grid {
+        padding: 24px;
+      }
+
+      .hero h1 {
+        font-size: 2.1rem;
+      }
+
+      .three-grid,
+      .timeline,
+      .stats,
+      .trust-grid,
+      .logos-band {
+        grid-template-columns: 1fr;
+      }
+
+      .card,
+      .step,
+      .stat-card,
+      .hero-panel {
+        padding: 22px;
+      }
+
+      .contact-cta {
+        padding: 22px;
+      }
+
+      .modelos-carousel-wrap {
+        gap: 8px;
+      }
+
+      .modelos-carousel {
+        grid-auto-columns: 100%;
+      }
+
+      .carousel-btn {
+        display: none;
+      }
+
+      .whatsapp-float {
+        right: 12px;
+        bottom: 12px;
+        padding: 13px 15px;
+        font-size: .92rem;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#inicio" class="brand">
+        <span class="brand-mark">🌾</span>
+        <span>Red Rural</span>
+      </a>
 
-  <h1>🌾 Red Rural "Gualeguay"</h1>
-  <p>Herramientas digitales para el trabajo rural</p>
+      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
 
-  <!-- Enlaces CORRECTOS -->
-  <a href="core/caminos/index.html" class="btn">🗺 Ver estado de los caminos</a>
-  <a href="core/productor/login.html" class="btn">👨‍🌾 Entrar como Productor</a>
-  <a href="core/empleado/login.html" class="btn">👷 Entrar como Empleado</a>
+      <nav id="menu" class="nav">
+        <a href="#modelos">Modelos</a>
+        <a href="#funciona">Cómo funciona</a>
+        <a href="#beneficios">Beneficios</a>
+        <a href="#cobertura">Cobertura</a>
+        <a href="#planes">Planes</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+    </div>
+  </header>
 
-  <script src="./core/js/modules/landing-sw.js"></script>
+  <main id="inicio">
+    <section class="hero">
+      <div class="container hero-card">
+        <div class="hero-grid">
+          <div>
+            <span class="badge">Tecnología aplicada a la gestión y seguridad rural</span>
+            <h1>Una solución profesional para ordenar el campo, prevenir riesgos y coordinar patrullajes.</h1>
+            <p>
+              Red Rural integra tres modelos complementarios para que el productor tenga más control, más prevención y
+              una gestión más profesional de su establecimiento: <strong>Red Rural</strong>, <strong>SISG Rural</strong>
+              y <strong>Vigía Rural</strong>.
+            </p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#modelos">Conocer los servicios</a>
+              <a class="btn btn-secondary" href="#planes">Ver planes</a>
+            </div>
+          </div>
 
+          <aside class="hero-panel">
+            <p class="small">Presentación comercial</p>
+            <h3>Qué obtiene el productor</h3>
+            <ul class="hero-list">
+              <li><span>✓</span>
+                <div>Control diario del establecimiento desde el celular o la computadora.</div>
+              </li>
+              <li><span>✓</span>
+                <div>Registro ordenado de incidencias, alertas, caminos, tareas y novedades.</div>
+              </li>
+              <li><span>✓</span>
+                <div>Herramientas de prevención y lectura territorial para reducir vulnerabilidades.</div>
+              </li>
+              <li><span>✓</span>
+                <div>Base operativa para solicitar y monitorear patrullajes rurales.</div>
+              </li>
+            </ul>
+          </aside>
+        </div>
+      </div>
 
+      <div class="container stats">
+        <article class="stat-card">
+          <p>Enfoque</p>
+          <h3>Prevención</h3>
+          <span class="badge">Antes del hecho</span>
+        </article>
+        <article class="stat-card">
+          <p>Modelo</p>
+          <h3>3 servicios</h3>
+          <span class="badge">Integrados</span>
+        </article>
+        <article class="stat-card">
+          <p>Aplicación</p>
+          <h3>Campo real</h3>
+          <span class="badge">Uso práctico</span>
+        </article>
+        <article class="stat-card">
+          <p>Objetivo</p>
+          <h3>Más control</h3>
+          <span class="badge">Menos pérdidas</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="block" id="modelos">
+      <div class="container">
+        <span class="badge">Modelos de servicio</span>
+        <h2 class="section-title">Elegí el modelo que mejor se adapta a tu necesidad</h2>
+        <p class="section-subtitle">
+          Tres soluciones conectadas en una experiencia más simple, dinámica y profesional.
+        </p>
+
+        <div class="modelos-carousel-wrap">
+          <button class="carousel-btn prev" id="btnPrevModelos" aria-label="Anterior">‹</button>
+
+          <div class="modelos-carousel" id="modelosCarousel">
+            <article class="card modelo-slide">
+              <div class="icon-box">🌐</div>
+              <h3>Red Rural</h3>
+              <p>Sistema de gestión del establecimiento para organizar empleados, tareas, caminos, alertas y operaciones
+                diarias.</p>
+              <ul class="list">
+                <li>Control de empleados y tareas</li>
+                <li>Registro de caminos y alertas</li>
+                <li>Información centralizada del campo</li>
+              </ul>
+              <a href="login-red-rural.html" class="btn-modelo btn-red">Ingresar a Red Rural</a>
+            </article>
+
+            <article class="card modelo-slide">
+              <div class="icon-box">🛡️</div>
+              <h3>SISG Rural</h3>
+              <p>Sistema inteligente de seguridad ganadera para registrar incidencias, analizar riesgos y fortalecer la
+                prevención.</p>
+              <ul class="list">
+                <li>Mapa de riesgos</li>
+                <li>Registro y análisis por sector</li>
+                <li>Base profesional para prevención</li>
+              </ul>
+              <a href="sisg-rural/seguridad-ganadera/operativo/login.html" class="btn-modelo btn-sisg">Ingresar a SISG
+                Rural</a>
+            </article>
+
+            <article class="card modelo-slide">
+              <div class="icon-box">🚓</div>
+              <h3>Vigía Rural</h3>
+              <p>Servicio de patrullaje rural bajo demanda para conectar productores con vigilancia activa y seguimiento
+                del servicio.</p>
+              <ul class="list">
+                <li>Solicitud de patrulla</li>
+                <li>Seguimiento GPS y recorridos</li>
+                <li>Historial e informes operativos</li>
+              </ul>
+              <a href="core/patrullero/login.html" class="btn-modelo btn-vigia">Ingresar a Vigía Rural</a>
+            </article>
+          </div>
+
+          <button class="carousel-btn next" id="btnNextModelos" aria-label="Siguiente">›</button>
+        </div>
+
+        <div class="carousel-dots">
+          <span class="dot active"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="funciona">
+      <div class="container">
+        <span class="badge">Cómo funciona</span>
+        <h2 class="section-title">Un proceso claro, simple y entendible para el productor</h2>
+        <p class="section-subtitle">La propuesta está pensada para que el establecimiento pueda comenzar a ordenar su
+          información, mejorar la prevención y escalar luego hacia vigilancia activa.</p>
+
+        <div class="timeline">
+          <article class="step">
+            <div class="step-number">1</div>
+            <h3>Diagnóstico inicial</h3>
+            <p>Se releva la realidad del establecimiento, sus sectores, accesos, personal, incidentes y necesidades
+              operativas.</p>
+          </article>
+          <article class="step">
+            <div class="step-number">2</div>
+            <h3>Implementación</h3>
+            <p>Se organiza la carga de datos y se pone en marcha el sistema con una estructura simple y usable.</p>
+          </article>
+          <article class="step">
+            <div class="step-number">3</div>
+            <h3>Control y prevención</h3>
+            <p>El productor comienza a visualizar mejor lo que pasa en el campo y toma decisiones con más información.
+            </p>
+          </article>
+          <article class="step">
+            <div class="step-number">4</div>
+            <h3>Escalado operativo</h3>
+            <p>El establecimiento puede incorporar patrullajes, seguimiento y una gestión de seguridad más integral.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="beneficios">
+      <div class="container">
+        <div class="benefit-band">
+          <span class="badge">Beneficios para el productor</span>
+          <h2 class="section-title" style="color:white; margin-top:14px;">Más control, más orden y una prevención mejor
+            organizada</h2>
+          <p>La propuesta busca transformar datos dispersos y situaciones aisladas en una herramienta concreta de
+            gestión, prevención y respaldo operativo para el establecimiento.</p>
+        </div>
+
+        <div class="three-grid" style="margin-top:22px;">
+          <article class="card">
+            <div class="icon-box">📍</div>
+            <h3>Control territorial</h3>
+            <p>Permite ubicar zonas sensibles, detectar patrones y visualizar mejor los sectores más vulnerables del
+              campo.</p>
+          </article>
+          <article class="card">
+            <div class="icon-box">📋</div>
+            <h3>Información ordenada</h3>
+            <p>Centraliza incidencias, tareas, alertas y novedades en un solo lugar, evitando desorden y pérdida de
+              datos.</p>
+          </article>
+          <article class="card">
+            <div class="icon-box">📈</div>
+            <h3>Mejores decisiones</h3>
+            <p>Brinda una base más profesional para definir prioridades, recorridas, controles y acciones preventivas.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="cobertura">
+      <div class="container">
+        <span class="badge">Cobertura inicial</span>
+        <h2 class="section-title">Una propuesta pensada para crecer por etapas</h2>
+        <p class="section-subtitle">La operación puede comenzar de forma focalizada para asegurar calidad de
+          implementación y respuesta, y luego expandirse por zonas.</p>
+
+        <div class="two-grid">
+          <article class="card coverage-card">
+            <div class="icon-box">📍</div>
+            <h3>Zona de operación inicial</h3>
+            <ul class="list">
+              <li>Gualeguay</li>
+              <li>Gualeguaychú</li>
+              <li>Victoria</li>
+              <li>Nogoyá</li>
+            </ul>
+          </article>
+
+          <article class="card coverage-card">
+            <div class="icon-box">🧭</div>
+            <h3>Expansión futura</h3>
+            <ul class="list">
+              <li>Entre Ríos</li>
+              <li>Santa Fe</li>
+              <li>Corrientes</li>
+              <li>Buenos Aires</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="planes">
+      <div class="container">
+        <span class="badge">Planes y modalidades</span>
+        <h2 class="section-title">Una propuesta comercial adaptable al establecimiento</h2>
+        <p class="section-subtitle">Los planes pueden ajustarse según el tamaño del campo, el nivel de acompañamiento y
+          la necesidad operativa de cada productor.</p>
+
+        <div class="three-grid">
+          <article class="card plan-card">
+            <div class="icon-box">🌱</div>
+            <h3>Plan Gestión</h3>
+            <p>Ideal para productores que desean comenzar a ordenar la operación diaria del establecimiento.</p>
+            <div class="price">Desde $50.000 / mes</div>
+            <ul class="list">
+              <li>Empleados, tareas y alertas</li>
+              <li>Información centralizada</li>
+              <li>Base operativa del campo</li>
+            </ul>
+          </article>
+
+          <article class="card plan-card featured">
+            <div class="icon-box">🛡️</div>
+            <h3>Plan Seguridad</h3>
+            <p>Para establecimientos que buscan una prevención más activa mediante análisis y control territorial.</p>
+            <div class="price">Desde $80.000 / mes</div>
+            <ul class="list">
+              <li>Mapa de riesgos</li>
+              <li>Registro de incidencias</li>
+              <li>Lectura de zonas sensibles</li>
+            </ul>
+          </article>
+
+          <article class="card plan-card">
+            <div class="icon-box">🚓</div>
+            <h3>Vigía Rural</h3>
+            <p>Servicio de patrullaje rural bajo demanda para vigilancia, recorridas y respuesta operativa.</p>
+            <div class="price">Pago por servicio</div>
+            <ul class="list">
+              <li>Patrullaje programado o urgente</li>
+              <li>Seguimiento GPS</li>
+              <li>Informe operativo</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="confianza">
+      <div class="container">
+        <span class="badge">Confianza y presentación</span>
+        <h2 class="section-title">Una propuesta preparada para verse seria, clara y profesional</h2>
+        <p class="section-subtitle">Esta landing está pensada para que el productor entienda rápidamente el valor del
+          sistema y perciba una imagen sólida desde el primer vistazo.</p>
+
+        <div class="trust-grid">
+          <article class="card testimonial shine">
+            <span class="mini-tag">Gestión rural</span>
+            <h3>"Se entiende rápido y transmite orden"</h3>
+            <p>Ideal para mostrar a productores que necesitan una solución práctica, sin tecnicismos innecesarios y con
+              foco en resultados concretos.</p>
+          </article>
+
+          <article class="card testimonial shine">
+            <span class="mini-tag">Prevención</span>
+            <h3>"Se nota como un servicio serio"</h3>
+            <p>La estructura visual ayuda a posicionar Red Rural, SISG Rural y Vigía Rural como una propuesta
+              profesional y no como una simple app.</p>
+          </article>
+
+          <article class="card testimonial shine">
+            <span class="mini-tag">Patrullaje</span>
+            <h3>"Da sensación de empresa"</h3>
+            <p>La estética y la organización generan mayor confianza para presentar el sistema en reuniones, visitas
+              comerciales o instituciones rurales.</p>
+          </article>
+        </div>
+
+        <div class="benefit-band" style="margin-top:22px;">
+          <span class="badge">Espacio para respaldo institucional</span>
+          <h2 class="section-title" style="color:white; margin-top:14px;">Podés sumar aquí aliados, clientes piloto o
+            entidades de referencia</h2>
+          <p>Este bloque puede usarse más adelante para incorporar logos de productores, asociaciones rurales,
+            cooperativas, aseguradoras o instituciones que acompañen la propuesta.</p>
+
+          <div class="logos-band">
+            <div class="logo-box">Espacio para productor piloto</div>
+            <div class="logo-box">Espacio para Sociedad Rural</div>
+            <div class="logo-box">Espacio para cooperativa</div>
+            <div class="logo-box">Espacio para aliado estratégico</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="faq">
+      <div class="container">
+        <span class="badge">Preguntas frecuentes</span>
+        <h2 class="section-title">Respuestas claras para las dudas más comunes del productor</h2>
+        <p class="section-subtitle">Este bloque mejora la confianza comercial y ayuda a explicar la propuesta sin
+          necesidad de una reunión inicial extensa.</p>
+
+        <div class="faq">
+          <details>
+            <summary>¿El sistema sirve aunque el campo tenga poca conectividad?</summary>
+            <p>Sí. La propuesta está pensada para escenarios rurales reales, donde muchas tareas pueden registrarse en
+              terreno y luego sincronizarse cuando vuelve la señal.</p>
+          </details>
+
+          <details>
+            <summary>¿Se puede contratar solo uno de los servicios?</summary>
+            <p>Sí. El productor puede comenzar con Red Rural, con SISG Rural o incorporar luego Vigía Rural según su
+              necesidad operativa y su nivel de riesgo.</p>
+          </details>
+
+          <details>
+            <summary>¿Esto reemplaza al personal del campo?</summary>
+            <p>No. El sistema ordena la información, mejora el control y fortalece la prevención, pero trabaja como
+              apoyo operativo para el productor y su equipo.</p>
+          </details>
+
+          <details>
+            <summary>¿Se puede adaptar a distintos tamaños de establecimiento?</summary>
+            <p>Sí. La propuesta puede ajustarse a campos pequeños, medianos o grandes, con una implementación progresiva
+              y según la complejidad de la operación.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="contacto">
+      <div class="container">
+        <div class="contact-cta">
+          <div>
+            <span class="badge">Contacto comercial</span>
+            <h2 class="section-title" style="margin-top:14px;">Solicitá una demostración del sistema para tu
+              establecimiento</h2>
+            <p class="section-subtitle" style="margin-bottom:0;">Una presentación clara para entender cómo aplicar Red
+              Rural, SISG Rural y Vigía Rural según la realidad de tu campo.</p>
+          </div>
+
+          <div class="contact-box">
+            <h3 style="color: var(--primary-2); margin-bottom: 10px;">Canales de contacto</h3>
+            <ul class="list" style="margin-top: 10px;">
+              <li>Asesoramiento inicial</li>
+              <li>Demostración comercial</li>
+              <li>Evaluación de implementación</li>
+            </ul>
+            <div class="hero-actions" style="margin-top: 18px;">
+              <a class="btn btn-primary"
+                href="https://wa.me/5492644429649?text=Hola,%20quiero%20recibir%20información%20sobre%20Red%20Rural,%20SISG%20Rural%20y%20Vigía%20Rural."
+                target="_blank">Hablar por WhatsApp</a>
+              <a class="btn btn-secondary" href="mailto:contacto@redrural.com">Solicitar información</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <strong style="color: var(--primary-2);">Red Rural</strong>
+        <p style="margin-top: 8px; max-width: 620px;">Plataforma orientada a la gestión, prevención y seguridad rural
+          con una propuesta profesional para establecimientos ganaderos y productivos.</p>
+      </div>
+      <div>
+        <p>© 2026 Red Rural</p>
+      </div>
+    </div>
+  </footer>
+
+  <a class="whatsapp-float" href="https://wa.me/5492644429649?text=Hola,%20quiero%20información%20sobre%20el%20sistema"
+    target="_blank" aria-label="Contactar por WhatsApp">
+    <span class="whatsapp-icon">💬</span>
+    <span>WhatsApp</span>
+  </a>
+
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById('menu');
+      menu.classList.toggle('open');
+    }
+
+    document.querySelectorAll('.nav a').forEach(link => {
+      link.addEventListener('click', () => {
+        const menu = document.getElementById('menu');
+        menu.classList.remove('open');
+      });
+    });
+
+    const modelosCarousel = document.getElementById('modelosCarousel');
+    const btnPrevModelos = document.getElementById('btnPrevModelos');
+    const btnNextModelos = document.getElementById('btnNextModelos');
+    const dots = document.querySelectorAll('.carousel-dots .dot');
+
+    if (modelosCarousel && btnPrevModelos && btnNextModelos) {
+      btnNextModelos.addEventListener('click', () => {
+        modelosCarousel.scrollBy({
+          left: modelosCarousel.clientWidth * 0.9,
+          behavior: 'smooth'
+        });
+      });
+
+      btnPrevModelos.addEventListener('click', () => {
+        modelosCarousel.scrollBy({
+          left: -modelosCarousel.clientWidth * 0.9,
+          behavior: 'smooth'
+        });
+      });
+    }
+
+    function updateActiveSlide() {
+      if (!modelosCarousel) return;
+
+      const slides = document.querySelectorAll('.modelo-slide');
+      if (!slides.length) return;
+
+      const scrollLeft = modelosCarousel.scrollLeft;
+      const slideWidth = slides[0].offsetWidth + 22;
+      let activeIndex = Math.round(scrollLeft / slideWidth);
+
+      if (activeIndex < 0) activeIndex = 0;
+      if (activeIndex >= slides.length) activeIndex = slides.length - 1;
+
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === activeIndex);
+      });
+
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === activeIndex);
+      });
+    }
+
+    if (modelosCarousel) {
+      modelosCarousel.addEventListener('scroll', updateActiveSlide);
+      updateActiveSlide();
+    }
+  </script>
 </body>
+
 </html>

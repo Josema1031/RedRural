@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,6 +11,7 @@
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
+
 <body>
   <main class="wrap">
     <header class="top">
@@ -20,43 +22,204 @@
 
       <div class="top-actions">
         <span id="usuarioInfo" class="usuario-info">Cargando usuario...</span>
-        <button id="btnLogout">Cerrar sesión</button>
+        <button id="btnLogout" class="btn-out">Cerrar sesión</button>
       </div>
     </header>
 
+    <div class="kpi-row">
+      <article class="kpi-card kpi-dark">
+        <span class="kpi-label">Disponibles</span>
+        <strong class="kpi-value" id="kpiDisponibles">0</strong>
+        <span class="kpi-foot">Servicios para tomar</span>
+      </article>
+
+      <article class="kpi-card kpi-blue">
+        <span class="kpi-label">Activas</span>
+        <strong class="kpi-value" id="kpiActivas">0</strong>
+        <span class="kpi-foot">Patrullas en curso</span>
+      </article>
+
+      <article class="kpi-card kpi-green">
+        <span class="kpi-label">Historial</span>
+        <strong class="kpi-value" id="kpiHistorial">0</strong>
+        <span class="kpi-foot">Servicios completados</span>
+      </article>
+    </div>
+
+    <section class="hero-operativa" id="heroOperativa">
+      <div class="hero-operativa-top">
+        <div>
+          <p class="hero-kicker">Estado operativo</p>
+          <h2 id="heroTitulo">Disponible para patrullaje</h2>
+          <p id="heroTexto">
+            No tenés una patrulla activa en este momento. Podés revisar nuevas solicitudes disponibles.
+          </p>
+        </div>
+
+        <div class="hero-pill" id="heroBadge">
+          🟢 Disponible
+        </div>
+      </div>
+
+      <div class="hero-operativa-grid">
+        <article class="hero-mini-card">
+          <span class="hero-mini-label">Estado actual</span>
+          <strong class="hero-mini-value" id="heroEstadoActual">Sin patrulla activa</strong>
+        </article>
+
+        <article class="hero-mini-card">
+          <span class="hero-mini-label">Campo actual</span>
+          <strong class="hero-mini-value" id="heroCampoActual">—</strong>
+        </article>
+
+        <article class="hero-mini-card">
+          <span class="hero-mini-label">GPS</span>
+          <strong class="hero-mini-value" id="heroGpsEstado">Inactivo</strong>
+        </article>
+      </div>
+    </section>
+
+    <section class="next-action-card" id="nextActionCard">
+      <div class="next-action-head">
+        <div>
+          <p class="next-action-kicker">Siguiente acción</p>
+          <h3 id="nextActionTitle">Revisar solicitudes disponibles</h3>
+          <p id="nextActionText">No tenés una patrulla activa. Podés aceptar un nuevo servicio.</p>
+        </div>
+
+        <span class="next-action-badge" id="nextActionBadge">Disponible</span>
+      </div>
+
+      <div class="next-action-footer">
+        <button type="button" class="next-action-btn" id="nextActionBtn">
+          Ir a disponibles
+        </button>
+      </div>
+    </section>
+
     <div id="panelPatrullaStatus"></div>
 
-    <section class="card">
+    <section class="smart-summary" id="smartSummary">
+      <article class="smart-card">
+        <span class="smart-label">Solicitudes</span>
+        <strong class="smart-value" id="smartDisponibles">0</strong>
+        <small class="smart-foot">Disponibles ahora</small>
+      </article>
+
+      <article class="smart-card">
+        <span class="smart-label">Patrullas activas</span>
+        <strong class="smart-value" id="smartActivas">0</strong>
+        <small class="smart-foot">En operación</small>
+      </article>
+
+      <article class="smart-card">
+        <span class="smart-label">Historial</span>
+        <strong class="smart-value" id="smartHistorial">0</strong>
+        <small class="smart-foot">Finalizadas</small>
+      </article>
+
+      <article class="smart-card">
+        <span class="smart-label">GPS</span>
+        <strong class="smart-value" id="smartGps">Inactivo</strong>
+        <small class="smart-foot">Estado actual</small>
+      </article>
+
+      <article class="smart-card smart-card-wide">
+        <span class="smart-label">Campo actual</span>
+        <strong class="smart-value" id="smartCampo">—</strong>
+        <small class="smart-foot">Patrulla activa o último estado</small>
+      </article>
+    </section>
+
+    <div class="quick-actions">
+      <button class="quick-btn quick-btn-dark" id="goDisponibles" type="button">
+        📥 Disponibles
+      </button>
+
+      <button class="quick-btn quick-btn-blue" id="goActivas" type="button">
+        🚓 Activas
+      </button>
+
+      <button class="quick-btn quick-btn-green" id="goHistorial" type="button">
+        📚 Historial
+      </button>
+    </div>
+
+    <section class="card" id="secDisponibles">
       <div class="section-head">
         <h2>Solicitudes disponibles</h2>
         <span class="badge" id="countDisponibles">0</span>
       </div>
+
       <div id="listaDisponibles" class="lista-solicitudes">
-        Cargando solicitudes...
+        <div class="skeleton-card">
+          <div class="skeleton-line skeleton-line-lg"></div>
+          <div class="skeleton-line"></div>
+          <div class="skeleton-grid">
+            <div class="skeleton-chip"></div>
+            <div class="skeleton-chip"></div>
+            <div class="skeleton-chip"></div>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section class="card">
+    <section class="card" id="secActivas">
       <div class="section-head">
         <h2>Mis patrullas activas</h2>
         <span class="badge blue" id="countActivas">0</span>
       </div>
+
       <div id="listaActivas" class="lista-solicitudes">
-        Sin patrullas activas.
+        <div class="skeleton-card">
+          <div class="skeleton-line skeleton-line-lg"></div>
+          <div class="skeleton-line"></div>
+          <div class="skeleton-grid">
+            <div class="skeleton-chip"></div>
+            <div class="skeleton-chip"></div>
+          </div>
+        </div>
       </div>
     </section>
 
-    <section class="card">
+    <section class="card" id="secHistorial">
       <div class="section-head">
         <h2>Historial</h2>
         <span class="badge green" id="countHistorial">0</span>
       </div>
+
       <div id="listaHistorial" class="lista-solicitudes">
-        Sin historial.
+        <div class="skeleton-card">
+          <div class="skeleton-line skeleton-line-lg"></div>
+          <div class="skeleton-line"></div>
+          <div class="skeleton-grid">
+            <div class="skeleton-chip"></div>
+            <div class="skeleton-chip"></div>
+          </div>
+        </div>
       </div>
+      
     </section>
   </main>
 
+  <nav class="app-bottom-bar">
+    <button class="app-tab active" id="tabDisponibles" type="button">
+      <span>📥</span>
+      <small>Disponibles</small>
+    </button>
+
+    <button class="app-tab" id="tabActivas" type="button">
+      <span>🚓</span>
+      <small>Activas</small>
+    </button>
+
+    <button class="app-tab" id="tabHistorial" type="button">
+      <span>📚</span>
+      <small>Historial</small>
+    </button>
+  </nav>
+
   <script type="module" src="../js/modules/patrullero/panel.js"></script>
 </body>
+
 </html>

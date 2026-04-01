@@ -19,14 +19,41 @@ import {
   arrayUnion
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const listaDisponibles = document.getElementById("listaDisponibles");
-const listaActivas = document.getElementById("listaActivas");
-const listaHistorial = document.getElementById("listaHistorial");
-
 const countDisponibles = document.getElementById("countDisponibles");
 const countActivas = document.getElementById("countActivas");
 const countHistorial = document.getElementById("countHistorial");
+
+const kpiDisponibles = document.getElementById("kpiDisponibles");
+const kpiActivas = document.getElementById("kpiActivas");
+const kpiHistorial = document.getElementById("kpiHistorial");
+
+const goDisponibles = document.getElementById("goDisponibles");
+const goActivas = document.getElementById("goActivas");
+const goHistorial = document.getElementById("goHistorial");
+
+const tabDisponibles = document.getElementById("tabDisponibles");
+const tabActivas = document.getElementById("tabActivas");
+const tabHistorial = document.getElementById("tabHistorial");
+
 const usuarioInfo = document.getElementById("usuarioInfo");
+
+const heroTitulo = document.getElementById("heroTitulo");
+const heroTexto = document.getElementById("heroTexto");
+const heroBadge = document.getElementById("heroBadge");
+const heroEstadoActual = document.getElementById("heroEstadoActual");
+const heroCampoActual = document.getElementById("heroCampoActual");
+const heroGpsEstado = document.getElementById("heroGpsEstado");
+
+const nextActionTitle = document.getElementById("nextActionTitle");
+const nextActionText = document.getElementById("nextActionText");
+const nextActionBadge = document.getElementById("nextActionBadge");
+const nextActionBtn = document.getElementById("nextActionBtn");
+
+const smartDisponibles = document.getElementById("smartDisponibles");
+const smartActivas = document.getElementById("smartActivas");
+const smartHistorial = document.getElementById("smartHistorial");
+const smartGps = document.getElementById("smartGps");
+const smartCampo = document.getElementById("smartCampo");
 
 let currentUser = null;
 let perfilPatrullero = null;
@@ -295,6 +322,7 @@ function renderBannerPatrullaActiva() {
   `;
 
   contenedor.appendChild(div);
+  actualizarHeroOperativa();
 }
 
 function textoGpsModo() {
@@ -402,10 +430,10 @@ function renderEstadoConexion() {
     <div class="pp-card-body">
       <b>Estado:</b> ${escapeHtml(estado.texto)}<br>
       <b>Última señal:</b> ${escapeHtml(
-        gpsEstado.ultimaSenialMs
-          ? new Date(gpsEstado.ultimaSenialMs).toLocaleString("es-AR")
-          : "—"
-      )}<br>
+    gpsEstado.ultimaSenialMs
+      ? new Date(gpsEstado.ultimaSenialMs).toLocaleString("es-AR")
+      : "—"
+  )}<br>
       <b>Tiempo desde última señal:</b> ${escapeHtml(tiempoDesdeUltimaSenialTexto())}
     </div>
   `;
@@ -499,13 +527,13 @@ function renderEstadoGPS() {
       <b>Modo:</b> ${escapeHtml(textoGpsModo())}<br>
       <b>Permiso:</b> ${escapeHtml(gpsEstado.permiso || "pendiente")}<br>
       <b>Última señal:</b> ${escapeHtml(
-        gpsEstado.ultimaSenialMs
-          ? new Date(gpsEstado.ultimaSenialMs).toLocaleString("es-AR")
-          : "—"
-      )}<br>
+    gpsEstado.ultimaSenialMs
+      ? new Date(gpsEstado.ultimaSenialMs).toLocaleString("es-AR")
+      : "—"
+  )}<br>
       <b>Precisión:</b> ${escapeHtml(
-        gpsEstado.precisionM != null ? `${gpsEstado.precisionM} m` : "—"
-      )}<br>
+    gpsEstado.precisionM != null ? `${gpsEstado.precisionM} m` : "—"
+  )}<br>
       <b>Velocidad:</b> ${escapeHtml(formatVelocidad(gpsEstado.velocidadMps))}<br>
       <b>Error:</b> ${escapeHtml(gpsEstado.error || "Sin errores")}
     </div>
@@ -522,6 +550,7 @@ function renderEstadoGPS() {
 
   renderControlesGPS();
   renderEstadoConexion();
+  actualizarHeroOperativa();
 
   if (patrullaActivaActual) {
     actualizarMiniMapaConPosiciones({
@@ -1079,11 +1108,242 @@ function renderLista(contenedor, items, tipoLista, textoVacio) {
   if (!contenedor) return;
 
   if (!items.length) {
-    contenedor.innerHTML = `<div class="empty">${textoVacio}</div>`;
+    let icono = "📭";
+
+    if (tipoLista === "activas") icono = "🚓";
+    if (tipoLista === "historial") icono = "📚";
+
+    contenedor.innerHTML = `
+      <div class="empty fade-in-up">
+        <div class="empty-icon">${icono}</div>
+        <div class="empty-title">${escapeHtml(textoVacio)}</div>
+        <div class="empty-subtitle">Cuando haya información disponible, la vas a ver acá.</div>
+      </div>
+    `;
     return;
   }
 
-  contenedor.innerHTML = items.map(item => renderCard(item, tipoLista)).join("");
+  contenedor.innerHTML = items
+    .map((item, index) => {
+      return `<div class="fade-in-up" style="animation-delay:${index * 70}ms">${renderCard(item, tipoLista)}</div>`;
+    })
+    .join("");
+}
+
+function textoHeroGps() {
+  if (gpsEstado.error) return "Error";
+  if (gpsEstado.pausado) return "Pausado";
+  if (gpsEstado.activo) return "Activo";
+  return "Inactivo";
+}
+
+function actualizarHeroOperativa() {
+  if (!heroTitulo || !heroTexto || !heroBadge || !heroEstadoActual || !heroCampoActual || !heroGpsEstado) return;
+
+  const tieneActiva = !!patrullaActivaActual;
+  const estado = String(patrullaActivaActual?.estado || "").toLowerCase();
+
+  const campo =
+    patrullaActivaActual?.nombreCampo ||
+    patrullaActivaActual?.campo ||
+    patrullaActivaActual?.establecimiento ||
+    "—";
+
+  heroGpsEstado.textContent = textoHeroGps();
+
+  if (!tieneActiva) {
+    heroTitulo.textContent = "Disponible para patrullaje";
+    heroTexto.textContent = "No tenés una patrulla activa en este momento. Podés revisar nuevas solicitudes disponibles.";
+    heroBadge.textContent = "🟢 Disponible";
+    heroBadge.className = "hero-pill hero-pill-ok";
+    heroEstadoActual.textContent = "Sin patrulla activa";
+    heroCampoActual.textContent = "—";
+    return;
+  }
+
+  if (estado === "aceptada" || estado === "asignada") {
+    heroTitulo.textContent = "Patrulla aceptada";
+    heroTexto.textContent = "Ya tomaste un servicio. El siguiente paso es salir al lugar para comenzar la operación.";
+    heroBadge.textContent = "🔵 Preparado";
+    heroBadge.className = "hero-pill hero-pill-info";
+    heroEstadoActual.textContent = "Aceptada";
+    heroCampoActual.textContent = campo;
+    return;
+  }
+
+  if (estado === "en_camino") {
+    heroTitulo.textContent = "En camino al objetivo";
+    heroTexto.textContent = "Estás desplazándote al lugar asignado. Mantené el tracking activo y monitoreá la ubicación.";
+    heroBadge.textContent = "🟡 En camino";
+    heroBadge.className = "hero-pill hero-pill-warn";
+    heroEstadoActual.textContent = "En camino";
+    heroCampoActual.textContent = campo;
+    return;
+  }
+
+  if (estado === "en_curso") {
+    heroTitulo.textContent = "Patrulla en curso";
+    heroTexto.textContent = "La patrulla está activa. Podés seguir el recorrido, pausar tracking o finalizar cuando corresponda.";
+    heroBadge.textContent = "🟢 En curso";
+    heroBadge.className = "hero-pill hero-pill-ok";
+    heroEstadoActual.textContent = "En curso";
+    heroCampoActual.textContent = campo;
+    return;
+  }
+
+  if (estado === "finalizada") {
+    heroTitulo.textContent = "Servicio finalizado";
+    heroTexto.textContent = "La última patrulla fue completada. Ya podés revisar historial o aceptar un nuevo servicio.";
+    heroBadge.textContent = "⚪ Finalizada";
+    heroBadge.className = "hero-pill hero-pill-neutral";
+    heroEstadoActual.textContent = "Finalizada";
+    heroCampoActual.textContent = campo;
+    return;
+  }
+
+  heroTitulo.textContent = "Estado operativo";
+  heroTexto.textContent = "Revisá el panel para continuar con la gestión de solicitudes y patrullas.";
+  heroBadge.textContent = "ℹ️ Operativo";
+  heroBadge.className = "hero-pill hero-pill-info";
+  heroEstadoActual.textContent = patrullaActivaActual?.estado || "—";
+  heroCampoActual.textContent = campo;
+
+  const hero = document.getElementById("heroOperativa");
+  if (hero) {
+    hero.classList.remove("hero-pulse");
+    void hero.offsetWidth;
+    hero.classList.add("hero-pulse");
+  }
+  actualizarNextAction();
+  actualizarSmartSummary();
+}
+
+function actualizarNextAction() {
+  if (!nextActionTitle || !nextActionText || !nextActionBadge || !nextActionBtn) return;
+
+  const estado = String(patrullaActivaActual?.estado || "").toLowerCase();
+
+  if (!patrullaActivaActual) {
+    nextActionTitle.textContent = "Revisar solicitudes disponibles";
+    nextActionText.textContent = "No tenés una patrulla activa. Podés aceptar un nuevo servicio.";
+    nextActionBadge.textContent = "Disponible";
+    nextActionBadge.className = "next-action-badge next-ok";
+    nextActionBtn.textContent = "Ir a disponibles";
+    nextActionBtn.dataset.target = "secDisponibles";
+    return;
+  }
+
+  if (estado === "asignada" || estado === "aceptada") {
+    nextActionTitle.textContent = "Salir al lugar";
+    nextActionText.textContent = "Ya aceptaste una patrulla. El siguiente paso es dirigirte al objetivo.";
+    nextActionBadge.textContent = "Acción requerida";
+    nextActionBadge.className = "next-action-badge next-info";
+    nextActionBtn.textContent = "Ir a activas";
+    nextActionBtn.dataset.target = "secActivas";
+    return;
+  }
+
+  if (estado === "en_camino") {
+    nextActionTitle.textContent = "Iniciar patrulla";
+    nextActionText.textContent = "Ya estás en camino. Cuando corresponda, iniciá formalmente la patrulla.";
+    nextActionBadge.textContent = "En camino";
+    nextActionBadge.className = "next-action-badge next-warn";
+    nextActionBtn.textContent = "Ver patrulla activa";
+    nextActionBtn.dataset.target = "secActivas";
+    return;
+  }
+
+  if (estado === "en_curso") {
+    nextActionTitle.textContent = "Continuar operativo";
+    nextActionText.textContent = "La patrulla está en curso. Mantené el tracking activo y finalizá cuando corresponda.";
+    nextActionBadge.textContent = "Operando";
+    nextActionBadge.className = "next-action-badge next-ok";
+    nextActionBtn.textContent = "Ver operativo";
+    nextActionBtn.dataset.target = "secActivas";
+    return;
+  }
+
+  if (estado === "finalizada") {
+    nextActionTitle.textContent = "Revisar historial o tomar una nueva patrulla";
+    nextActionText.textContent = "La última patrulla fue finalizada correctamente.";
+    nextActionBadge.textContent = "Finalizada";
+    nextActionBadge.className = "next-action-badge next-neutral";
+    nextActionBtn.textContent = "Ir a historial";
+    nextActionBtn.dataset.target = "secHistorial";
+    return;
+  }
+
+  nextActionTitle.textContent = "Continuar gestión";
+  nextActionText.textContent = "Revisá el panel para seguir con la operación.";
+  nextActionBadge.textContent = "Operativo";
+  nextActionBadge.className = "next-action-badge next-info";
+  nextActionBtn.textContent = "Ver activas";
+  nextActionBtn.dataset.target = "secActivas";
+}
+
+function actualizarSmartSummary() {
+  if (!smartDisponibles || !smartActivas || !smartHistorial || !smartGps || !smartCampo) return;
+
+  smartGps.textContent = textoHeroGps();
+
+  const campo =
+    patrullaActivaActual?.nombreCampo ||
+    patrullaActivaActual?.campo ||
+    patrullaActivaActual?.establecimiento ||
+    "—";
+
+  smartCampo.textContent = campo;
+}
+
+function scrollToSection(sectionId) {
+  const el = document.getElementById(sectionId);
+  if (!el) return;
+
+  el.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
+
+function setActiveTab(tabId) {
+  [tabDisponibles, tabActivas, tabHistorial].forEach(tab => {
+    if (!tab) return;
+    tab.classList.remove("active");
+  });
+
+  const active = document.getElementById(tabId);
+  if (active) active.classList.add("active");
+}
+
+function actualizarTabSegunScroll() {
+  const secDisponibles = document.getElementById("secDisponibles");
+  const secActivas = document.getElementById("secActivas");
+  const secHistorial = document.getElementById("secHistorial");
+
+  const sections = [
+    { id: "tabDisponibles", sectionId: "secDisponibles", el: secDisponibles },
+    { id: "tabActivas", sectionId: "secActivas", el: secActivas },
+    { id: "tabHistorial", sectionId: "secHistorial", el: secHistorial }
+  ].filter(s => s.el);
+
+  let selected = sections[0];
+
+  for (const sec of sections) {
+    const rect = sec.el.getBoundingClientRect();
+    if (rect.top <= 180) {
+      selected = sec;
+    }
+  }
+
+  if (selected) {
+    setActiveTab(selected.id);
+
+    sections.forEach(sec => {
+      sec.el.classList.remove("section-focus");
+    });
+
+    selected.el.classList.add("section-focus");
+  }
 }
 
 async function verificarSiYaTienePatrullaActiva() {
@@ -1103,6 +1363,7 @@ async function verificarSiYaTienePatrullaActiva() {
 
   patrullaActivaActual = obtenerPatrullaPrincipal(activas);
   renderBannerPatrullaActiva();
+  actualizarHeroOperativa();
 }
 
 async function enviarTrackingPosicion(position) {
@@ -1366,6 +1627,9 @@ function escucharSolicitudes() {
     const disponibles = all.filter(puedeVerComoDisponible);
 
     countDisponibles.textContent = disponibles.length;
+    if (kpiDisponibles) kpiDisponibles.textContent = disponibles.length;
+    if (smartDisponibles) smartDisponibles.textContent = disponibles.length;
+
     renderLista(
       listaDisponibles,
       disponibles,
@@ -1376,7 +1640,13 @@ function escucharSolicitudes() {
     );
   }, (err) => {
     console.error("Error cargando disponibles:", err);
-    listaDisponibles.innerHTML = `<div class="empty">Error cargando solicitudes.</div>`;
+    listaDisponibles.innerHTML = `
+      <div class="empty fade-in-up">
+        <div class="empty-icon">⚠️</div>
+        <div class="empty-title">Error cargando solicitudes</div>
+        <div class="empty-subtitle">Revisá la conexión o intentá nuevamente.</div>
+      </div>
+    `;
   });
 
   const qActivas = query(
@@ -1396,6 +1666,7 @@ function escucharSolicitudes() {
     patrullaActivaActual = obtenerPatrullaPrincipal(activas);
     renderBannerPatrullaActiva();
     evaluarTrackingAutomatico();
+    actualizarHeroOperativa();
 
     if (patrullaActivaActual) {
       actualizarMiniMapaConPosiciones({
@@ -1410,6 +1681,9 @@ function escucharSolicitudes() {
     }
 
     countActivas.textContent = activas.length;
+    if (kpiActivas) kpiActivas.textContent = activas.length;
+    if (smartActivas) smartActivas.textContent = activas.length;
+
     renderLista(
       listaActivas,
       activas,
@@ -1418,7 +1692,13 @@ function escucharSolicitudes() {
     );
   }, (err) => {
     console.error("Error cargando activas:", err);
-    listaActivas.innerHTML = `<div class="empty">Error cargando patrullas activas.</div>`;
+        listaActivas.innerHTML = `
+      <div class="empty fade-in-up">
+        <div class="empty-icon">⚠️</div>
+        <div class="empty-title">Error cargando patrullas activas</div>
+        <div class="empty-subtitle">No se pudo obtener la información actual del operativo.</div>
+      </div>
+    `;
   });
 
   const qHistorial = query(
@@ -1442,6 +1722,9 @@ function escucharSolicitudes() {
       });
 
     countHistorial.textContent = historial.length;
+    if (kpiHistorial) kpiHistorial.textContent = historial.length;
+    if (smartHistorial) smartHistorial.textContent = historial.length;
+
     renderLista(
       listaHistorial,
       historial,
@@ -1450,7 +1733,13 @@ function escucharSolicitudes() {
     );
   }, (err) => {
     console.error("Error cargando historial:", err);
-    listaHistorial.innerHTML = `<div class="empty">Error cargando historial.</div>`;
+      listaHistorial.innerHTML = `
+      <div class="empty fade-in-up">
+        <div class="empty-icon">⚠️</div>
+        <div class="empty-title">Error cargando historial</div>
+        <div class="empty-subtitle">No se pudo recuperar el historial del patrullero.</div>
+      </div>
+    `;
   });
 }
 
@@ -1679,6 +1968,47 @@ window.addEventListener("beforeunload", () => {
   detenerTracking();
 });
 
+goDisponibles?.addEventListener("click", () => {
+  scrollToSection("secDisponibles");
+  setActiveTab("tabDisponibles");
+});
+
+goActivas?.addEventListener("click", () => {
+  scrollToSection("secActivas");
+  setActiveTab("tabActivas");
+});
+
+goHistorial?.addEventListener("click", () => {
+  scrollToSection("secHistorial");
+  setActiveTab("tabHistorial");
+});
+
+tabDisponibles?.addEventListener("click", () => {
+  scrollToSection("secDisponibles");
+  setActiveTab("tabDisponibles");
+});
+
+tabActivas?.addEventListener("click", () => {
+  scrollToSection("secActivas");
+  setActiveTab("tabActivas");
+});
+
+tabHistorial?.addEventListener("click", () => {
+  scrollToSection("secHistorial");
+  setActiveTab("tabHistorial");
+});
+
+window.addEventListener("scroll", actualizarTabSegunScroll);
+
+nextActionBtn?.addEventListener("click", () => {
+  const target = nextActionBtn.dataset.target || "secDisponibles";
+  scrollToSection(target);
+
+  if (target === "secDisponibles") setActiveTab("tabDisponibles");
+  if (target === "secActivas") setActiveTab("tabActivas");
+  if (target === "secHistorial") setActiveTab("tabHistorial");
+});
+
 onAuthStateChanged(auth, async (user) => {
   currentUser = user;
 
@@ -1691,17 +2021,19 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   try {
-  perfilPatrullero = await validarAccesoPatrullero(user);
+    perfilPatrullero = await validarAccesoPatrullero(user);
 
-  usuarioInfo.textContent =
-    `Usuario: ${(perfilPatrullero?.nombre || "")} ${(perfilPatrullero?.apellido || "")}`.trim();
+    usuarioInfo.textContent =
+      `Usuario: ${(perfilPatrullero?.nombre || "")} ${(perfilPatrullero?.apellido || "")}`.trim();
 
-  renderEstadoGPS();
-  renderEstadoConexion();
-  iniciarTimerEstadoConexion();
-  await verificarSiYaTienePatrullaActiva();
-  escucharSolicitudes();
-} catch (error) {
+    renderEstadoGPS();
+    renderEstadoConexion();
+    actualizarHeroOperativa();
+    iniciarTimerEstadoConexion();
+    await verificarSiYaTienePatrullaActiva();
+    escucharSolicitudes();
+    setTimeout(() => actualizarTabSegunScroll(), 250);
+  } catch (error) {
     console.error("Acceso denegado:", error);
     alert(error.message || "No tenés permisos para acceder a este panel.");
     detenerTracking();

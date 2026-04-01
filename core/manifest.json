@@ -2,7 +2,7 @@
   "name": "Red Rural Gualeguay",
   "short_name": "Red Rural",
   "description": "Herramientas digitales para el trabajo rural: tareas, alertas, caminos y monitoreo.",
-  "start_url": "../index.html",
+  "start_url": "../login-red-rural.html",
   "scope": "../",
   "display": "standalone",
   "background_color": "#f0f2f3",
