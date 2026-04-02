@@ -4,15 +4,24 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Ingreso Patrullero | Vigía Rural</title>
+<meta name="description" content="Servicio de patrullaje rural bajo demanda. Conectamos productores con personal de seguridad capacitado.">
+
+<meta property="og:title" content="Vigía Rural — Seguridad física rural">
+<meta property="og:description" content="Solicitá patrullaje en minutos. Seguridad rural tipo Uber.">
+<meta property="og:image" content="https://tudominio.com/icons/vigia-rural-og.png">
+<meta property="og:url" content="https://tudominio.com/vigia-rural">
+<meta property="og:site_name" content="Vigía Rural">
+
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#b91c1c">
+<link rel="apple-touch-icon" href="./icons/vigia-192.png">
 
 <link rel="stylesheet" href="../css/patrullero-login.css">
 
 </head>
 
 <body>
-
 <main class="login-wrap">
 
 <section class="card">
@@ -56,6 +65,11 @@ Registrarme como patrullero
 </main>
 
 <script type="module" src="../js/modules/patrullero/login.js"></script>
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./service-worker.js");
+}
+</script>
 
 </body>
 </html>

@@ -3,7 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <title>SISG Rural - Ingreso</title>
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Sistema inteligente de análisis de incidencias, mapas de riesgo y prevención del delito rural.">
+
+<meta property="og:title" content="SISG Rural — Inteligencia de seguridad">
+<meta property="og:description" content="Análisis de riesgo, incidencias y seguridad ganadera con mapas inteligentes.">
+<meta property="og:image" content="https://tudominio.com/icons/sisg-rural-og.png">
+<meta property="og:url" content="https://tudominio.com/sisg-rural">
+<meta property="og:site_name" content="SISG Rural">
+
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#0f766e">
+<link rel="apple-touch-icon" href="./icons/sisg-192.png">
 
 <style>
 
@@ -133,6 +145,16 @@ async function login() {
 }
 
 btnLogin.addEventListener("click", login);
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js")
+      .then((reg) => console.log("SW registrado:", reg.scope))
+      .catch((err) => console.error("Error registrando SW:", err));
+  });
+}
 </script>
 
 </body>
